@@ -1,0 +1,76 @@
+{
+  "titre": "Barème de cotation des priorités Transitions Pro PACA",
+  "total": 20,
+  "priorites": [
+    {
+      "code": "P1",
+      "libelle": "Salariés les moins qualifiés (ouvriers et/ou employés de niveau 3 et infra)",
+      "points": 5,
+      "questions": ["Q3a"],
+      "condition": "Q3a = 'Oui'"
+    },
+    {
+      "code": "P2",
+      "libelle": "Salariés reconnus inaptes sur leur poste actuel",
+      "points": 1,
+      "questions": ["Q7"],
+      "condition": "Q7 = 'Oui'"
+    },
+    {
+      "code": "P3",
+      "libelle": "Salariés des entreprises de moins de 50 salariés",
+      "points": 1,
+      "questions": ["Q4"],
+      "condition": "Q4 = 'Non'"
+    },
+    {
+      "code": "P4",
+      "libelle": "Salariés ciblant des formations ne dépassant pas 1200 heures",
+      "points": 2,
+      "questions": [],
+      "note": "À évaluer via les questions sur la formation"
+    },
+    {
+      "code": "P5",
+      "libelle": "Formation certifiante portant sur une partie seulement des blocs (acquisition progressive)",
+      "points": 1,
+      "questions": [],
+      "note": "À évaluer via les questions sur la formation"
+    },
+    {
+      "code": "P6",
+      "libelle": "Projets présentant une ingénierie de formation valorisée (CEP, VAE, CléA, PMSMP, recruteur identifié, etc.)",
+      "points": 1,
+      "questions": ["Q13", "Q23"],
+      "note": "1 point si au moins un critère rempli"
+    },
+    {
+      "code": "P7",
+      "libelle": "Dossiers bénéficiant d'un cofinancement",
+      "points": 2,
+      "questions": ["Q14"],
+      "condition": "Q14 mentionne un cofinancement"
+    },
+    {
+      "code": "P8",
+      "libelle": "Métiers à forte perspective d'emploi et métiers émergents",
+      "points": 3,
+      "questions": ["Q12"],
+      "note": "3 points si métier trouvé dans la liste prioritaire n°8"
+    },
+    {
+      "code": "P9",
+      "libelle": "Salarié dans un secteur dont le taux d'emploi diminue",
+      "points": 3,
+      "questions": ["Q11"],
+      "note": "3 points si secteur trouvé dans la liste prioritaire n°9"
+    },
+    {
+      "code": "P10",
+      "libelle": "Salarié en contrat court et/ou à temps partiel",
+      "points": 1,
+      "questions": ["Q5", "Q6"],
+      "condition": "Q5 = 'Oui' OU Q6 = 'Oui'"
+    }
+  ]
+}

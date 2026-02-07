@@ -1,0 +1,147 @@
+{
+  "titre": "Métiers à fortes perspectives d'emploi / émergents en PACA 2026",
+  "version": "20251215",
+  "priorite": "n°8",
+  "metiers": [
+    {
+      "code_rome": "C1501",
+      "metier": "Gérance immobilière",
+      "domaine": "Banque, Assurance, Immobilier"
+    },
+    {
+      "code_rome": "F1106",
+      "metier": "Ingénierie et études du BTP",
+      "domaine": "Construction, Bâtiment et Travaux publics"
+    },
+    {
+      "code_rome": "F1201",
+      "metier": "Conduite de travaux du BTP",
+      "domaine": "Construction, Bâtiment et Travaux publics"
+    },
+    {
+      "code_rome": "F1705",
+      "metier": "Pose de canalisations",
+      "domaine": "Construction, Bâtiment et Travaux publics"
+    },
+    {
+      "code_rome": "H1202",
+      "metier": "Conception et dessin produits électriques et électroniques",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1203",
+      "metier": "Conception et dessin produits mécaniques",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1208",
+      "metier": "Technicien en études et conception en automatisme",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1302",
+      "metier": "Management et ingénierie Hygiène Sécurité Environnement -HSE- industriels",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1401",
+      "metier": "Management et ingénierie gestion industrielle et logistique",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1402",
+      "metier": "Management et ingénierie méthodes et industrialisation",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1403",
+      "metier": "Technicien en gestion industrielle et logistique",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1404",
+      "metier": "Technicien en méthodes et industrialisation",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H1502",
+      "metier": "Management et ingénierie qualité industrielle",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H2602",
+      "metier": "Câblage électrique et électromécanique",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H2901",
+      "metier": "Ajusteur de fabrication",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "H2903",
+      "metier": "Conduite d'équipement d'usinage",
+      "domaine": "Industrie"
+    },
+    {
+      "code_rome": "I1302",
+      "metier": "Installation et maintenance d'automatismes",
+      "domaine": "Installation et Maintenance"
+    },
+    {
+      "code_rome": "I1304",
+      "metier": "Installation et maintenance d'équipements industriels et d'exploitation",
+      "domaine": "Installation et Maintenance"
+    },
+    {
+      "code_rome": "I1310",
+      "metier": "Maintenance mécanique industrielle",
+      "domaine": "Installation et Maintenance"
+    },
+    {
+      "code_rome": "I1603",
+      "metier": "Maintenance d'engins de chantier, de levage, manutention et agricoles",
+      "domaine": "Installation et Maintenance"
+    },
+    {
+      "code_rome": "J1306",
+      "metier": "Imagerie médicale",
+      "domaine": "Santé"
+    },
+    {
+      "code_rome": "J1307",
+      "metier": "Préparateur en pharmacie",
+      "domaine": "Santé"
+    },
+    {
+      "code_rome": "K1301",
+      "metier": "Accompagnement médico-social",
+      "domaine": "Services à la personne et à la collectivité"
+    },
+    {
+      "code_rome": "K2301",
+      "metier": "Distribution et assainissement d'eau",
+      "domaine": "Services à la personne et à la collectivité"
+    },
+    {
+      "code_rome": "M1202",
+      "metier": "Audit et contrôle comptables et financiers",
+      "domaine": "Support à l'entreprise"
+    },
+    {
+      "code_rome": "M1203",
+      "metier": "Comptabilité",
+      "domaine": "Support à l'entreprise"
+    },
+    {
+      "code_rome": "M1206",
+      "metier": "Management de groupe ou de service comptable",
+      "domaine": "Support à l'entreprise"
+    },
+    {
+      "code_rome": "M1605",
+      "metier": "Assistanat technique et administratif",
+      "domaine": "Support à l'entreprise"
+    }
+  ]
+}

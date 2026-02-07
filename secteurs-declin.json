@@ -1,0 +1,147 @@
+{
+  "titre": "Secteurs d'activité dont le taux d'emploi diminue en PACA 2026",
+  "version": "20251215",
+  "priorite": "n°9",
+  "secteurs": [
+    {
+      "code_ape": "7830Z",
+      "intitule": "Autre mise à disposition de ressources humaines",
+      "section": "Activités de services administratifs et de soutien"
+    },
+    {
+      "code_ape": "8219Z",
+      "intitule": "Photocopie, préparation de documents et autres activités spécialisées de soutien de bureau",
+      "section": "Activités de services administratifs et de soutien"
+    },
+    {
+      "code_ape": "8220Z",
+      "intitule": "Activités de centres d'appels",
+      "section": "Activités de services administratifs et de soutien"
+    },
+    {
+      "code_ape": "6810Z",
+      "intitule": "Activités des marchands de biens immobiliers",
+      "section": "Activités immobilières"
+    },
+    {
+      "code_ape": "6820B",
+      "intitule": "Location de terrains et d'autres biens immobiliers",
+      "section": "Activités immobilières"
+    },
+    {
+      "code_ape": "7021Z",
+      "intitule": "Conseil en relations publiques et communication",
+      "section": "Activités spécialisées, scientifiques et techniques"
+    },
+    {
+      "code_ape": "7211Z",
+      "intitule": "Recherche-développement en biotechnologie",
+      "section": "Activités spécialisées, scientifiques et techniques"
+    },
+    {
+      "code_ape": "4638A",
+      "intitule": "Commerce de gros (commerce interentreprises) de poissons, crustacés et mollusques",
+      "section": "Commerce ; réparation d'automobiles et de motocycles"
+    },
+    {
+      "code_ape": "4641Z",
+      "intitule": "Commerce de gros (commerce interentreprises) de textiles",
+      "section": "Commerce ; réparation d'automobiles et de motocycles"
+    },
+    {
+      "code_ape": "4643Z",
+      "intitule": "Commerce de gros (commerce interentreprises) d'appareils électroménagers",
+      "section": "Commerce ; réparation d'automobiles et de motocycles"
+    },
+    {
+      "code_ape": "4651Z",
+      "intitule": "Commerce de gros (commerce interentreprises) de composants et d'équipements électroniques et de télécommunication",
+      "section": "Commerce ; réparation d'automobiles et de motocycles"
+    },
+    {
+      "code_ape": "4673B",
+      "intitule": "Commerce de gros (commerce interentreprises) d'appareils sanitaires et de produits de décoration",
+      "section": "Commerce ; réparation d'automobiles et de motocycles"
+    },
+    {
+      "code_ape": "4799A",
+      "intitule": "Vente à domicile",
+      "section": "Commerce ; réparation d'automobiles et de motocycles"
+    },
+    {
+      "code_ape": "4110A",
+      "intitule": "Promotion immobilière de logements",
+      "section": "Construction"
+    },
+    {
+      "code_ape": "4331Z",
+      "intitule": "Travaux de plâtrerie",
+      "section": "Construction"
+    },
+    {
+      "code_ape": "4333Z",
+      "intitule": "Travaux de revêtement des sols et des murs",
+      "section": "Construction"
+    },
+    {
+      "code_ape": "8552Z",
+      "intitule": "Enseignement culturel",
+      "section": "Enseignement"
+    },
+    {
+      "code_ape": "1071B",
+      "intitule": "Cuisson de produits de boulangerie",
+      "section": "Industrie manufacturière"
+    },
+    {
+      "code_ape": "1623Z",
+      "intitule": "Fabrication de charpentes et d'autres menuiseries",
+      "section": "Industrie manufacturière"
+    },
+    {
+      "code_ape": "1811Z",
+      "intitule": "Imprimerie de journaux",
+      "section": "Industrie manufacturière"
+    },
+    {
+      "code_ape": "2593Z",
+      "intitule": "Fabrication d'articles en fils métalliques, de chaînes et de ressorts",
+      "section": "Industrie manufacturière"
+    },
+    {
+      "code_ape": "3311Z",
+      "intitule": "Réparation d'ouvrages en métaux",
+      "section": "Industrie manufacturière"
+    },
+    {
+      "code_ape": "3320D",
+      "intitule": "Installation d'équipements électriques, de matériels électroniques et optiques ou d'autres matériels",
+      "section": "Industrie manufacturière"
+    },
+    {
+      "code_ape": "5911B",
+      "intitule": "Production de films institutionnels et publicitaires",
+      "section": "Information et communication"
+    },
+    {
+      "code_ape": "6312Z",
+      "intitule": "Portails Internet",
+      "section": "Information et communication"
+    },
+    {
+      "code_ape": "8690F",
+      "intitule": "Activités de santé humaine non classées ailleurs",
+      "section": "Santé humaine et action sociale"
+    },
+    {
+      "code_ape": "4942Z",
+      "intitule": "Services de déménagement",
+      "section": "Transports et entreposage"
+    },
+    {
+      "code_ape": "5110Z",
+      "intitule": "Transports aériens de passagers",
+      "section": "Transports et entreposage"
+    }
+  ]
+}
