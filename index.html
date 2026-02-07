@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questionnaire CEP - Coaching</title>
+    <title>Questionnaire CEP - Transitions Pro PACA</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,25 +15,24 @@
             <h1>Questionnaire préalable au projet de transition professionnelle</h1>
         </header>
 
+        <!-- Barre de progression sticky -->
         <div id="progress-container">
             <div class="progress-bar">
                 <div id="progress-fill" class="progress-fill"></div>
             </div>
             <p class="progress-text">
-                Question <span id="current-question">0</span> sur <span id="total-questions">0</span>
+                <span id="answered-count">0</span> / <span id="total-questions">0</span> questions répondues
             </p>
         </div>
 
         <main id="app">
-            <div id="charge-projets-screen" class="screen active">
-                <div class="welcome-content">
-                    <h2>Sélection du chargé de projets</h2>
-                    <p>Veuillez sélectionner votre nom dans la liste ci-dessous :</p>
-
-                    <div style="margin: 30px 0;">
-                        <label for="charge-projets-select" style="display: block; margin-bottom: 8px; font-weight: 500;">Chargé·e de projets</label>
-                        <select id="charge-projets-select" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;">
-                            <option value="">-- Sélectionnez votre nom --</option>
+            <!-- Bloc identité en haut -->
+            <div class="identity-block">
+                <div class="identity-row">
+                    <div class="identity-field">
+                        <label for="charge-projets-select">Chargé·e de projets</label>
+                        <select id="charge-projets-select">
+                            <option value="">-- Sélectionnez --</option>
                             <option value="cindy">Cindy Lecouf</option>
                             <option value="elies">Eliès Lemhani</option>
                             <option value="maurine">Maurine Loubeau</option>
@@ -42,98 +41,40 @@
                             <option value="marie">Marie Saglietto</option>
                         </select>
                     </div>
-
-                    <button id="select-charge-btn" class="btn btn-primary">Continuer</button>
-                </div>
-            </div>
-
-            <div id="welcome-screen" class="screen">
-                <div class="welcome-content">
-                    <h2>Bienvenue</h2>
-                    <p>Ce questionnaire vous aidera à évaluer votre projet de reconversion professionnelle.</p>
-                    <p>Il aborde trois aspects :</p>
-                    <ul>
-                        <li><strong>Éligibilité</strong> - Vérifier si vous pouvez bénéficier du dispositif</li>
-                        <li><strong>Priorité</strong> - Évaluer votre niveau de priorité</li>
-                        <li><strong>Maturité du projet</strong> - Analyser l'avancement de votre réflexion</li>
-                    </ul>
-                    <p>À l'issue, vous recevrez une prescription personnalisée à présenter à votre conseiller CEP.</p>
-                    <button id="start-btn" class="btn btn-primary">Commencer</button>
-                </div>
-            </div>
-
-            <div id="identity-screen" class="screen">
-                <div class="welcome-content">
-                    <h2>Vos informations</h2>
-                    <p>Pour commencer, veuillez renseigner vos coordonnées :</p>
-
-                    <div style="margin: 30px 0;">
-                        <div style="margin-bottom: 20px;">
-                            <label for="user-prenom" style="display: block; margin-bottom: 8px; font-weight: 500;">Prénom</label>
-                            <input type="text" id="user-prenom" placeholder="Votre prénom" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;">
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <label for="user-nom" style="display: block; margin-bottom: 8px; font-weight: 500;">Nom</label>
-                            <input type="text" id="user-nom" placeholder="Votre nom" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem;">
-                        </div>
+                    <div class="identity-field">
+                        <label for="user-prenom">Prénom du bénéficiaire</label>
+                        <input type="text" id="user-prenom" placeholder="Prénom">
                     </div>
-
-                    <button id="continue-btn" class="btn btn-primary">Continuer</button>
-                </div>
-            </div>
-
-            <div id="question-screen" class="screen">
-                <div class="question-card">
-                    <div class="section-badge" id="section-badge"></div>
-                    <h2 id="question-text" class="question-text"></h2>
-
-                    <div id="answer-container" class="answer-container"></div>
-
-                    <div class="navigation-buttons">
-                        <button id="prev-btn" class="btn btn-secondary">Précédent</button>
-                        <button id="next-btn" class="btn btn-primary">Suivant</button>
-                    </div>
-                </div>
-
-                <div id="alert-container" class="alert-container"></div>
-            </div>
-
-            <div id="summary-screen" class="screen">
-                <div class="summary-content">
-                    <h2>Questionnaire terminé !</h2>
-                    <p>Merci d'avoir répondu à toutes les questions.</p>
-                    <p>Nous analysons vos réponses pour générer votre prescription personnalisée...</p>
-
-                    <div class="summary-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" id="total-answered">0</span>
-                            <span class="stat-label">Questions répondues</span>
-                        </div>
-                    </div>
-
-                    <div class="navigation-buttons" style="margin-top: 30px;">
-                        <button id="back-to-review-btn" class="btn btn-secondary">Revenir au questionnaire</button>
-                        <button id="show-results-btn" class="btn btn-primary">Voir mes résultats</button>
+                    <div class="identity-field">
+                        <label for="user-nom">Nom du bénéficiaire</label>
+                        <input type="text" id="user-nom" placeholder="Nom">
                     </div>
                 </div>
             </div>
 
-            <div id="result-screen" class="screen">
+            <!-- Toutes les questions sont rendues ici dynamiquement -->
+            <div id="questions-container"></div>
+
+            <!-- Bouton résultats -->
+            <div id="results-trigger" class="results-trigger" style="display:none;">
+                <button id="show-results-btn" class="btn btn-primary btn-large">Voir les résultats et générer la prescription</button>
+            </div>
+
+            <!-- Résultats -->
+            <div id="result-screen" style="display:none;">
                 <div class="result-content">
-                    <h2>Résultats de votre évaluation</h2>
+                    <h2>Résultats de l'évaluation</h2>
                     <div id="result-summary"></div>
                     <div id="prescription-content"></div>
-
                     <div class="result-actions">
                         <button id="download-pdf-btn" class="btn btn-primary">Télécharger la prescription (PDF)</button>
-                        <button id="restart-btn" class="btn btn-secondary">Recommencer</button>
+                        <button id="restart-btn" class="btn btn-secondary">Nouveau questionnaire</button>
                     </div>
                 </div>
             </div>
         </main>
 
-        <footer>
-        </footer>
+        <footer></footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
