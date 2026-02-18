@@ -1101,11 +1101,12 @@ class CEPQuestionnaire {
         const pageWidth = doc.internal.pageSize.width;
         const contentWidth = pageWidth - margin * 2;
 
-        // Logo en haut à gauche
+        // Logo en haut, centré
         const logoWidth = 45;
         const logoRatio = 156 / 340; // dimensions réelles du PNG: 340x156
         const logoHeight = logoWidth * logoRatio;
-        doc.addImage(logoBase64, 'PNG', margin, y, logoWidth, logoHeight);
+        const logoX = (pageWidth - logoWidth) / 2;
+        doc.addImage(logoBase64, 'PNG', logoX, y, logoWidth, logoHeight);
         y += logoHeight + 5;
 
         // Titre principal
@@ -1414,12 +1415,12 @@ class CEPQuestionnaire {
             const wrapped = doc.splitTextToSize(line, textWidth);
             wrapped.forEach(wl => {
                 checkPageBreak(7);
-                if (wl.trim().startsWith('•')) {
+                if (wl.trim().startsWith('-')) {
                     doc.setFont(undefined, 'normal');
                     doc.setTextColor(99, 102, 241);
-                    doc.text('●', margin + 4, y);
+                    doc.text('>', margin + 4, y);
                     doc.setTextColor(60, 60, 60);
-                    doc.text(wl.replace(/^[\s•]+/, ''), margin + 10, y);
+                    doc.text(wl.replace(/^[\s\-]+/, ''), margin + 10, y);
                 } else if (wl.match(/^\d+\./)) {
                     doc.setFont(undefined, 'bold');
                     doc.setTextColor(99, 102, 241);
@@ -1456,7 +1457,7 @@ class CEPQuestionnaire {
         doc.setFontSize(8.5);
         doc.setFont(undefined, 'italic');
         doc.setTextColor(80, 80, 80);
-        const contactLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle, nous vous invitons à revenir vers votre chargé·e de projets Transitions Pro PACA :', textWidth - 10);
+        const contactLines = doc.splitTextToSize('Apres avoir rencontre un conseiller en evolution professionnelle, nous vous invitons a revenir vers votre charge(e) de projets Transitions Pro PACA :', textWidth - 10);
         contactLines.forEach(line => { doc.text(line, margin + 7, y + 4); y += 4.5; });
         y += 4;
         doc.setFont(undefined, 'bold');
@@ -1482,52 +1483,56 @@ class CEPQuestionnaire {
             // Texte
             doc.setFontSize(7);
             doc.setTextColor(160, 160, 160);
-            doc.text('Transitions Pro PACA — Questionnaire préalable au PTP', margin, pageHeight - 10);
+            doc.text('Transitions Pro PACA - Questionnaire prealable au PTP', margin, pageHeight - 10);
             doc.text(`Page ${i}/${pageCount}`, margin + contentWidth - 15, pageHeight - 10);
             doc.text(date, margin + contentWidth / 2 - 8, pageHeight - 10);
         }
 
-        doc.save(`prescription-cep-${date.replace(/\//g, '-')}.pdf`);
+        // Nom du fichier avec prénom et nom du bénéficiaire
+        const sanitize = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+        const fileName = `prescription-cep-${sanitize(this.userInfo.prenom)}-${sanitize(this.userInfo.nom)}-${date.replace(/\//g, '-')}.pdf`;
+        doc.save(fileName);
     }
 
     generatePrescriptionText(analysis) {
-        let text = 'Suite à l\'évaluation de votre projet de reconversion professionnelle :\n\n';
+        let text = 'Suite a l\'evaluation de votre projet de reconversion professionnelle :\n\n';
 
         if (analysis.eligibilite.status === 'Éligible') {
-            text += '• Vous êtes éligible au dispositif de reconversion professionnelle\n';
+            text += '- Vous etes eligible au dispositif de reconversion professionnelle\n';
         }
-        text += `\nScore de priorité : ${analysis.priorite.score}/${analysis.priorite.maxScore} points\n`;
+        text += `\nScore de priorite : ${analysis.priorite.score}/${analysis.priorite.maxScore} points\n`;
 
         if (analysis.priorite.score >= 15) {
-            text += '• Votre profil bénéficie d\'une priorité très élevée\n';
-            text += '• Traitement accéléré de votre dossier recommandé\n';
+            text += '- Votre profil beneficie d\'une priorite tres elevee\n';
+            text += '- Traitement accelere de votre dossier recommande\n';
         } else if (analysis.priorite.score >= 10) {
-            text += '• Votre profil est prioritaire pour l\'accès au dispositif\n';
+            text += '- Votre profil est prioritaire pour l\'acces au dispositif\n';
         } else if (analysis.priorite.score >= 7) {
-            text += '• Votre profil présente une priorité moyenne\n';
+            text += '- Votre profil presente une priorite moyenne\n';
         }
 
         if (analysis.maturite.status === 'Projet à construire') {
-            text += '• Accompagnement CEP approfondi recommandé\n';
-            text += '• Réalisation d\'un bilan de compétences suggérée\n';
-            text += '• Enquêtes métier et immersions professionnelles à prévoir\n';
+            text += '- Accompagnement CEP approfondi recommande\n';
+            text += '- Realisation d\'un bilan de competences suggeree\n';
+            text += '- Enquetes metier et immersions professionnelles a prevoir\n';
         } else if (analysis.maturite.status === 'Projet en développement') {
-            text += '• Accompagnement CEP pour finaliser le projet\n';
-            text += '• Validation du choix de formation et d\'organisme\n';
+            text += '- Accompagnement CEP pour finaliser le projet\n';
+            text += '- Validation du choix de formation et d\'organisme\n';
         } else {
-            text += '• Projet suffisamment mature pour constituer un dossier\n';
-            text += '• Accompagnement CEP pour la partie administrative et financière\n';
+            text += '- Projet suffisamment mature pour constituer un dossier\n';
+            text += '- Accompagnement CEP pour la partie administrative et financiere\n';
         }
 
         if (this.answers['Q1b'] === 'Oui') {
-            text += '• Mobiliser CAP EMPLOI et le référent handicap\n';
+            text += '- Mobiliser CAP EMPLOI et le referent handicap\n';
         }
 
-        text += '\nProchaines étapes :\n';
-        text += '1. Présenter cette prescription à votre conseiller CEP\n';
-        text += '2. Constituer votre dossier avec les pièces justificatives\n';
+
+        text += '\nProchaines etapes :\n';
+        text += '1. Presenter cette prescription a votre conseiller CEP\n';
+        text += '2. Constituer votre dossier avec les pieces justificatives\n';
         text += '3. Finaliser le plan de financement\n';
-        text += '4. Déposer votre demande d\'autorisation d\'absence\n';
+        text += '4. Deposer votre demande d\'autorisation d\'absence\n';
         return text;
     }
 
