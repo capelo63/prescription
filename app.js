@@ -1100,34 +1100,50 @@ class CEPQuestionnaire {
         img.crossOrigin = 'Anonymous';
 
         const buildPDF = (withLogo) => {
+            const pageWidth = doc.internal.pageSize.width;
+            const contentWidth = pageWidth - margin * 2;
+
             if (withLogo) {
-                const logoWidth = 50;
+                const logoWidth = 45;
                 const logoHeight = (img.height / img.width) * logoWidth;
                 doc.addImage(img, 'PNG', margin, y, logoWidth, logoHeight);
-                y += logoHeight + 10;
+                y += logoHeight + 5;
             }
 
-            doc.setFontSize(16);
+            // Titre principal
+            doc.setFontSize(15);
+            doc.setFont(undefined, 'bold');
             doc.setTextColor(37, 99, 235);
-            const titleLines = doc.splitTextToSize('Questionnaire préalable au projet de transition professionnelle', 170);
+            const titleLines = doc.splitTextToSize('Questionnaire préalable au projet de transition professionnelle', contentWidth);
             doc.text(titleLines, margin, y);
-            y += lineHeight * titleLines.length + 5;
+            y += lineHeight * titleLines.length + 2;
 
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text('Transitions Pro PACA', margin, y);
-            y += lineHeight + 5;
+            // Ligne décorative sous le titre
+            doc.setDrawColor(37, 99, 235);
+            doc.setLineWidth(1);
+            doc.line(margin, y, margin + 60, y);
+            doc.setLineWidth(0.3);
+            doc.setDrawColor(200, 200, 200);
+            doc.line(margin + 60, y, margin + contentWidth, y);
+            y += 8;
+
+            // Bloc identité
+            const date = new Date().toLocaleDateString('fr-FR');
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(margin - 2, y - 3, contentWidth + 4, 20, 2, 2, 'F');
 
             doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
             doc.setTextColor(37, 99, 235);
-            doc.text(`${this.userInfo.prenom} ${this.userInfo.nom}`, margin, y);
-            y += lineHeight + 5;
+            doc.text(`${this.userInfo.prenom} ${this.userInfo.nom}`, margin + 3, y + 4);
 
-            const date = new Date().toLocaleDateString('fr-FR');
             doc.setFontSize(9);
-            doc.setTextColor(0);
-            doc.text(`Date: ${date}`, margin, y);
-            y += lineHeight * 2;
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Chargé·e de projets : ${this.chargeProjets.nom}`, margin + 3, y + 11);
+            doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
+
+            y += 24;
 
             const analysis = this.analyzeAnswers();
             this.generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date);
@@ -1139,174 +1155,350 @@ class CEPQuestionnaire {
     }
 
     generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date) {
+        const pageWidth = doc.internal.pageSize.width;
+        const contentWidth = pageWidth - margin * 2;
+        const textWidth = contentWidth - 6;
+
         const checkPageBreak = (needed) => {
-            if (y + needed > pageHeight - margin) { doc.addPage(); y = margin; }
+            if (y + needed > pageHeight - 20) { doc.addPage(); y = 20; }
         };
 
-        const drawSectionTitle = (title, color) => {
-            checkPageBreak(20);
-            doc.setFillColor(color.r, color.g, color.b);
-            doc.rect(margin - 3, y - 2, 176, 8, 'F');
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text(title, margin, y + 4);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(0);
-            y += lineHeight + 3;
-            return y;
-        };
-
-        const drawAlertBox = (label, message, fillColor, borderColor, labelColor) => {
-            const lines = doc.splitTextToSize(message, 160);
-            const boxHeight = 8 + (lines.length * (lineHeight - 1));
-            checkPageBreak(boxHeight + 5);
-            doc.setFillColor(...fillColor);
-            doc.rect(margin - 2, y - 2, 169, boxHeight, 'F');
-            doc.setDrawColor(...borderColor);
-            doc.setLineWidth(0.3);
-            doc.rect(margin - 2, y - 2, 169, boxHeight);
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(...labelColor);
-            doc.text(label, margin + 1, y + 2);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(0);
-            y += lineHeight;
-            lines.forEach(line => { doc.text(line, margin + 1, y); y += lineHeight - 1; });
+        // Ligne de séparation décorative
+        const drawSeparator = (color) => {
+            checkPageBreak(8);
+            doc.setDrawColor(color.r, color.g, color.b);
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, margin + contentWidth, y);
             y += 8;
         };
 
-        // ÉLIGIBILITÉ
-        y = drawSectionTitle('ÉLIGIBILITÉ', {r: 37, g: 99, b: 235});
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'bold');
-        doc.text(analysis.eligibilite.status, margin, y);
-        doc.setFont(undefined, 'normal');
-        y += lineHeight;
-        const eligDetails = doc.splitTextToSize(analysis.eligibilite.details, 165);
-        doc.text(eligDetails, margin, y);
-        y += lineHeight * eligDetails.length + 5;
+        // Titre de section avec bandeau coloré
+        const drawSectionTitle = (title, color, icon) => {
+            checkPageBreak(18);
+            y += 4;
+            doc.setFillColor(color.r, color.g, color.b);
+            doc.roundedRect(margin - 2, y - 5, contentWidth + 4, 12, 2, 2, 'F');
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text(`${icon}  ${title}`, margin + 3, y + 3);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0);
+            y += 14;
+        };
 
+        // Cartouche d'alerte avec calcul de hauteur correct
+        const drawAlertBox = (label, message, fillColor, borderColor, labelColor) => {
+            doc.setFontSize(8.5);
+            const lines = doc.splitTextToSize(message, textWidth - 4);
+            // Hauteur = padding top (5) + label (5) + espace après label (3) + lignes * 4.5 + padding bottom (5)
+            const contentLineHeight = 4.5;
+            const boxHeight = 5 + 5 + 3 + (lines.length * contentLineHeight) + 5;
+            checkPageBreak(boxHeight + 4);
+
+            // Fond
+            doc.setFillColor(...fillColor);
+            doc.roundedRect(margin, y, contentWidth, boxHeight, 1.5, 1.5, 'F');
+            // Bordure gauche épaisse (accent)
+            doc.setFillColor(...borderColor);
+            doc.rect(margin, y, 3, boxHeight, 'F');
+
+            // Label
+            const labelY = y + 8;
+            doc.setFontSize(8.5);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(...labelColor);
+            doc.text(label, margin + 7, labelY);
+
+            // Contenu
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(60, 60, 60);
+            doc.setFontSize(8);
+            let textY = labelY + 6;
+            lines.forEach(line => {
+                doc.text(line, margin + 7, textY);
+                textY += contentLineHeight;
+            });
+
+            y += boxHeight + 4;
+        };
+
+        // Cartouche contextuel avec niveau (faible/moyen/bon)
+        const drawContextBox = (title, analysis) => {
+            if (!analysis || !analysis.message) return;
+            const niveauColors = {
+                'bon': { fill: [220, 252, 231], border: [22, 163, 74], label: [22, 163, 74], icon: '✓' },
+                'moyen': { fill: [219, 234, 254], border: [59, 130, 246], label: [59, 130, 246], icon: '~' },
+                'faible': { fill: [254, 242, 232], border: [234, 88, 12], label: [234, 88, 12], icon: '!' }
+            };
+            const c = niveauColors[analysis.niveau] || niveauColors['moyen'];
+            const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'À approfondir';
+            drawAlertBox(`${title} — ${niveauLabel}`, analysis.message, c.fill, c.border, c.label);
+        };
+
+        // Indicateur de statut avec icône
+        const drawStatus = (label, value, color) => {
+            checkPageBreak(12);
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(color.r, color.g, color.b);
+            doc.text(value, margin + 2, y);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0);
+            y += lineHeight + 2;
+        };
+
+        // Texte descriptif
+        const drawText = (text, fontSize) => {
+            doc.setFontSize(fontSize || 9);
+            doc.setTextColor(80, 80, 80);
+            const lines = doc.splitTextToSize(text, textWidth);
+            lines.forEach(line => {
+                checkPageBreak(6);
+                doc.text(line, margin + 2, y);
+                y += 5;
+            });
+            doc.setTextColor(0);
+            y += 3;
+        };
+
+        // Barre de score visuelle
+        const drawScoreBar = (score, maxScore, color) => {
+            checkPageBreak(20);
+            const barWidth = 100;
+            const barHeight = 8;
+            const barX = margin + 2;
+            const pct = Math.min(score / maxScore, 1);
+
+            // Fond gris
+            doc.setFillColor(230, 230, 230);
+            doc.roundedRect(barX, y, barWidth, barHeight, 3, 3, 'F');
+            // Barre de progression
+            if (pct > 0) {
+                doc.setFillColor(color.r, color.g, color.b);
+                doc.roundedRect(barX, y, barWidth * pct, barHeight, 3, 3, 'F');
+            }
+            // Score texte
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(color.r, color.g, color.b);
+            doc.text(`${score} / ${maxScore} points`, barX + barWidth + 8, y + 6);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(0);
+            y += barHeight + 8;
+        };
+
+        // ========================================
+        // SECTION 1 : ÉLIGIBILITÉ
+        // ========================================
+        drawSectionTitle('ÉLIGIBILITÉ', { r: 37, g: 99, b: 235 }, '§1');
+        drawStatus('Statut', analysis.eligibilite.status, { r: 37, g: 99, b: 235 });
+        drawText(analysis.eligibilite.details);
+
+        // Cartouche CDI/CDD
+        if (analysis.eligibilite.eligibiliteCDDCDI) {
+            if (analysis.eligibilite.eligibiliteCDDCDI.isCDD) {
+                drawAlertBox('Conditions d\'éligibilité CDD :', 'À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+            } else {
+                drawAlertBox('Conditions d\'éligibilité CDI :', 'À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+            }
+        }
+
+        // Alertes Q1a
+        if (analysis.eligibilite.q1aAnalysis?.ancienneteInsuffisante) {
+            drawAlertBox('Alerte :', 'Il faudra avoir 12 mois d\'ancienneté à la date d\'entrée en formation.', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+        }
+        if (analysis.eligibilite.q1aAnalysis?.ancienneteElevee) {
+            drawAlertBox('Alerte :', 'Le taux de mise en oeuvre de la reconversion décline après 5 ans d\'ancienneté. Compte tenu de votre ancienneté, nous vous invitons à faire preuve de la plus grande vigilance lors de votre demande d\'autorisation d\'absence et à anticiper les futurs freins : mettre votre CV à jour, vous préparer pour les entretiens d\'embauche, envisager une perte des indemnités de licenciement, vous préparer à vivre une nouvelle période d\'essai, à perdre des congés, à voir votre rémunération baisser...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+        }
+
+        // Alerte travailleur handicapé
         if (analysis.eligibilite.q1bAnalysis?.travailleurHandicape) {
-            drawAlertBox('Information :', 'Du fait de la reconnaissance de votre statut de travailleur handicapé, nous vous invitons à solliciter un accompagnement renforcé auprès de Cap Emploi, de la médecine du travail ou encore de l\'éventuel référent au sein de l\'organisme de formation.', [240, 249, 255], [37, 99, 235], [37, 99, 235]);
+            drawAlertBox('Information :', 'Du fait de la reconnaissance de votre statut de travailleur handicapé, nous vous invitons à solliciter un accompagnement renforcé auprès de Cap Emploi, de la médecine du travail ou encore de l\'éventuel référent au sein de l\'organisme de formation.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
         }
+
+        // Alerte rémunération
         if (analysis.eligibilite.q3bAnalysis?.remunerationElevee) {
-            drawAlertBox('Attention :', 'Votre rémunération est supérieure à la moyenne des rémunérations prises en charge par Transitions Pro PACA. Pistes de compensation : formation partiellement hors temps de travail, organisme plus compétitif, solutions de cofinancement...', [254, 243, 199], [245, 158, 11], [245, 158, 11]);
+            drawAlertBox('Attention :', 'Votre rémunération est supérieure à la moyenne des rémunérations prises en charge par Transitions Pro PACA. Cet élément risque de faire réagir négativement la commission. Pistes de compensation : formation partiellement hors temps de travail, organisme plus compétitif en coût/durée, solutions de cofinancement...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
         }
-        y += 5;
 
-        // PRIORITÉ
-        y = drawSectionTitle('NIVEAU DE PRIORITÉ', {r: 16, g: 185, b: 129});
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'bold');
-        doc.text(analysis.priorite.status, margin, y);
-        doc.setFont(undefined, 'normal');
-        y += lineHeight;
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(16, 185, 129);
-        doc.text(`Score : ${analysis.priorite.score}/${analysis.priorite.maxScore} points`, margin, y);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(0);
-        y += lineHeight + 3;
+        // Alerte pénibilité
+        if (analysis.eligibilite.q9Analysis?.penibiliteDetectee) {
+            drawAlertBox('Alerte chargé de projets :', 'Conditions de travail pénibles détectées — Interroger les dispositifs C2P/FIPU.', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+        }
 
+        // Alerte Q10b (employeur non informé)
+        if (analysis.eligibilite.q10bAnalysis?.nonParleEmployeur) {
+            drawAlertBox('Alerte chargé·e de projets :', 'Le·la salarié·e n\'a pas encore informé son employeur. Il est essentiel de l\'alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation ; en revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+        }
+
+        y += 2;
+
+        // ========================================
+        // SECTION 2 : PRIORITÉ
+        // ========================================
+        drawSectionTitle('NIVEAU DE PRIORITÉ', { r: 16, g: 163, b: 129 }, '§2');
+        drawStatus('Statut', analysis.priorite.status, { r: 16, g: 163, b: 129 });
+        drawScoreBar(analysis.priorite.score, analysis.priorite.maxScore, { r: 16, g: 163, b: 129 });
+
+        // Détail des points
         if (analysis.priorite.details.length > 0) {
             doc.setFontSize(9);
-            doc.setFont(undefined, 'italic');
-            doc.text('Détail des points obtenus :', margin, y);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(80, 80, 80);
+            doc.text('Détail des points obtenus :', margin + 2, y);
             doc.setFont(undefined, 'normal');
-            y += lineHeight;
+            y += 6;
+
             analysis.priorite.details.forEach(detail => {
-                checkPageBreak(lineHeight + 2);
-                doc.setFillColor(250, 250, 250);
-                doc.rect(margin - 1, y - 3, 165, 5, 'F');
-                doc.text(`  • ${detail.code} — ${detail.libelle} : +${detail.points} pt${detail.points > 1 ? 's' : ''}`, margin, y);
-                y += lineHeight;
+                checkPageBreak(8);
+                // Ligne alternée
+                doc.setFillColor(248, 250, 252);
+                doc.rect(margin, y - 4, contentWidth, 7, 'F');
+                doc.setFontSize(8.5);
+                doc.setTextColor(60, 60, 60);
+                doc.setFont(undefined, 'bold');
+                doc.text(`${detail.code}`, margin + 4, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(`${detail.libelle}`, margin + 18, y);
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(16, 163, 129);
+                doc.text(`+${detail.points} pt${detail.points > 1 ? 's' : ''}`, margin + contentWidth - 20, y);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(0);
+                y += 7;
             });
-        }
-
-        if (analysis.priorite.q3aAnalysis?.ouvrierEmploye) {
             y += 3;
-            drawAlertBox('Information :', 'Du fait de votre statut d\'ouvrier ou employé, vous avez de grandes chances d\'obtenir la prise en charge. L\'accompagnement d\'un conseiller en évolution professionnelle est vivement encouragé.', [240, 249, 255], [37, 99, 235], [37, 99, 235]);
         }
-        y += 5;
 
-        // MATURITÉ
-        y = drawSectionTitle('MATURITÉ DU PROJET', {r: 245, g: 158, b: 11});
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'bold');
-        doc.text(analysis.maturite.status, margin, y);
-        doc.setFont(undefined, 'normal');
-        y += lineHeight;
-        const matDetails = doc.splitTextToSize(analysis.maturite.details, 165);
-        doc.text(matDetails, margin, y);
-        y += lineHeight * matDetails.length + 5;
+        // Alerte ouvrier/employé
+        if (analysis.priorite.q3aAnalysis?.ouvrierEmploye) {
+            drawAlertBox('Information :', 'Du fait de votre statut d\'ouvrier ou employé, vous avez de grandes chances d\'obtenir la prise en charge. L\'accompagnement d\'un conseiller en évolution professionnelle est vivement encouragé pour formaliser votre projet.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+        }
+        y += 2;
 
+        // ========================================
+        // SECTION 3 : MATURITÉ DU PROJET
+        // ========================================
+        drawSectionTitle('MATURITÉ DU PROJET', { r: 234, g: 136, b: 0 }, '§3');
+        drawStatus('Statut', analysis.maturite.status, { r: 234, g: 136, b: 0 });
+        drawText(analysis.maturite.details);
+
+        // Alerte cohérence
         if (analysis.maturite.critere1Analysis?.renseignementNecessaire) {
-            drawAlertBox('Attention :', 'Nous vous suggérons de renforcer la cohérence de votre projet : enquêtes métiers, immersion facilitée, stages...', [254, 243, 199], [245, 158, 11], [245, 158, 11]);
+            drawAlertBox('Attention :', 'Nous vous suggérons de renforcer la cohérence de votre projet : enquêtes métiers, immersion facilitée, stages...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
         }
+
+        // Cartouches contextuels de maturité
+        drawContextBox('Connaissance du métier', analysis.maturite.q15Analysis);
+        drawContextBox('Rémunération débutant', analysis.maturite.q16Analysis);
+        drawContextBox('Expérience requise', analysis.maturite.q17Analysis);
+        drawContextBox('Inconvénients du métier', analysis.maturite.q19Analysis);
+
+        // Formation
         if (analysis.maturite.q21Analysis?.afficherInfoFormation) {
-            drawAlertBox('Information :', 'Pour comparer les organismes de formation, nous vous suggérons d\'en interroger plusieurs à l\'aide du guide Transitions Pro PACA (https://www.transitionspro-paca.fr/telechargement/10630/).', [240, 249, 255], [37, 99, 235], [37, 99, 235]);
+            drawAlertBox('Information :', 'Pour comparer les organismes de formation, nous vous suggérons d\'en interroger plusieurs à l\'aide du guide Transitions Pro PACA (https://www.transitionspro-paca.fr/telechargement/10630/).', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
         }
+
+        // Vérification organisme
         if (analysis.maturite.q22Analysis?.nombreCriteres > 0) {
             const detailsText = analysis.maturite.q22Analysis.details.map(d => `• ${d}`).join('\n');
-            drawAlertBox('Démarche de vérification du choix de l\'organisme :', detailsText, [209, 250, 229], [16, 185, 129], [16, 185, 129]);
+            drawAlertBox('Vérification du choix de l\'organisme :', detailsText, [220, 252, 231], [22, 163, 74], [22, 163, 74]);
         }
-        if (analysis.maturite.q23Analysis?.recruteurNonIdentifie) {
-            drawAlertBox('Attention :', 'Nous vous invitons à solliciter un stage auprès de l\'employeur chez lequel vous souhaiteriez être embauché·e.', [254, 243, 199], [245, 158, 11], [245, 158, 11]);
-        }
-        y += 5;
 
-        // RECOMMANDATIONS
-        y = drawSectionTitle('RECOMMANDATIONS', {r: 99, g: 102, b: 241});
-        doc.setFontSize(10);
+        // Recruteurs (Q23 contextuel)
+        if (analysis.maturite.q23Analysis?.message) {
+            drawContextBox('Recruteurs identifiés', analysis.maturite.q23Analysis);
+        }
+
+        y += 2;
+
+        // ========================================
+        // SECTION 4 : RECOMMANDATIONS
+        // ========================================
+        drawSectionTitle('RECOMMANDATIONS', { r: 99, g: 102, b: 241 }, '§4');
+
+        doc.setFontSize(9);
+        doc.setTextColor(60, 60, 60);
         const prescText = this.generatePrescriptionText(analysis);
-        const lines = doc.splitTextToSize(prescText, 165);
-        lines.forEach(line => {
-            checkPageBreak(lineHeight + 2);
-            if (line.trim().startsWith('•') || line.trim().startsWith('→')) {
-                doc.setFont(undefined, 'bold');
-                doc.text(line, margin, y);
-                doc.setFont(undefined, 'normal');
-            } else {
-                doc.text(line, margin, y);
-            }
-            y += lineHeight;
+        const prescLines = prescText.split('\n');
+
+        prescLines.forEach(line => {
+            if (!line.trim()) { y += 3; return; }
+            const wrapped = doc.splitTextToSize(line, textWidth);
+            wrapped.forEach(wl => {
+                checkPageBreak(7);
+                if (wl.trim().startsWith('•')) {
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(99, 102, 241);
+                    doc.text('●', margin + 4, y);
+                    doc.setTextColor(60, 60, 60);
+                    doc.text(wl.replace(/^[\s•]+/, ''), margin + 10, y);
+                } else if (wl.match(/^\d+\./)) {
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(99, 102, 241);
+                    doc.text(wl.match(/^\d+\./)[0], margin + 4, y);
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(60, 60, 60);
+                    doc.text(wl.replace(/^\d+\.\s*/, ''), margin + 12, y);
+                } else if (wl.includes('Score de priorité') || wl.includes('Prochaines étapes')) {
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(40, 40, 40);
+                    doc.text(wl, margin + 2, y);
+                    doc.setFont(undefined, 'normal');
+                } else {
+                    doc.text(wl, margin + 2, y);
+                }
+                y += 5.5;
+            });
         });
+        doc.setTextColor(0);
 
+        // ========================================
         // COORDONNÉES DU CHARGÉ DE PROJETS
-        y += 10;
-        checkPageBreak(35);
-        doc.setFillColor(240, 240, 240);
-        doc.rect(margin - 3, y - 3, 176, 30, 'F');
-        doc.setDrawColor(99, 102, 241);
-        doc.setLineWidth(0.5);
-        doc.rect(margin - 3, y - 3, 176, 30);
+        // ========================================
+        y += 6;
+        const contactBoxHeight = 32;
+        checkPageBreak(contactBoxHeight + 10);
 
-        doc.setFontSize(10);
+        // Fond avec bordure
+        doc.setFillColor(245, 245, 255);
+        doc.roundedRect(margin - 2, y - 2, contentWidth + 4, contactBoxHeight, 3, 3, 'F');
+        doc.setFillColor(99, 102, 241);
+        doc.rect(margin - 2, y - 2, 3, contactBoxHeight, 'F');
+
+        doc.setFontSize(8.5);
         doc.setFont(undefined, 'italic');
-        doc.setTextColor(0);
-        const contactText = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle, nous vous invitons à revenir vers votre chargé·e de projets Transitions Pro PACA :', 165);
-        contactText.forEach(line => { doc.text(line, margin, y); y += lineHeight; });
-        y += 3;
+        doc.setTextColor(80, 80, 80);
+        const contactLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle, nous vous invitons à revenir vers votre chargé·e de projets Transitions Pro PACA :', textWidth - 10);
+        contactLines.forEach(line => { doc.text(line, margin + 7, y + 4); y += 4.5; });
+        y += 4;
         doc.setFont(undefined, 'bold');
-        doc.setFontSize(11);
-        doc.setTextColor(99, 102, 241);
-        doc.text(this.chargeProjets.nom, margin, y);
-        y += lineHeight;
-        doc.setFont(undefined, 'normal');
         doc.setFontSize(10);
-        doc.setTextColor(0);
-        doc.text(this.chargeProjets.email, margin, y);
+        doc.setTextColor(99, 102, 241);
+        doc.text(this.chargeProjets.nom, margin + 7, y);
+        y += 5;
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(80, 80, 80);
+        doc.text(this.chargeProjets.email, margin + 7, y);
 
-        // Pied de page
+        // ========================================
+        // PIED DE PAGE
+        // ========================================
         const pageCount = doc.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(150);
-            doc.text(`Page ${i} sur ${pageCount}`, margin, pageHeight - 10);
+            // Ligne de séparation
+            doc.setDrawColor(200, 200, 200);
+            doc.setLineWidth(0.3);
+            doc.line(margin, pageHeight - 15, margin + contentWidth, pageHeight - 15);
+            // Texte
+            doc.setFontSize(7);
+            doc.setTextColor(160, 160, 160);
+            doc.text('Transitions Pro PACA — Questionnaire préalable au PTP', margin, pageHeight - 10);
+            doc.text(`Page ${i}/${pageCount}`, margin + contentWidth - 15, pageHeight - 10);
+            doc.text(date, margin + contentWidth / 2 - 8, pageHeight - 10);
         }
 
         doc.save(`prescription-cep-${date.replace(/\//g, '-')}.pdf`);
