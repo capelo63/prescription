@@ -84,7 +84,6 @@ class CEPQuestionnaire {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.className = 'section-header';
                 sectionDiv.innerHTML = `
-                    <span class="section-badge">${this.getSectionLabel(question.objectif)}</span>
                     <h2 class="section-title">${question.section}</h2>
                 `;
                 container.appendChild(sectionDiv);
@@ -121,10 +120,9 @@ class CEPQuestionnaire {
             'priorité': 'Priorité',
             'critère 1': 'Maturité - Projet',
             'critère 2': 'Maturité - Formation',
-            'critère 3': 'Maturité - Emploi',
-            'à voir si priorité 2026': 'Priorité future'
+            'critère 3': 'Maturité - Emploi'
         };
-        return labels[objectif] || 'Questionnaire';
+        return labels[objectif] || objectif || 'Questionnaire';
     }
 
     // ==================== RENDU DES INPUTS ====================
@@ -157,7 +155,7 @@ class CEPQuestionnaire {
     }
 
     isYesNoQuestion(question) {
-        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q13', 'Q14', 'Q15', 'Q19', 'Q21'];
+        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q21'];
         return yesNoIds.includes(question.id);
     }
 
@@ -605,10 +603,12 @@ class CEPQuestionnaire {
                 <h3>Éligibilité</h3>
                 <p><strong>${analysis.eligibilite.status}</strong></p>
                 <p>${analysis.eligibilite.details}</p>
+                ${this.generateEligibiliteCDDCDIHTML(analysis.eligibilite.eligibiliteCDDCDI)}
                 ${this.generateQ1aAlertHTML(analysis.eligibilite.q1aAnalysis)}
                 ${this.generateQ1bAlertHTML(analysis.eligibilite.q1bAnalysis)}
                 ${this.generateQ3bAlertHTML(analysis.eligibilite.q3bAnalysis)}
                 ${this.generateQ9AlertHTML(analysis.eligibilite.q9Analysis)}
+                ${this.generateQ10bAlertHTML(analysis.eligibilite.q10bAnalysis)}
             </div>
             <div class="result-card">
                 <h3>Niveau de priorité</h3>
@@ -622,6 +622,10 @@ class CEPQuestionnaire {
                 <p><strong>${analysis.maturite.status}</strong></p>
                 <p>${analysis.maturite.details}</p>
                 ${this.generateCritere1AlertHTML(analysis.maturite.critere1Analysis)}
+                ${this.generateMaturiteContextuelHTML('Connaissance du métier', analysis.maturite.q15Analysis)}
+                ${this.generateMaturiteContextuelHTML('Rémunération débutant', analysis.maturite.q16Analysis)}
+                ${this.generateMaturiteContextuelHTML('Expérience requise', analysis.maturite.q17Analysis)}
+                ${this.generateMaturiteContextuelHTML('Inconvénients du métier', analysis.maturite.q19Analysis)}
                 ${this.generateQ21AlertHTML(analysis.maturite.q21Analysis)}
                 ${this.generateQ22AnalysisHTML(analysis.maturite.q22Analysis)}
                 ${this.generateQ23AlertHTML(analysis.maturite.q23Analysis)}
@@ -656,7 +660,9 @@ class CEPQuestionnaire {
             q1aAnalysis: this.analyzeQ1a(),
             q1bAnalysis: this.analyzeQ1b(),
             q3bAnalysis: this.analyzeQ3b(),
-            q9Analysis: this.analyzeQ9()
+            q9Analysis: this.analyzeQ9(),
+            q10bAnalysis: this.analyzeQ10b(),
+            eligibiliteCDDCDI: this.analyzeEligibiliteCDDCDI()
         };
     }
 
@@ -698,6 +704,15 @@ class CEPQuestionnaire {
         const q9 = this.answers['Q9'] ? this.answers['Q9'].toLowerCase() : '';
         const penibilite = q9.match(/pénible|difficile|épuisant|fatigue|usure|douleur|mal de dos|mal au dos|port de charge|horaire.*difficile|rythme.*difficile|condition.*travail.*difficile|travail.*physique|exposition|produit.*dangereux|bruit|stress.*intense|burn.*out|burnout|souffrance|santé.*dégradée|problème.*santé|risque.*professionnel|accident.*travail/);
         return { penibiliteDetectee: !!penibilite };
+    }
+
+    analyzeQ10b() {
+        return { nonParleEmployeur: this.answers['Q10b'] === 'Non' };
+    }
+
+    analyzeEligibiliteCDDCDI() {
+        const isCDD = this.answers['Q5'] === 'Oui';
+        return { isCDD };
     }
 
     // ==================== CALCUL DE PRIORITÉ ====================
@@ -800,6 +815,10 @@ class CEPQuestionnaire {
         return {
             status, details, score: maturiteScore,
             critere1Analysis: this.analyzeCritere1(),
+            q15Analysis: this.analyzeQ15(),
+            q16Analysis: this.analyzeQ16(),
+            q17Analysis: this.analyzeQ17(),
+            q19Analysis: this.analyzeQ19(),
             q21Analysis: this.analyzeQ21(),
             q22Analysis: this.analyzeQ22(),
             q23Analysis: this.analyzeQ23()
@@ -813,6 +832,69 @@ class CEPQuestionnaire {
             if (this.answers[qId] === 'Non') nombreReponseNon++;
         });
         return { renseignementNecessaire: nombreReponseNon > 0, nombreReponseNon };
+    }
+
+    analyzeQ15() {
+        const q15 = this.answers['Q15'];
+        const q15a = this.answers['Q15a'] ? this.answers['Q15a'].toLowerCase() : '';
+        if (q15 === 'Non') {
+            return { niveau: 'faible', message: 'Le·la salarié·e ne connaît pas les caractéristiques du métier visé. Il est fortement recommandé de réaliser des enquêtes métiers, des immersions professionnelles (PMSMP) ou de consulter les fiches ROME de France Travail avant de poursuivre le projet.' };
+        }
+        if (q15 === 'Oui' && q15a) {
+            const hasImmersion = q15a.match(/immersion|stage|pmsmp|terrain|entreprise|professionnel/);
+            const hasEnquete = q15a.match(/enquête|interview|rencontr|échange|professionnel|réseau/);
+            const hasRecherche = q15a.match(/internet|site|rome|fiche|recherche|lu|article|vidéo/);
+            const nbDemarches = (hasImmersion ? 1 : 0) + (hasEnquete ? 1 : 0) + (hasRecherche ? 1 : 0);
+            if (nbDemarches >= 2) {
+                return { niveau: 'bon', message: 'Le·la salarié·e a mené plusieurs démarches pour connaître le métier visé (recherches, enquêtes, immersions). La connaissance du métier semble solide.' };
+            }
+            if (nbDemarches === 1) {
+                return { niveau: 'moyen', message: 'Le·la salarié·e s\'est renseigné·e sur le métier, mais par un seul canal. Il serait bénéfique de compléter par une immersion professionnelle (PMSMP) ou des enquêtes métiers auprès de professionnels en activité.' };
+            }
+            return { niveau: 'moyen', message: 'Le·la salarié·e indique connaître le métier. Il serait utile de vérifier la profondeur de cette connaissance par des enquêtes métiers ou une immersion professionnelle.' };
+        }
+        return null;
+    }
+
+    analyzeQ16() {
+        const q16 = this.answers['Q16'];
+        if (q16 === 'Non') {
+            return { niveau: 'faible', message: 'Le·la salarié·e ne connaît pas les conditions de rémunération d\'un débutant dans ce métier. Il est important de se renseigner pour éviter toute déception : consulter les grilles salariales conventionnelles, les offres d\'emploi, ou interroger des professionnels en poste.' };
+        }
+        if (q16 === 'Oui') {
+            return { niveau: 'bon', message: 'Le·la salarié·e connaît les conditions de rémunération pour un débutant. C\'est un indicateur positif de maturité du projet.' };
+        }
+        return null;
+    }
+
+    analyzeQ17() {
+        const q17 = this.answers['Q17'];
+        if (q17 === 'Non') {
+            return { niveau: 'faible', message: 'Le·la salarié·e ne connaît pas le niveau d\'expérience exigé par les recruteurs. Il est essentiel de se renseigner sur les attentes du marché : certains métiers privilégient les profils expérimentés, d\'autres sont plus ouverts aux reconversions. Consulter les offres d\'emploi et interroger des recruteurs permettrait de mieux évaluer les chances d\'insertion.' };
+        }
+        if (q17 === 'Oui') {
+            return { niveau: 'bon', message: 'Le·la salarié·e connaît le niveau d\'expérience attendu par les recruteurs. Cette connaissance est un atout pour anticiper les conditions d\'accès à l\'emploi après la formation.' };
+        }
+        return null;
+    }
+
+    analyzeQ19() {
+        const q19 = this.answers['Q19'];
+        const q19a = this.answers['Q19a'] ? this.answers['Q19a'].toLowerCase() : '';
+        const q19b = this.answers['Q19b'] ? this.answers['Q19b'].toLowerCase() : '';
+        if (q19 === 'Non') {
+            return { niveau: 'faible', message: 'Le·la salarié·e n\'a pas identifié d\'inconvénients au métier visé. Un projet réaliste intègre aussi les contraintes du futur métier. Il est recommandé de réaliser une immersion professionnelle ou des enquêtes métiers pour avoir une vision complète (horaires, conditions de travail, contraintes physiques, rémunération de départ...).' };
+        }
+        if (q19 === 'Oui') {
+            if (q19b && q19b.length > 5) {
+                return { niveau: 'bon', message: 'Le·la salarié·e a identifié des inconvénients et réfléchi à des solutions d\'adaptation. C\'est un signe de maturité du projet.' };
+            }
+            if (q19a && q19a.length > 5) {
+                return { niveau: 'moyen', message: 'Le·la salarié·e a identifié des inconvénients mais n\'a pas encore élaboré de stratégie d\'adaptation. Il serait utile de travailler sur les solutions possibles avec un conseiller CEP.' };
+            }
+            return { niveau: 'moyen', message: 'Le·la salarié·e dit avoir identifié des inconvénients. Il est utile d\'approfondir cette réflexion pour s\'assurer d\'une vision réaliste du métier.' };
+        }
+        return null;
     }
 
     analyzeQ21() {
@@ -838,11 +920,39 @@ class CEPQuestionnaire {
     }
 
     analyzeQ23() {
-        const q23 = this.answers['Q23'];
-        let recruteurNonIdentifie = false;
-        if (q23 === 'Non') recruteurNonIdentifie = true;
-        else if (!q23 || q23.trim().length < 5) recruteurNonIdentifie = true;
-        return { recruteurNonIdentifie };
+        const q23 = this.answers['Q23'] ? this.answers['Q23'].trim() : '';
+        const q23lower = q23.toLowerCase();
+        if (q23lower === 'non' || q23.length < 5) {
+            return {
+                recruteurNonIdentifie: true,
+                niveau: 'faible',
+                message: 'Le·la salarié·e n\'a pas encore identifié de recruteurs potentiels. Il est vivement recommandé de mettre en place une démarche tactique : solliciter des immersions facilitées (PMSMP) ou des stages chez un employeur susceptible de recruter à l\'issue de la formation. À noter : 50% des personnes en stage se font embaucher dans la même entreprise. Cette démarche renforce considérablement le dossier et les chances de retour à l\'emploi.'
+            };
+        }
+        if (q23.length >= 5) {
+            const hasContact = q23lower.match(/contact|rencontr|échange|entretien|candidat|postuler|cv|mail|téléphone/);
+            const hasStage = q23lower.match(/stage|immersion|pmsmp/);
+            if (hasStage) {
+                return {
+                    recruteurNonIdentifie: false,
+                    niveau: 'bon',
+                    message: 'Le·la salarié·e a identifié des recruteurs et envisage une immersion ou un stage. Excellente démarche qui maximise les chances d\'embauche à l\'issue de la formation.'
+                };
+            }
+            if (hasContact) {
+                return {
+                    recruteurNonIdentifie: false,
+                    niveau: 'moyen',
+                    message: 'Le·la salarié·e a identifié des recruteurs et pris contact. Pour aller plus loin, il serait pertinent de solliciter une immersion facilitée (PMSMP) ou un stage chez l\'un d\'entre eux : 50% des personnes en stage se font embaucher dans la même entreprise.'
+                };
+            }
+            return {
+                recruteurNonIdentifie: false,
+                niveau: 'moyen',
+                message: 'Le·la salarié·e a identifié des recruteurs potentiels. Il est recommandé d\'aller au-delà de l\'identification : solliciter une immersion facilitée (PMSMP) ou un stage permettrait de concrétiser cette perspective. 50% des personnes en stage se font embaucher dans la même entreprise.'
+            };
+        }
+        return { recruteurNonIdentifie: true, niveau: 'faible' };
     }
 
     // ==================== GÉNÉRATION HTML DES ALERTES ====================
@@ -874,6 +984,19 @@ class CEPQuestionnaire {
         return '<div class="alert alert-warning"><strong>Alerte chargé de projets :</strong> Conditions de travail pénibles détectées — Interroger les dispositifs C2P/FIPU</div>';
     }
 
+    generateEligibiliteCDDCDIHTML(a) {
+        if (!a) return '';
+        if (a.isCDD) {
+            return '<div class="alert alert-warning"><strong>Conditions d\'éligibilité CDD :</strong> À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.</div>';
+        }
+        return '<div class="alert alert-warning"><strong>Conditions d\'éligibilité CDI :</strong> À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.</div>';
+    }
+
+    generateQ10bAlertHTML(a) {
+        if (!a || !a.nonParleEmployeur) return '';
+        return '<div class="alert alert-warning"><strong>Alerte chargé·e de projets :</strong> Le·la salarié·e n\'a pas encore informé son employeur. Il est essentiel de l\'alerter sur les points suivants :<ul style="margin-top:8px;margin-bottom:0;"><li>Ne <strong>surtout pas</strong> signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission.</li><li>Ne pas non plus le faire trop tôt pendant la période de formation.</li><li>En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la <strong>demande d\'autorisation d\'absence</strong>.</li></ul></div>';
+    }
+
     generateQ3aAlertHTML(a) {
         if (!a || !a.ouvrierEmploye) return '';
         return '<div class="alert alert-info"><strong>Information :</strong> Du fait de votre statut d\'ouvrier ou employé, vous avez de grandes chances d\'obtenir la prise en charge. Cependant, l\'accompagnement d\'un conseiller en évolution professionnelle est vivement encouragé pour formaliser votre projet.</div>';
@@ -882,6 +1005,13 @@ class CEPQuestionnaire {
     generateCritere1AlertHTML(a) {
         if (!a || !a.renseignementNecessaire) return '';
         return '<div class="alert alert-warning"><strong>Attention :</strong> Nous vous suggérons de renforcer la cohérence de votre projet : enquêtes métiers, immersion facilitée, stages...</div>';
+    }
+
+    generateMaturiteContextuelHTML(label, analysis) {
+        if (!analysis) return '';
+        const alertClass = analysis.niveau === 'bon' ? 'alert-success' : analysis.niveau === 'moyen' ? 'alert-info' : 'alert-warning';
+        const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'À approfondir';
+        return `<div class="alert ${alertClass}"><strong>${label} — ${niveauLabel} :</strong> ${analysis.message}</div>`;
     }
 
     generateQ21AlertHTML(a) {
@@ -898,8 +1028,10 @@ class CEPQuestionnaire {
     }
 
     generateQ23AlertHTML(a) {
-        if (!a || !a.recruteurNonIdentifie) return '';
-        return '<div class="alert alert-warning"><strong>Attention :</strong> Nous vous invitons à solliciter un stage auprès de l\'employeur chez lequel vous souhaiteriez être embauché·e.</div>';
+        if (!a || !a.message) return '';
+        const alertClass = a.niveau === 'bon' ? 'alert-success' : a.niveau === 'moyen' ? 'alert-info' : 'alert-warning';
+        const niveauLabel = a.niveau === 'bon' ? 'Maturité solide' : a.niveau === 'moyen' ? 'Maturité partielle' : 'À approfondir';
+        return `<div class="alert ${alertClass}"><strong>Recruteurs identifiés — ${niveauLabel} :</strong> ${a.message}</div>`;
     }
 
     // ==================== PRESCRIPTION ====================

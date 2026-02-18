@@ -4,231 +4,231 @@
       "id": "Q1a",
       "question": "Depuis quand êtes-vous salarié·e chez votre employeur actuel ?",
       "objectif": "éligibilité",
-      "section": "On va vérifier ensemble si vous êtes éligible dès à présent :",
+      "section": "Éligibilité",
       "note": null
     },
     {
       "id": "Q1b",
       "question": "Avez-vous été reconnu·e travailleur handicapé ?",
       "objectif": "éligibilité",
-      "section": "On va vérifier ensemble si vous êtes éligible dès à présent :",
+      "section": "Éligibilité",
       "note": null
     },
     {
       "id": "Q1c",
       "question": "Êtes-vous en arrêt ?",
-      "objectif": null,
-      "section": "On va vérifier ensemble si vous êtes éligible dès à présent :",
+      "objectif": "éligibilité",
+      "section": "Éligibilité",
       "note": null
     },
     {
       "id": "Q2",
       "question": "Quel est votre diplôme le plus élevé ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q3a",
       "question": "Êtes-vous ouvrier ou employé ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q3b",
       "question": "Quelle est votre rémunération brute mensuelle moyenne ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q4",
       "question": "Votre entreprise compte-t-elle 50 salariés ou plus ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q5",
       "question": "Êtes-vous en CDD ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q6",
       "question": "Êtes-vous à temps partiel (<130 heures / mois) ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q7",
       "question": "Êtes-vous reconnu·e inapte par le médecin du travail (ou en-cours de reconnaissance) ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si vous êtes prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q8",
       "question": "Quel est votre emploi actuel ?",
       "objectif": "critère 1",
-      "section": "On va vérifier ensemble si votre projet est éligible",
+      "section": "Maturité - Emploi",
       "note": null
     },
     {
       "id": "Q9",
       "question": "Pourquoi vouloir quitter votre emploi actuel ?",
       "objectif": "critère 1",
-      "section": "On va vérifier ensemble si votre projet est éligible",
+      "section": "Maturité - Emploi",
       "note": "si emploi menacé => interroger transco ; si emploi prénible => interroger C2P/FIPU"
     },
     {
       "id": "Q10",
       "question": "Comment pensez-vous quitter votre emploi ?",
       "objectif": "critère 3",
-      "section": "On va vérifier ensemble si votre projet est éligible",
+      "section": "Maturité - Emploi",
       "note": null
     },
     {
       "id": "Q10b",
       "question": "En avez-vous parlé à votre employeur ?",
       "objectif": "critère 3",
-      "section": "On va vérifier ensemble si votre projet est éligible",
+      "section": "Maturité - Emploi",
       "note": null
     },
     {
       "id": "Q11",
       "question": "Quel est le secteur d'activité de votre employeur actuel, et est-il dans la liste des secteurs qui décrutent ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si votre projet est prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
-      "id": "Q1?",
+      "id": "Q11b",
       "question": "Avez-vous réalisé un bilan de compétences ?",
-      "objectif": "à voir si priorité 2026",
-      "section": "On va vérifier ensemble si votre projet est prioritaire ++ ou --",
+      "objectif": "priorité",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q12",
       "question": "Quel est le métier visé, et est-il dans la liste des métiers priorisés en PACA ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si votre projet est prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q13",
       "question": "Avez-vous déjà obtenu CléA, VAE, suivi un accompagnement CEP (bilan de compétence ?) ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si votre projet est prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q14",
       "question": "Pensez-vous pouvoir mobiliser un cofinancement, notamment de votre employeur (et son OPCO) ?",
       "objectif": "priorité",
-      "section": "On va vérifier ensemble si votre projet est prioritaire ++ ou --",
+      "section": "Priorité",
       "note": null
     },
     {
       "id": "Q15",
       "question": "Connaissez-vous les caractéristiques du métier visé ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q15a",
       "question": "Comment vous êtes-vous renseigné ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q15b",
       "question": "Quand vous êtes-vous renseigné ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q16",
       "question": "Connaissez-vous les conditions de rémunération pour un débutant dans ce métier ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q17",
       "question": "Connaissez-vous le niveau d'expérience demandée par les recruteurs pour ce métier ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q18",
       "question": "Quels sont les avantages de ce métier par rapport à maintenant ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q19",
       "question": "Avez-vous identifié des inconvénients à ce métier ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q19a",
       "question": "Quels sont ces inconvénients ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q19b",
       "question": "Avez-vous identifié comment vous adapter à ces inconvénients ?",
       "objectif": "critère 1",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q20",
       "question": "Avez-vous besoin d'aide pour comparer et identifier la formation la plus reconnue voire le meilleur organisme de formation pour vous former ?",
       "objectif": "critère 2",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Formation",
       "note": null
     },
     {
       "id": "Q21",
       "question": "Avez-vous retenu une formation et un organisme de formation en particulier ?",
       "objectif": "critère 2",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Formation",
       "note": null
     },
     {
       "id": "Q21a",
       "question": "Quelles formation et quel organisme de formation ?",
       "objectif": "critère 2",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Formation",
       "note": null
     },
     {
       "id": "Q22",
       "question": "Pour quelles raisons avez-vous retenu cet organisme de formation par rapport aux autres ?",
       "objectif": "critère 2",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Formation",
       "note": "a-t-il pu observer un groupe en situation ? A-t-il visité le centre, voire le plateau technique et moyens pédagogiques ?"
     },
     {
       "id": "Q23",
       "question": "Avez-vous identifié des recruteurs susceptibles de vous embaucher dès la fin de formation ?",
       "objectif": "critère 3",
-      "section": "On va faire le point sur le niveau de maturité de votre projet",
+      "section": "Maturité - Emploi futur",
       "note": null
     }
   ],
