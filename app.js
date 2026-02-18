@@ -1322,15 +1322,8 @@ class CEPQuestionnaire {
             drawAlertBox('Attention :', 'Votre rémunération est supérieure à la moyenne des rémunérations prises en charge par Transitions Pro PACA. Cet élément risque de faire réagir négativement la commission. Pistes de compensation : formation partiellement hors temps de travail, organisme plus compétitif en coût/durée, solutions de cofinancement...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
         }
 
-        // Alerte pénibilité
-        if (analysis.eligibilite.q9Analysis?.penibiliteDetectee) {
-            drawAlertBox('Alerte chargé de projets :', 'Conditions de travail pénibles détectées — Interroger les dispositifs C2P/FIPU.', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
-        }
-
-        // Alerte Q10b (employeur non informé)
-        if (analysis.eligibilite.q10bAnalysis?.nonParleEmployeur) {
-            drawAlertBox('Alerte chargé·e de projets :', 'Le·la salarié·e n\'a pas encore informé son employeur. Il est essentiel de l\'alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation ; en revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
-        }
+        // NB : les alertes Q9 (pénibilité/C2P) et Q10b (employeur non informé)
+        // sont réservées aux chargés de projets et ne figurent pas dans le PDF bénéficiaire.
 
         y += 2;
 
