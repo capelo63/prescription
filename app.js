@@ -1095,63 +1095,56 @@ class CEPQuestionnaire {
         const lineHeight = 7;
         const pageHeight = doc.internal.pageSize.height;
 
-        const logoUrl = 'https://www.transitionspro-paca.fr/wp-content/uploads/2021/04/logo-transitions-pro-paca.png';
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
+        // Logo Transitions Pro PACA embarqué en base64 (évite les problèmes CORS)
+        const logoBase64 = 'data:image/png;base64,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';
 
-        const buildPDF = (withLogo) => {
-            const pageWidth = doc.internal.pageSize.width;
-            const contentWidth = pageWidth - margin * 2;
+        const pageWidth = doc.internal.pageSize.width;
+        const contentWidth = pageWidth - margin * 2;
 
-            if (withLogo) {
-                const logoWidth = 45;
-                const logoHeight = (img.height / img.width) * logoWidth;
-                doc.addImage(img, 'PNG', margin, y, logoWidth, logoHeight);
-                y += logoHeight + 5;
-            }
+        // Logo en haut à gauche
+        const logoWidth = 45;
+        const logoRatio = 156 / 340; // dimensions réelles du PNG: 340x156
+        const logoHeight = logoWidth * logoRatio;
+        doc.addImage(logoBase64, 'PNG', margin, y, logoWidth, logoHeight);
+        y += logoHeight + 5;
 
-            // Titre principal
-            doc.setFontSize(15);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(37, 99, 235);
-            const titleLines = doc.splitTextToSize('Questionnaire préalable au projet de transition professionnelle', contentWidth);
-            doc.text(titleLines, margin, y);
-            y += lineHeight * titleLines.length + 2;
+        // Titre principal
+        doc.setFontSize(15);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(37, 99, 235);
+        const titleLines = doc.splitTextToSize('Questionnaire préalable au projet de transition professionnelle', contentWidth);
+        doc.text(titleLines, margin, y);
+        y += lineHeight * titleLines.length + 2;
 
-            // Ligne décorative sous le titre
-            doc.setDrawColor(37, 99, 235);
-            doc.setLineWidth(1);
-            doc.line(margin, y, margin + 60, y);
-            doc.setLineWidth(0.3);
-            doc.setDrawColor(200, 200, 200);
-            doc.line(margin + 60, y, margin + contentWidth, y);
-            y += 8;
+        // Ligne décorative sous le titre
+        doc.setDrawColor(37, 99, 235);
+        doc.setLineWidth(1);
+        doc.line(margin, y, margin + 60, y);
+        doc.setLineWidth(0.3);
+        doc.setDrawColor(200, 200, 200);
+        doc.line(margin + 60, y, margin + contentWidth, y);
+        y += 8;
 
-            // Bloc identité
-            const date = new Date().toLocaleDateString('fr-FR');
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(margin - 2, y - 3, contentWidth + 4, 20, 2, 2, 'F');
+        // Bloc identité
+        const date = new Date().toLocaleDateString('fr-FR');
+        doc.setFillColor(248, 250, 252);
+        doc.roundedRect(margin - 2, y - 3, contentWidth + 4, 20, 2, 2, 'F');
 
-            doc.setFontSize(12);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(37, 99, 235);
-            doc.text(`${this.userInfo.prenom} ${this.userInfo.nom}`, margin + 3, y + 4);
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(37, 99, 235);
+        doc.text(`${this.userInfo.prenom} ${this.userInfo.nom}`, margin + 3, y + 4);
 
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Chargé·e de projets : ${this.chargeProjets.nom}`, margin + 3, y + 11);
-            doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Chargé·e de projets : ${this.chargeProjets.nom}`, margin + 3, y + 11);
+        doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
 
-            y += 24;
+        y += 24;
 
-            const analysis = this.analyzeAnswers();
-            this.generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date);
-        };
-
-        img.onload = () => buildPDF(true);
-        img.onerror = () => buildPDF(false);
-        img.src = logoUrl;
+        const analysis = this.analyzeAnswers();
+        this.generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date);
     }
 
     generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date) {
