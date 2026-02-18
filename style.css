@@ -55,6 +55,40 @@ header h1 {
     color: var(--primary-color);
 }
 
+.intro-block {
+    text-align: left;
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: #f0f9ff;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.intro-block h2 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.intro-block p {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: var(--text-color);
+}
+
+.intro-block ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 8px 0;
+}
+
+.intro-block ul li {
+    font-size: 0.9rem;
+    padding: 4px 0 4px 12px;
+    border-left: 2px solid var(--primary-color);
+    margin-bottom: 4px;
+}
+
 /* Barre de progression sticky */
 #progress-container {
     position: sticky;
