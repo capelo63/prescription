@@ -84,7 +84,6 @@ class CEPQuestionnaire {
                 const sectionDiv = document.createElement('div');
                 sectionDiv.className = 'section-header';
                 sectionDiv.innerHTML = `
-                    <span class="section-badge">${this.getSectionLabel(question.objectif)}</span>
                     <h2 class="section-title">${question.section}</h2>
                 `;
                 container.appendChild(sectionDiv);
@@ -121,10 +120,9 @@ class CEPQuestionnaire {
             'priorité': 'Priorité',
             'critère 1': 'Maturité - Projet',
             'critère 2': 'Maturité - Formation',
-            'critère 3': 'Maturité - Emploi',
-            'à voir si priorité 2026': 'Priorité future'
+            'critère 3': 'Maturité - Emploi'
         };
-        return labels[objectif] || 'Questionnaire';
+        return labels[objectif] || objectif || 'Questionnaire';
     }
 
     // ==================== RENDU DES INPUTS ====================
@@ -157,7 +155,7 @@ class CEPQuestionnaire {
     }
 
     isYesNoQuestion(question) {
-        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q13', 'Q14', 'Q15', 'Q19', 'Q21'];
+        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q21'];
         return yesNoIds.includes(question.id);
     }
 
