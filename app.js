@@ -1110,7 +1110,7 @@ class CEPQuestionnaire {
         doc.setFontSize(9);
         doc.setFont(undefined, 'normal');
         doc.setTextColor(100, 100, 100);
-        doc.text(`Chargé·e de projets : ${this.chargeProjets.nom}`, margin + 3, y + 11);
+        doc.text(`Référent·e : ${this.chargeProjets.nom}`, margin + 3, y + 11);
         doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
 
         y += 24;
