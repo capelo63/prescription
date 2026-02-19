@@ -1439,7 +1439,10 @@ class CEPQuestionnaire {
         doc.setFont(undefined, 'normal');
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
-        doc.text(`${this.chargeProjets.email}  -  ${this.chargeProjets.tel}`, margin + 7, y);
+        const emailText = this.chargeProjets.email;
+        doc.textWithLink(emailText, margin + 7, y, { url: `mailto:${emailText}` });
+        const emailWidth = doc.getTextWidth(emailText);
+        doc.text(`  -  ${this.chargeProjets.tel}`, margin + 7 + emailWidth, y);
 
         // ========================================
         // PIED DE PAGE
