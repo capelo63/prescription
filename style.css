@@ -487,6 +487,24 @@ header h1 {
     color: #991b1b;
 }
 
+.alert-internal {
+    background-color: #f3f0ff;
+    border-color: #7c3aed;
+    color: #4c1d95;
+    border-left-width: 4px;
+    border-left-style: solid;
+    position: relative;
+}
+
+.alert-internal::before {
+    content: "\1F512";
+    margin-right: 6px;
+}
+
+.alert-internal strong {
+    color: #6d28d9;
+}
+
 .alert strong {
     display: block;
     margin-bottom: 4px;

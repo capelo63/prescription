@@ -952,7 +952,7 @@ class CEPQuestionnaire {
 
     generateQ9AlertHTML(a) {
         if (!a || !a.penibiliteDetectee) return '';
-        return '<div class="alert alert-warning"><strong>Alerte chargé de projets :</strong> Conditions de travail pénibles détectées — Interroger les dispositifs C2P/FIPU</div>';
+        return '<div class="alert alert-internal"><strong>Note référent·e :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
     }
 
     generateEligibiliteCDDCDIHTML(a) {
@@ -965,7 +965,7 @@ class CEPQuestionnaire {
 
     generateQ10bAlertHTML(a) {
         if (!a || !a.nonParleEmployeur) return '';
-        return '<div class="alert alert-warning"><strong>Alerte chargé·e de projets :</strong> Le·la salarié·e n\'a pas encore informé son employeur. Il est essentiel de l\'alerter sur les points suivants :<ul style="margin-top:8px;margin-bottom:0;"><li>Ne <strong>surtout pas</strong> signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission.</li><li>Ne pas non plus le faire trop tôt pendant la période de formation.</li><li>En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la <strong>demande d\'autorisation d\'absence</strong>.</li></ul></div>';
+        return '<div class="alert alert-internal"><strong>Note référent·e :</strong> Le·la salarié·e n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
     }
 
     generateQ3aAlertHTML(a) {
