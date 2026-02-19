@@ -144,7 +144,7 @@ class CEPQuestionnaire {
         } else if (qId === 'Q10b') {
             this.createInlineButtons(container, qId, ['Oui', 'Non'], current);
         } else if (qId === 'Q11') {
-            this.createTextInput(container, qId, 'Ex: Commerce de détail, BTP, Restauration...', current);
+            this.createSecteurInput(container, qId, current);
         } else if (qId === 'Q12') {
             this.createMetierInput(container, qId, current);
         } else {
