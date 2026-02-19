@@ -1438,7 +1438,7 @@ class CEPQuestionnaire {
         doc.setFontSize(8.5);
         doc.setFont(undefined, 'italic');
         doc.setTextColor(80, 80, 80);
-        const contactLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle, nous vous invitons à revenir vers votre chargé(e) de projets Transitions Pro PACA :', textWidth - 10);
+        const contactLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle, nous vous invitons à revenir vers votre référent(e) Transitions Pro PACA :', textWidth - 10);
         contactLines.forEach(line => { doc.text(line, margin + 7, y + 4); y += 4.5; });
         y += 4;
         doc.setFont(undefined, 'bold');
