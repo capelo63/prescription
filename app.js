@@ -7,14 +7,16 @@ class CEPQuestionnaire {
         this.metiersPrioritaires = [];
         this.secteursDeclin = [];
         this.userInfo = { prenom: '', nom: '' };
-        this.chargeProjets = { id: '', nom: '', email: '' };
+        this.chargeProjets = { id: '', nom: '', email: '', tel: '' };
         this.chargesProjetsData = {
-            'cindy': { nom: 'Cindy Lecouf', email: 'c.lecouf@transitionspro-paca.fr' },
-            'elies': { nom: 'Eliès Lemhani', email: 'e.lemhani@transitionspro-paca.fr' },
-            'maurine': { nom: 'Maurine Loubeau', email: 'm.loubeau@transitionspro-paca.fr' },
-            'zacharie': { nom: 'Zacharie Pinton', email: 'z.pinton@transitionspro-paca.fr' },
-            'domoina': { nom: 'Domoïna Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr' },
-            'marie': { nom: 'Marie Saglietto', email: 'm.saglietto@transitionspro-paca.fr' }
+            'nathalie': { nom: 'Nathalie Cornet', email: 'n.cornet@transitionspro-paca.fr', tel: '04 91 13 23 15' },
+            'cindy': { nom: 'Cindy Lecouf', email: 'c.lecouf@transitionspro-paca.fr', tel: '04 91 13 94 16' },
+            'elies': { nom: 'Eliès Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
+            'maurine': { nom: 'Maurine Loubeau', email: 'm.loubeau@transitionspro-paca.fr', tel: '04 91 13 20 73' },
+            'zacharie': { nom: 'Zacharie Pinton', email: 'z.pinton@transitionspro-paca.fr', tel: '04 91 13 94 15' },
+            'domoina': { nom: 'Domoïna Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr', tel: '04 91 13 93 83' },
+            'sylvie': { nom: 'Sylvie Troubat', email: 's.troubat@transitionspro-paca.fr', tel: '04 91 13 20 72' },
+            'marie': { nom: 'Marie-Josée Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
         };
         this.init();
     }
@@ -61,7 +63,7 @@ class CEPQuestionnaire {
             this.chargeProjets.id = id;
             this.chargeProjets.nom = this.chargesProjetsData[id].nom;
             this.chargeProjets.email = this.chargesProjetsData[id].email;
-            localStorage.setItem('cep_charge_projets', id);
+            this.chargeProjets.tel = this.chargesProjetsData[id].tel;
         }
     }
 
@@ -1424,7 +1426,7 @@ class CEPQuestionnaire {
         // COORDONNÉES DU CHARGÉ DE PROJETS
         // ========================================
         y += 6;
-        const contactBoxHeight = 32;
+        const contactBoxHeight = 37;
         checkPageBreak(contactBoxHeight + 10);
 
         // Fond avec bordure
@@ -1447,7 +1449,7 @@ class CEPQuestionnaire {
         doc.setFont(undefined, 'normal');
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
-        doc.text(this.chargeProjets.email, margin + 7, y);
+        doc.text(`${this.chargeProjets.email}  -  ${this.chargeProjets.tel}`, margin + 7, y);
 
         // ========================================
         // PIED DE PAGE
