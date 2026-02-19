@@ -53,11 +53,7 @@ class CEPQuestionnaire {
     }
 
     restoreChargeProjets() {
-        const saved = localStorage.getItem('cep_charge_projets');
-        if (saved) {
-            document.getElementById('charge-projets-select').value = saved;
-            this.selectChargeProjets(saved);
-        }
+        // Ne pas restaurer automatiquement : laisser "--Sélectionnez--" par défaut
     }
 
     selectChargeProjets(id) {
@@ -146,7 +142,7 @@ class CEPQuestionnaire {
         } else if (qId === 'Q10b') {
             this.createInlineButtons(container, qId, ['Oui', 'Non'], current);
         } else if (qId === 'Q11') {
-            this.createSecteurInput(container, qId, current);
+            this.createTextInput(container, qId, 'Ex: Commerce de détail, BTP, Restauration...', current);
         } else if (qId === 'Q12') {
             this.createMetierInput(container, qId, current);
         } else {
@@ -155,7 +151,7 @@ class CEPQuestionnaire {
     }
 
     isYesNoQuestion(question) {
-        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q21'];
+        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q20', 'Q21', 'Q23'];
         return yesNoIds.includes(question.id);
     }
 
@@ -735,9 +731,9 @@ class CEPQuestionnaire {
         }
 
         const q13 = this.answers['Q13'] ? this.answers['Q13'].toLowerCase() : '';
-        const q23 = this.answers['Q23'] ? this.answers['Q23'].toLowerCase() : '';
+        const q23 = this.answers['Q23'] || '';
         if (q13.includes('oui') || q13.includes('cléa') || q13.includes('vae') || q13.includes('cep') ||
-            q23.includes('oui') || q23.length > 10) {
+            q23 === 'Oui') {
             score += 1;
             details.push({ code: 'P6', libelle: 'Ingénierie de formation valorisée (CEP, VAE, CléA, recruteur...)', points: 1 });
         }
@@ -920,39 +916,22 @@ class CEPQuestionnaire {
     }
 
     analyzeQ23() {
-        const q23 = this.answers['Q23'] ? this.answers['Q23'].trim() : '';
-        const q23lower = q23.toLowerCase();
-        if (q23lower === 'non' || q23.length < 5) {
+        const q23 = this.answers['Q23'];
+        if (q23 === 'Non') {
             return {
                 recruteurNonIdentifie: true,
                 niveau: 'faible',
                 message: 'Le·la salarié·e n\'a pas encore identifié de recruteurs potentiels. Il est vivement recommandé de mettre en place une démarche tactique : solliciter des immersions facilitées (PMSMP) ou des stages chez un employeur susceptible de recruter à l\'issue de la formation. À noter : 50% des personnes en stage se font embaucher dans la même entreprise. Cette démarche renforce considérablement le dossier et les chances de retour à l\'emploi.'
             };
         }
-        if (q23.length >= 5) {
-            const hasContact = q23lower.match(/contact|rencontr|échange|entretien|candidat|postuler|cv|mail|téléphone/);
-            const hasStage = q23lower.match(/stage|immersion|pmsmp/);
-            if (hasStage) {
-                return {
-                    recruteurNonIdentifie: false,
-                    niveau: 'bon',
-                    message: 'Le·la salarié·e a identifié des recruteurs et envisage une immersion ou un stage. Excellente démarche qui maximise les chances d\'embauche à l\'issue de la formation.'
-                };
-            }
-            if (hasContact) {
-                return {
-                    recruteurNonIdentifie: false,
-                    niveau: 'moyen',
-                    message: 'Le·la salarié·e a identifié des recruteurs et pris contact. Pour aller plus loin, il serait pertinent de solliciter une immersion facilitée (PMSMP) ou un stage chez l\'un d\'entre eux : 50% des personnes en stage se font embaucher dans la même entreprise.'
-                };
-            }
+        if (q23 === 'Oui') {
             return {
                 recruteurNonIdentifie: false,
                 niveau: 'moyen',
-                message: 'Le·la salarié·e a identifié des recruteurs potentiels. Il est recommandé d\'aller au-delà de l\'identification : solliciter une immersion facilitée (PMSMP) ou un stage permettrait de concrétiser cette perspective. 50% des personnes en stage se font embaucher dans la même entreprise.'
+                message: 'Le·la salarié·e a identifié des recruteurs potentiels. Il est recommandé de solliciter une immersion facilitée (PMSMP) ou un stage chez l\'un d\'entre eux : 50% des personnes en stage se font embaucher dans la même entreprise.'
             };
         }
-        return { recruteurNonIdentifie: true, niveau: 'faible' };
+        return null;
     }
 
     // ==================== GÉNÉRATION HTML DES ALERTES ====================
