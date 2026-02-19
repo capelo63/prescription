@@ -268,16 +268,10 @@ class CEPQuestionnaire {
 
         container.appendChild(wrapper);
 
-        // Vérifier si la valeur actuelle matche
-        if (currentAnswer) {
-            const term = currentAnswer.toLowerCase().trim();
-            if (term.length >= 2) {
-                const matches = this.findSecteurMatches(term);
-                if (matches.length > 0) {
-                    resultBadge.textContent = 'Secteur prioritaire';
-                    resultBadge.className = 'match-badge match-yes';
-                }
-            }
+        // Restaurer le badge uniquement si un item avait été sélectionné (format "Intitulé (CODE)")
+        if (currentAnswer && currentAnswer.match(/\(.+\)$/)) {
+            resultBadge.textContent = 'Secteur prioritaire';
+            resultBadge.className = 'match-badge match-yes';
         }
     }
 
@@ -332,16 +326,10 @@ class CEPQuestionnaire {
 
         container.appendChild(wrapper);
 
-        // Vérifier si la valeur actuelle matche
-        if (currentAnswer) {
-            const term = currentAnswer.toLowerCase().trim();
-            if (term.length >= 2) {
-                const matches = this.findMetierMatches(term);
-                if (matches.length > 0) {
-                    resultBadge.textContent = 'Métier prioritaire PACA';
-                    resultBadge.className = 'match-badge match-yes';
-                }
-            }
+        // Restaurer le badge uniquement si un item avait été sélectionné (format "Intitulé (CODE)")
+        if (currentAnswer && currentAnswer.match(/\(.+\)$/)) {
+            resultBadge.textContent = 'Métier prioritaire PACA';
+            resultBadge.className = 'match-badge match-yes';
         }
     }
 
@@ -365,9 +353,10 @@ class CEPQuestionnaire {
 
     showSecteurSuggestions(term, dropdown, input, badge) {
         const matches = this.findSecteurMatches(term);
+        // Réinitialiser le badge pendant la saisie (le badge ne s'affiche qu'au clic sur un item)
+        badge.textContent = '';
+        badge.className = 'match-badge';
         if (matches.length > 0) {
-            badge.textContent = 'Secteur prioritaire';
-            badge.className = 'match-badge match-yes';
             dropdown.innerHTML = matches.map(s =>
                 `<div class="autocomplete-item" data-value="${s.intitule} (${s.code_ape})">${s.intitule} <span class="autocomplete-code">${s.code_ape}</span></div>`
             ).join('');
@@ -377,20 +366,21 @@ class CEPQuestionnaire {
                     input.value = item.dataset.value;
                     this.saveAnswer('Q11', input.value);
                     dropdown.style.display = 'none';
+                    badge.textContent = 'Secteur prioritaire';
+                    badge.className = 'match-badge match-yes';
                 });
             });
         } else {
-            badge.textContent = 'Non prioritaire';
-            badge.className = 'match-badge match-no';
             dropdown.style.display = 'none';
         }
     }
 
     showMetierSuggestions(term, dropdown, input, badge) {
         const matches = this.findMetierMatches(term);
+        // Réinitialiser le badge pendant la saisie (le badge ne s'affiche qu'au clic sur un item)
+        badge.textContent = '';
+        badge.className = 'match-badge';
         if (matches.length > 0) {
-            badge.textContent = 'Métier prioritaire PACA';
-            badge.className = 'match-badge match-yes';
             dropdown.innerHTML = matches.map(m =>
                 `<div class="autocomplete-item" data-value="${m.metier} (${m.code_rome})">${m.metier} <span class="autocomplete-code">${m.code_rome} — ${m.domaine}</span></div>`
             ).join('');
@@ -400,11 +390,11 @@ class CEPQuestionnaire {
                     input.value = item.dataset.value;
                     this.saveAnswer('Q12', input.value);
                     dropdown.style.display = 'none';
+                    badge.textContent = 'Métier prioritaire PACA';
+                    badge.className = 'match-badge match-yes';
                 });
             });
         } else {
-            badge.textContent = 'Non prioritaire';
-            badge.className = 'match-badge match-no';
             dropdown.style.display = 'none';
         }
     }
