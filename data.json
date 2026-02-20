@@ -121,7 +121,14 @@
     },
     {
       "id": "Q13",
-      "question": "Avez-vous déjà obtenu CléA, VAE, suivi un accompagnement CEP (bilan de compétence ?) ?",
+      "question": "Avez-vous déjà obtenu CléA, VAE, suivi un accompagnement CEP... ?",
+      "objectif": "priorité",
+      "section": "Priorité",
+      "note": null
+    },
+    {
+      "id": "Q13a",
+      "question": "Précisez lesquels :",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null

@@ -453,6 +453,9 @@ class CEPQuestionnaire {
             const q2 = this.answers['Q2'];
             return q2 === 'Bac' || q2 === 'Bac+2' || q2 === 'Bac+3 ou plus';
         }
+        if (questionId === 'Q13a') {
+            return this.answers['Q13'] === 'Oui';
+        }
         if (questionId === 'Q15a' || questionId === 'Q15b') {
             return this.answers['Q15'] === 'Oui';
         }
