@@ -186,6 +186,14 @@ header h1 {
     align-items: end;
 }
 
+.identity-row-employeur {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 12px;
+    align-items: end;
+    margin-top: 12px;
+}
+
 .identity-field label {
     display: block;
     font-size: 0.85rem;
@@ -652,6 +660,10 @@ footer {
     .identity-row {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
+    }
+
+    .identity-row-employeur {
+        grid-template-columns: 1fr;
     }
 
     .question-block {
