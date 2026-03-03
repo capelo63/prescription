@@ -1,4 +1,4 @@
-// Application de questionnaire CEP - Mode page unique
+// Application Impulsion - Transitions Pro PACA
 class CEPQuestionnaire {
     constructor() {
         this.questions = [];
@@ -6,26 +6,28 @@ class CEPQuestionnaire {
         this.answers = {};
         this.metiersPrioritaires = [];
         this.secteursDeclin = [];
-        this.userInfo = { prenom: '', nom: '' };
-        this.chargeProjets = { id: '', nom: '', email: '', tel: '' };
-        this.chargesProjetsData = {
+        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '' };
+        this.referent = { id: '', nom: '', email: '', tel: '' };
+        this.referentsData = {
             'nathalie': { nom: 'Nathalie Cornet', email: 'n.cornet@transitionspro-paca.fr', tel: '04 91 13 23 15' },
             'cindy': { nom: 'Cindy Lecouf', email: 'c.lecouf@transitionspro-paca.fr', tel: '04 91 13 94 16' },
-            'elies': { nom: 'Eliès Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
+            'elies': { nom: 'Elies Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
             'maurine': { nom: 'Maurine Loubeau', email: 'm.loubeau@transitionspro-paca.fr', tel: '04 91 13 20 73' },
             'zacharie': { nom: 'Zacharie Pinton', email: 'z.pinton@transitionspro-paca.fr', tel: '04 91 13 94 15' },
-            'domoina': { nom: 'Domoïna Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr', tel: '04 91 13 93 83' },
+            'domoina': { nom: 'Domoina Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr', tel: '04 91 13 93 83' },
             'sylvie': { nom: 'Sylvie Troubat', email: 's.troubat@transitionspro-paca.fr', tel: '04 91 13 20 72' },
-            'marie': { nom: 'Marie-Josée Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
+            'marie': { nom: 'Marie-Josee Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
         };
+        this.timerSeconds = 0;
+        this.timerInterval = null;
         this.init();
     }
 
     async init() {
         await this.loadData();
-        this.restoreChargeProjets();
         this.renderAllQuestions();
         this.setupEventListeners();
+        this.startTimer();
         this.updateProgress();
     }
 
@@ -54,17 +56,22 @@ class CEPQuestionnaire {
         }
     }
 
-    restoreChargeProjets() {
-        // Ne pas restaurer automatiquement : laisser "--Sélectionnez--" par défaut
+    selectReferent(id) {
+        if (id && this.referentsData[id]) {
+            this.referent.id = id;
+            this.referent.nom = this.referentsData[id].nom;
+            this.referent.email = this.referentsData[id].email;
+            this.referent.tel = this.referentsData[id].tel;
+        }
     }
 
-    selectChargeProjets(id) {
-        if (id && this.chargesProjetsData[id]) {
-            this.chargeProjets.id = id;
-            this.chargeProjets.nom = this.chargesProjetsData[id].nom;
-            this.chargeProjets.email = this.chargesProjetsData[id].email;
-            this.chargeProjets.tel = this.chargesProjetsData[id].tel;
-        }
+    startTimer() {
+        this.timerInterval = setInterval(() => {
+            this.timerSeconds++;
+            const m = Math.floor(this.timerSeconds / 60).toString().padStart(2, '0');
+            const s = (this.timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').textContent = `${m}:${s}`;
+        }, 1000);
     }
 
     // ==================== RENDU DE TOUTES LES QUESTIONS ====================
@@ -129,7 +136,9 @@ class CEPQuestionnaire {
         const qId = question.id;
         const current = this.answers[qId];
 
-        if (qId === 'Q1a') {
+        if (qId === 'Q1d') {
+            this.createDateInput(container, qId, current);
+        } else if (qId === 'Q1a') {
             this.createTextInput(container, qId, 'Ex: 2 ans et 3 mois', current);
         } else if (qId === 'Q15a' || qId === 'Q15b' || qId === 'Q22') {
             this.createTextAreaInput(container, qId, 'Votre réponse...', current);
@@ -138,7 +147,7 @@ class CEPQuestionnaire {
         } else if (qId === 'Q2') {
             this.createInlineButtons(container, qId, ['Sans diplôme', 'CAP/BEP', 'Bac', 'Bac+2', 'Bac+3 ou plus'], current);
         } else if (qId === 'Q3b') {
-            this.createNumberInput(container, qId, 'Rémunération brute mensuelle (€)', current);
+            this.createRemunerationInput(container, qId, current);
         } else if (qId === 'Q10') {
             this.createInlineButtons(container, qId, ['Démission', 'Rupture conventionnelle', 'Licenciement', 'Autre'], current);
         } else if (qId === 'Q10b') {
@@ -147,13 +156,15 @@ class CEPQuestionnaire {
             this.createSecteurInput(container, qId, current);
         } else if (qId === 'Q12') {
             this.createMetierInput(container, qId, current);
+        } else if (qId === 'Q23') {
+            this.createInlineButtons(container, qId, ['Oui, via France Travail', 'Oui, via mon réseau', 'Oui, promesse d\'embauche', 'Oui, projet interne (même employeur)', 'Non'], current);
         } else {
             this.createTextAreaInput(container, qId, 'Votre réponse...', current);
         }
     }
 
     isYesNoQuestion(question) {
-        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q20', 'Q21', 'Q23'];
+        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q20', 'Q21'];
         return yesNoIds.includes(question.id);
     }
 
@@ -215,6 +226,105 @@ class CEPQuestionnaire {
             textarea.style.height = textarea.scrollHeight + 'px';
         });
         container.appendChild(textarea);
+    }
+
+    createRemunerationInput(container, qId, currentAnswer) {
+        const wrapper = document.createElement('div');
+
+        const inputRow = document.createElement('div');
+        inputRow.className = 'inline-buttons';
+        inputRow.style.alignItems = 'center';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'inline-input';
+        input.style.maxWidth = '250px';
+        input.placeholder = 'Rémunération brute mensuelle (€)';
+        input.min = 0;
+
+        const optOutBtn = document.createElement('button');
+        optOutBtn.type = 'button';
+        optOutBtn.className = 'answer-chip';
+        optOutBtn.textContent = 'Je préfère ne pas répondre';
+
+        if (currentAnswer === 'Je préfère ne pas répondre') {
+            optOutBtn.classList.add('selected');
+            input.disabled = true;
+        } else {
+            input.value = currentAnswer || '';
+        }
+
+        input.addEventListener('input', () => {
+            optOutBtn.classList.remove('selected');
+            this.saveAnswer(qId, input.value);
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') this.focusNextQuestion(qId);
+        });
+
+        optOutBtn.addEventListener('click', () => {
+            input.value = '';
+            input.disabled = true;
+            optOutBtn.classList.add('selected');
+            this.saveAnswer(qId, 'Je préfère ne pas répondre');
+        });
+
+        input.addEventListener('focus', () => {
+            if (optOutBtn.classList.contains('selected')) {
+                input.disabled = false;
+                optOutBtn.classList.remove('selected');
+                this.saveAnswer(qId, '');
+            }
+        });
+
+        inputRow.appendChild(input);
+        inputRow.appendChild(optOutBtn);
+        wrapper.appendChild(inputRow);
+        container.appendChild(wrapper);
+    }
+
+    createDateInput(container, qId, currentAnswer) {
+        const wrapper = document.createElement('div');
+
+        const input = document.createElement('input');
+        input.type = 'date';
+        input.className = 'inline-input';
+        input.style.maxWidth = '250px';
+        input.value = currentAnswer || '';
+
+        const alertDiv = document.createElement('div');
+        alertDiv.id = 'alert-date-projet';
+
+        input.addEventListener('input', () => {
+            this.saveAnswer(qId, input.value);
+            this.checkDateProjet(input.value, alertDiv);
+        });
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(alertDiv);
+        container.appendChild(wrapper);
+
+        // Vérifier si la date actuelle déclenche l'alerte
+        if (currentAnswer) {
+            this.checkDateProjet(currentAnswer, alertDiv);
+        }
+    }
+
+    checkDateProjet(dateStr, alertDiv) {
+        if (!dateStr) {
+            alertDiv.innerHTML = '';
+            return;
+        }
+        const dateProjet = new Date(dateStr);
+        const today = new Date();
+        const diffMs = dateProjet - today;
+        const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffJours < 90) {
+            alertDiv.innerHTML = '<div class="alert alert-danger"><strong>Alerte :</strong> La date envisagée est à moins de 90 jours. Ce délai est très court pour constituer un dossier complet (autorisation d\'absence, recherche de formation, passage en commission). Il est vivement recommandé d\'anticiper davantage.</div>';
+        } else {
+            alertDiv.innerHTML = '<div class="alert alert-success"><strong>Délai suffisant :</strong> La date envisagée laisse un délai de ' + diffJours + ' jours pour préparer votre dossier.</div>';
+        }
     }
 
     createSecteurInput(container, qId, currentAnswer) {
@@ -449,12 +559,13 @@ class CEPQuestionnaire {
             const q2 = this.answers['Q2'];
             return q2 === 'Sans diplôme' || q2 === 'CAP/BEP';
         }
-        if (questionId === 'Q3b') {
-            const q2 = this.answers['Q2'];
-            return q2 === 'Bac' || q2 === 'Bac+2' || q2 === 'Bac+3 ou plus';
-        }
+        // Q3b est toujours visible quel que soit le choix à Q2
         if (questionId === 'Q13a') {
             return this.answers['Q13'] === 'Oui';
+        }
+        if (questionId === 'Q23a') {
+            const q23 = this.answers['Q23'] || '';
+            return q23.startsWith('Oui');
         }
         if (questionId === 'Q15a' || questionId === 'Q15b') {
             return this.answers['Q15'] === 'Oui';
@@ -527,23 +638,29 @@ class CEPQuestionnaire {
     // ==================== EVENT LISTENERS ====================
 
     setupEventListeners() {
-        // Chargé de projets
-        document.getElementById('charge-projets-select').addEventListener('change', (e) => {
-            this.selectChargeProjets(e.target.value);
+        // Referent
+        document.getElementById('referent-select').addEventListener('change', (e) => {
+            this.selectReferent(e.target.value);
         });
 
-        // Identité
+        // Identite
+        document.getElementById('user-civilite').addEventListener('change', (e) => {
+            this.userInfo.civilite = e.target.value;
+        });
         document.getElementById('user-prenom').addEventListener('input', (e) => {
             this.userInfo.prenom = e.target.value.trim();
         });
         document.getElementById('user-nom').addEventListener('input', (e) => {
             this.userInfo.nom = e.target.value.trim();
         });
+        document.getElementById('user-code-interne').addEventListener('input', (e) => {
+            this.userInfo.codeInterne = e.target.value.trim();
+        });
 
-        // Résultats
+        // Resultats
         document.getElementById('show-results-btn').addEventListener('click', () => this.showResults());
         document.getElementById('download-pdf-btn').addEventListener('click', () => this.downloadPDF());
-        document.getElementById('restart-btn').addEventListener('click', () => this.restart());
+        document.getElementById('new-questionnaire-btn').addEventListener('click', () => this.newQuestionnaire());
 
         // Fermer les dropdowns autocomplete en cliquant ailleurs
         document.addEventListener('click', (e) => {
@@ -557,13 +674,13 @@ class CEPQuestionnaire {
 
     showResults() {
         if (!this.userInfo.prenom || !this.userInfo.nom) {
-            alert('Veuillez renseigner le prénom et le nom du bénéficiaire.');
+            alert('Veuillez renseigner le prenom et le nom du beneficiaire.');
             document.getElementById('user-prenom').focus();
             return;
         }
-        if (!this.chargeProjets.id) {
-            alert('Veuillez sélectionner un chargé de projets.');
-            document.getElementById('charge-projets-select').focus();
+        if (!this.referent.id) {
+            alert('Veuillez selectionner un referent Transitions Pro PACA.');
+            document.getElementById('referent-select').focus();
             return;
         }
 
@@ -586,15 +703,33 @@ class CEPQuestionnaire {
             prioriteDetailsHTML += '</ul>';
         }
 
+        // Déterminer projet interne/externe
+        const q23Analysis = analysis.maturite.q23Analysis;
+        const projetInterne = q23Analysis?.projetInterne || false;
+        const typeProjetLabel = projetInterne ? 'Projet interne (reconversion chez le même employeur)' : 'Projet externe (changement d\'employeur)';
+        const typeProjetClass = projetInterne ? 'alert-info' : 'alert-warning';
+
+        // Niveau de priorité avec badge coloré
+        const niveauColors = {
+            'Très haute': { bg: '#d1fae5', color: '#065f46' },
+            'Haute': { bg: '#dbeafe', color: '#1e40af' },
+            'Moyenne': { bg: '#fef3c7', color: '#92400e' },
+            'Faible': { bg: '#fed7aa', color: '#9a3412' },
+            'Très faible': { bg: '#fee2e2', color: '#991b1b' }
+        };
+        const niveauStyle = niveauColors[analysis.priorite.niveau] || niveauColors['Moyenne'];
+
         summaryDiv.innerHTML = `
             <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: var(--bg-color); border-radius: 8px;">
                 <p style="font-size: 1.3em; color: var(--primary-color); margin: 0;"><strong>${this.userInfo.prenom} ${this.userInfo.nom}</strong></p>
+                ${this.userInfo.codeInterne ? `<p style="font-size: 0.9em; color: var(--text-light); margin-top: 4px;">Code interne : ${this.userInfo.codeInterne}</p>` : ''}
             </div>
             <div class="result-card">
                 <h3>Éligibilité</h3>
                 <p><strong>${analysis.eligibilite.status}</strong></p>
                 <p>${analysis.eligibilite.details}</p>
                 ${this.generateEligibiliteCDDCDIHTML(analysis.eligibilite.eligibiliteCDDCDI)}
+                ${this.generateQ1dAlertHTML()}
                 ${this.generateQ1aAlertHTML(analysis.eligibilite.q1aAnalysis)}
                 ${this.generateQ1bAlertHTML(analysis.eligibilite.q1bAnalysis)}
                 ${this.generateQ3bAlertHTML(analysis.eligibilite.q3bAnalysis)}
@@ -603,10 +738,13 @@ class CEPQuestionnaire {
             </div>
             <div class="result-card">
                 <h3>Niveau de priorité</h3>
-                <p><strong>${analysis.priorite.status}</strong></p>
-                <p style="font-size: 1.2em; margin: 10px 0;"><strong>Score: ${analysis.priorite.score}/${analysis.priorite.maxScore} points</strong></p>
+                <p><span style="display: inline-block; padding: 4px 16px; border-radius: 20px; background: ${niveauStyle.bg}; color: ${niveauStyle.color}; font-weight: 700; font-size: 1.1em;">${analysis.priorite.niveau}</span></p>
                 ${prioriteDetailsHTML}
                 ${this.generateQ3aAlertHTML(analysis.priorite.q3aAnalysis)}
+            </div>
+            <div class="result-card">
+                <h3>Type de projet</h3>
+                <div class="alert ${typeProjetClass}"><strong>${typeProjetLabel}</strong></div>
             </div>
             <div class="result-card">
                 <h3>Maturité du projet</h3>
@@ -686,7 +824,7 @@ class CEPQuestionnaire {
 
     analyzeQ3b() {
         const q3b = this.answers['Q3b'];
-        if (!q3b) return { remunerationElevee: false };
+        if (!q3b || q3b === 'Je préfère ne pas répondre') return { remunerationElevee: false };
         const rem = parseFloat(q3b);
         return { remunerationElevee: !isNaN(rem) && rem > 21417 };
     }
@@ -728,7 +866,7 @@ class CEPQuestionnaire {
         const q13 = this.answers['Q13'] ? this.answers['Q13'].toLowerCase() : '';
         const q23 = this.answers['Q23'] || '';
         if (q13.includes('oui') || q13.includes('cléa') || q13.includes('vae') || q13.includes('cep') ||
-            q23 === 'Oui') {
+            q23.startsWith('Oui')) {
             score += 1;
             details.push({ code: 'P6', libelle: 'Ingénierie de formation valorisée (CEP, VAE, CléA, recruteur...)', points: 1 });
         }
@@ -770,11 +908,25 @@ class CEPQuestionnaire {
         }
 
         const maxScore = 20;
-        let status = score >= 15 ? 'Priorité très élevée' :
-                     score >= 10 ? 'Priorité élevée' :
-                     score >= 7 ? 'Priorité moyenne' : 'Priorité standard';
+        let niveau, status;
+        if (score >= 15) {
+            niveau = 'Très haute';
+            status = 'Priorité très haute';
+        } else if (score >= 10) {
+            niveau = 'Haute';
+            status = 'Priorité haute';
+        } else if (score >= 7) {
+            niveau = 'Moyenne';
+            status = 'Priorité moyenne';
+        } else if (score >= 4) {
+            niveau = 'Faible';
+            status = 'Priorité faible';
+        } else {
+            niveau = 'Très faible';
+            status = 'Priorité très faible';
+        }
 
-        return { score, maxScore, status, details, q3aAnalysis: this.analyzeQ3a() };
+        return { score, maxScore, status, niveau, details, q3aAnalysis: this.analyzeQ3a() };
     }
 
     analyzeQ3a() {
@@ -829,7 +981,7 @@ class CEPQuestionnaire {
         const q15 = this.answers['Q15'];
         const q15a = this.answers['Q15a'] ? this.answers['Q15a'].toLowerCase() : '';
         if (q15 === 'Non') {
-            return { niveau: 'faible', message: 'Le·la salarié·e ne connaît pas les caractéristiques du métier visé. Il est fortement recommandé de réaliser des enquêtes métiers, des immersions professionnelles (PMSMP) ou de consulter les fiches ROME de France Travail avant de poursuivre le projet.' };
+            return { niveau: 'faible', message: 'Le ou la salarie ne connaît pas les caractéristiques du métier visé. Il est fortement recommandé de réaliser des enquêtes métiers, des immersions professionnelles (PMSMP) ou de consulter les fiches ROME de France Travail avant de poursuivre le projet.' };
         }
         if (q15 === 'Oui' && q15a) {
             const hasImmersion = q15a.match(/immersion|stage|pmsmp|terrain|entreprise|professionnel/);
@@ -837,12 +989,12 @@ class CEPQuestionnaire {
             const hasRecherche = q15a.match(/internet|site|rome|fiche|recherche|lu|article|vidéo/);
             const nbDemarches = (hasImmersion ? 1 : 0) + (hasEnquete ? 1 : 0) + (hasRecherche ? 1 : 0);
             if (nbDemarches >= 2) {
-                return { niveau: 'bon', message: 'Le·la salarié·e a mené plusieurs démarches pour connaître le métier visé (recherches, enquêtes, immersions). La connaissance du métier semble solide.' };
+                return { niveau: 'bon', message: 'Le ou la salarie a mené plusieurs démarches pour connaître le métier visé (recherches, enquêtes, immersions). La connaissance du métier semble solide.' };
             }
             if (nbDemarches === 1) {
-                return { niveau: 'moyen', message: 'Le·la salarié·e s\'est renseigné·e sur le métier, mais par un seul canal. Il serait bénéfique de compléter par une immersion professionnelle (PMSMP) ou des enquêtes métiers auprès de professionnels en activité.' };
+                return { niveau: 'moyen', message: 'Le ou la salarie s\'est renseigne sur le métier, mais par un seul canal. Il serait bénéfique de compléter par une immersion professionnelle (PMSMP) ou des enquêtes métiers auprès de professionnels en activité.' };
             }
-            return { niveau: 'moyen', message: 'Le·la salarié·e indique connaître le métier. Il serait utile de vérifier la profondeur de cette connaissance par des enquêtes métiers ou une immersion professionnelle.' };
+            return { niveau: 'moyen', message: 'Le ou la salarie indique connaître le métier. Il serait utile de vérifier la profondeur de cette connaissance par des enquêtes métiers ou une immersion professionnelle.' };
         }
         return null;
     }
@@ -850,10 +1002,10 @@ class CEPQuestionnaire {
     analyzeQ16() {
         const q16 = this.answers['Q16'];
         if (q16 === 'Non') {
-            return { niveau: 'faible', message: 'Le·la salarié·e ne connaît pas les conditions de rémunération d\'un débutant dans ce métier. Il est important de se renseigner pour éviter toute déception : consulter les grilles salariales conventionnelles, les offres d\'emploi, ou interroger des professionnels en poste.' };
+            return { niveau: 'faible', message: 'Le ou la salarie ne connaît pas les conditions de rémunération d\'un débutant dans ce métier. Il est important de se renseigner pour éviter toute déception : consulter les grilles salariales conventionnelles, les offres d\'emploi, ou interroger des professionnels en poste.' };
         }
         if (q16 === 'Oui') {
-            return { niveau: 'bon', message: 'Le·la salarié·e connaît les conditions de rémunération pour un débutant. C\'est un indicateur positif de maturité du projet.' };
+            return { niveau: 'bon', message: 'Le ou la salarie connaît les conditions de rémunération pour un débutant. C\'est un indicateur positif de maturité du projet.' };
         }
         return null;
     }
@@ -861,10 +1013,10 @@ class CEPQuestionnaire {
     analyzeQ17() {
         const q17 = this.answers['Q17'];
         if (q17 === 'Non') {
-            return { niveau: 'faible', message: 'Le·la salarié·e ne connaît pas le niveau d\'expérience exigé par les recruteurs. Il est essentiel de se renseigner sur les attentes du marché : certains métiers privilégient les profils expérimentés, d\'autres sont plus ouverts aux reconversions. Consulter les offres d\'emploi et interroger des recruteurs permettrait de mieux évaluer les chances d\'insertion.' };
+            return { niveau: 'faible', message: 'Le ou la salarie ne connaît pas le niveau d\'expérience exigé par les recruteurs. Il est essentiel de se renseigner sur les attentes du marché : certains métiers privilégient les profils expérimentés, d\'autres sont plus ouverts aux reconversions. Consulter les offres d\'emploi et interroger des recruteurs permettrait de mieux évaluer les chances d\'insertion.' };
         }
         if (q17 === 'Oui') {
-            return { niveau: 'bon', message: 'Le·la salarié·e connaît le niveau d\'expérience attendu par les recruteurs. Cette connaissance est un atout pour anticiper les conditions d\'accès à l\'emploi après la formation.' };
+            return { niveau: 'bon', message: 'Le ou la salarie connaît le niveau d\'expérience attendu par les recruteurs. Cette connaissance est un atout pour anticiper les conditions d\'accès à l\'emploi après la formation.' };
         }
         return null;
     }
@@ -874,16 +1026,16 @@ class CEPQuestionnaire {
         const q19a = this.answers['Q19a'] ? this.answers['Q19a'].toLowerCase() : '';
         const q19b = this.answers['Q19b'] ? this.answers['Q19b'].toLowerCase() : '';
         if (q19 === 'Non') {
-            return { niveau: 'faible', message: 'Le·la salarié·e n\'a pas identifié d\'inconvénients au métier visé. Un projet réaliste intègre aussi les contraintes du futur métier. Il est recommandé de réaliser une immersion professionnelle ou des enquêtes métiers pour avoir une vision complète (horaires, conditions de travail, contraintes physiques, rémunération de départ...).' };
+            return { niveau: 'faible', message: 'Le ou la salarie n\'a pas identifié d\'inconvénients au métier visé par rapport à sa situation actuelle. Tout métier comporte des contraintes. Il est essentiel de les identifier pour éviter une déception après la reconversion : horaires, conditions de travail, contraintes physiques, rémunération de départ, éloignement géographique, perte d\'ancienneté, nouvelle période d\'essai... Nous recommandons fortement de réaliser une immersion professionnelle (PMSMP) ou des enquêtes métiers pour avoir une vision réaliste et complète.' };
         }
         if (q19 === 'Oui') {
             if (q19b && q19b.length > 5) {
-                return { niveau: 'bon', message: 'Le·la salarié·e a identifié des inconvénients et réfléchi à des solutions d\'adaptation. C\'est un signe de maturité du projet.' };
+                return { niveau: 'bon', message: 'Le ou la salarie a identifié des inconvénients et réfléchi à des solutions d\'adaptation. C\'est un signe de maturité du projet.' };
             }
             if (q19a && q19a.length > 5) {
-                return { niveau: 'moyen', message: 'Le·la salarié·e a identifié des inconvénients mais n\'a pas encore élaboré de stratégie d\'adaptation. Il serait utile de travailler sur les solutions possibles avec un conseiller CEP.' };
+                return { niveau: 'moyen', message: 'Le ou la salarie a identifié des inconvénients mais n\'a pas encore élaboré de stratégie d\'adaptation. Il serait utile de travailler sur les solutions possibles avec un conseiller CEP.' };
             }
-            return { niveau: 'moyen', message: 'Le·la salarié·e dit avoir identifié des inconvénients. Il est utile d\'approfondir cette réflexion pour s\'assurer d\'une vision réaliste du métier.' };
+            return { niveau: 'moyen', message: 'Le ou la salarie dit avoir identifié des inconvénients. Il est utile d\'approfondir cette réflexion pour s\'assurer d\'une vision réaliste du métier.' };
         }
         return null;
     }
@@ -911,25 +1063,56 @@ class CEPQuestionnaire {
     }
 
     analyzeQ23() {
-        const q23 = this.answers['Q23'];
+        const q23 = this.answers['Q23'] || '';
         if (q23 === 'Non') {
             return {
                 recruteurNonIdentifie: true,
+                projetInterne: false,
                 niveau: 'faible',
-                message: 'Le·la salarié·e n\'a pas encore identifié de recruteurs potentiels. Il est vivement recommandé de mettre en place une démarche tactique : solliciter des immersions facilitées (PMSMP) ou des stages chez un employeur susceptible de recruter à l\'issue de la formation. À noter : 50% des personnes en stage se font embaucher dans la même entreprise. Cette démarche renforce considérablement le dossier et les chances de retour à l\'emploi.'
+                message: 'Le ou la salarie n\'a pas encore identifié de recruteurs potentiels. Il est vivement recommandé de mettre en place une démarche tactique : solliciter des immersions facilitées (PMSMP) ou des stages chez un employeur susceptible de recruter à l\'issue de la formation. À noter : 50% des personnes en stage se font embaucher dans la même entreprise. Cette démarche renforce considérablement le dossier et les chances de retour à l\'emploi.'
             };
         }
-        if (q23 === 'Oui') {
+        if (q23.includes('projet interne')) {
             return {
                 recruteurNonIdentifie: false,
+                projetInterne: true,
+                niveau: 'bon',
+                message: 'Le ou la salarie envisage un projet interne (reconversion chez le même employeur). Ce type de projet est très favorable : il rassure la commission sur le retour à l\'emploi et peut faciliter le cofinancement par l\'employeur et son OPCO.'
+            };
+        }
+        if (q23.includes('promesse')) {
+            return {
+                recruteurNonIdentifie: false,
+                projetInterne: false,
+                niveau: 'bon',
+                message: 'Le ou la salarie dispose d\'une promesse d\'embauche. C\'est un élément très favorable pour le dossier, qui démontre la pertinence du projet et sécurise le retour à l\'emploi.'
+            };
+        }
+        if (q23.startsWith('Oui')) {
+            return {
+                recruteurNonIdentifie: false,
+                projetInterne: false,
                 niveau: 'moyen',
-                message: 'Le·la salarié·e a identifié des recruteurs potentiels. Il est recommandé de solliciter une immersion facilitée (PMSMP) ou un stage chez l\'un d\'entre eux : 50% des personnes en stage se font embaucher dans la même entreprise.'
+                message: 'Le ou la salarie a identifié des recruteurs potentiels. Il est recommandé de solliciter une immersion facilitée (PMSMP) ou un stage chez l\'un d\'entre eux : 50% des personnes en stage se font embaucher dans la même entreprise.'
             };
         }
         return null;
     }
 
     // ==================== GÉNÉRATION HTML DES ALERTES ====================
+
+    generateQ1dAlertHTML() {
+        const q1d = this.answers['Q1d'];
+        if (!q1d) return '';
+        const dateProjet = new Date(q1d);
+        const today = new Date();
+        const diffMs = dateProjet - today;
+        const diffJours = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        if (diffJours < 90) {
+            return '<div class="alert alert-danger"><strong>Alerte :</strong> La date envisagée est à moins de 90 jours. Ce délai est très court pour constituer un dossier complet.</div>';
+        }
+        return '';
+    }
 
     generateQ1aAlertHTML(a) {
         if (!a) return '';
@@ -955,20 +1138,20 @@ class CEPQuestionnaire {
 
     generateQ9AlertHTML(a) {
         if (!a || !a.penibiliteDetectee) return '';
-        return '<div class="alert alert-internal"><strong>Note référent·e :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
+        return '<div class="alert alert-internal"><strong>Note referent :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
     }
 
     generateEligibiliteCDDCDIHTML(a) {
         if (!a) return '';
         if (a.isCDD) {
-            return '<div class="alert alert-warning"><strong>Conditions d\'éligibilité CDD :</strong> À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.</div>';
+            return '<div class="alert alert-warning"><strong>Conditions d\'éligibilité CDD :</strong> À la date du départ en formation, le ou la salarie doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.</div>';
         }
-        return '<div class="alert alert-warning"><strong>Conditions d\'éligibilité CDI :</strong> À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.</div>';
+        return '<div class="alert alert-warning"><strong>Conditions d\'éligibilité CDI :</strong> À la date du départ en formation, le ou la salarie doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.</div>';
     }
 
     generateQ10bAlertHTML(a) {
         if (!a || !a.nonParleEmployeur) return '';
-        return '<div class="alert alert-internal"><strong>Note référent·e :</strong> Le·la salarié·e n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
+        return '<div class="alert alert-internal"><strong>Note referent :</strong> Le ou la salarie n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
     }
 
     generateQ3aAlertHTML(a) {
@@ -984,7 +1167,7 @@ class CEPQuestionnaire {
     generateMaturiteContextuelHTML(label, analysis) {
         if (!analysis) return '';
         const alertClass = analysis.niveau === 'bon' ? 'alert-success' : analysis.niveau === 'moyen' ? 'alert-info' : 'alert-warning';
-        const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'À approfondir';
+        const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'Objectiver les contraintes';
         return `<div class="alert ${alertClass}"><strong>${label} — ${niveauLabel} :</strong> ${analysis.message}</div>`;
     }
 
@@ -1017,17 +1200,20 @@ class CEPQuestionnaire {
             p += '<li>Vous êtes éligible au dispositif de reconversion professionnelle</li>';
         }
 
-        p += `<li><strong>Score de priorité : ${analysis.priorite.score}/${analysis.priorite.maxScore} points</strong></li>`;
+        p += `<li><strong>Niveau de priorité : ${analysis.priorite.niveau}</strong></li>`;
 
-        if (analysis.priorite.score >= 15) {
-            p += '<li>Votre profil bénéficie d\'une priorité très élevée</li>';
-            p += '<li>Traitement accéléré de votre dossier recommandé</li>';
-        } else if (analysis.priorite.score >= 10) {
-            p += '<li>Votre profil est prioritaire pour l\'accès au dispositif</li>';
-        } else if (analysis.priorite.score >= 7) {
+        // Type de projet
+        const q23Analysis = analysis.maturite.q23Analysis;
+        if (q23Analysis?.projetInterne) {
+            p += '<li>Projet interne : reconversion chez le même employeur</li>';
+        }
+
+        if (analysis.priorite.niveau === 'Très haute' || analysis.priorite.niveau === 'Haute') {
+            p += '<li>Votre profil bénéficie d\'une priorité élevée pour l\'accès au dispositif</li>';
+        } else if (analysis.priorite.niveau === 'Moyenne') {
             p += '<li>Votre profil présente une priorité moyenne</li>';
         } else {
-            p += '<li>Envisagez d\'optimiser votre dossier pour augmenter votre score de priorité</li>';
+            p += '<li>Il est recommandé d\'optimiser votre dossier pour renforcer votre priorité</li>';
         }
 
         if (analysis.maturite.status === 'Projet à construire') {
@@ -1087,7 +1273,7 @@ class CEPQuestionnaire {
         doc.setFontSize(15);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(37, 99, 235);
-        const titleLines = doc.splitTextToSize('Questionnaire préalable au projet de transition professionnelle', contentWidth);
+        const titleLines = doc.splitTextToSize('Impulsion - Prescription', contentWidth);
         doc.text(titleLines, margin, y);
         y += lineHeight * titleLines.length + 2;
 
@@ -1108,12 +1294,13 @@ class CEPQuestionnaire {
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
         doc.setTextColor(37, 99, 235);
-        doc.text(`${this.userInfo.prenom} ${this.userInfo.nom}`, margin + 3, y + 4);
+        const identLabel = this.userInfo.codeInterne ? `Réf. : ${this.userInfo.codeInterne}` : `${this.userInfo.prenom} ${this.userInfo.nom}`;
+        doc.text(identLabel, margin + 3, y + 4);
 
         doc.setFontSize(9);
         doc.setFont(undefined, 'normal');
         doc.setTextColor(100, 100, 100);
-        doc.text(`Référent·e : ${this.chargeProjets.nom}`, margin + 3, y + 11);
+        doc.text(`Référent : ${this.referent.nom}`, margin + 3, y + 11);
         doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
 
         y += 24;
@@ -1200,7 +1387,7 @@ class CEPQuestionnaire {
                 'faible': { fill: [254, 242, 232], border: [234, 88, 12], label: [234, 88, 12], icon: '!' }
             };
             const c = niveauColors[analysis.niveau] || niveauColors['moyen'];
-            const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'À approfondir';
+            const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'Objectiver les contraintes';
             drawAlertBox(`${title} — ${niveauLabel}`, analysis.message, c.fill, c.border, c.label);
         };
 
@@ -1266,9 +1453,9 @@ class CEPQuestionnaire {
         // Cartouche CDI/CDD
         if (analysis.eligibilite.eligibiliteCDDCDI) {
             if (analysis.eligibilite.eligibiliteCDDCDI.isCDD) {
-                drawAlertBox('Conditions d\'éligibilité CDD :', 'À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+                drawAlertBox('Conditions d\'éligibilité CDD :', 'À la date du départ en formation, le ou la salarie doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
             } else {
-                drawAlertBox('Conditions d\'éligibilité CDI :', 'À la date du départ en formation, le·la salarié·e doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+                drawAlertBox('Conditions d\'éligibilité CDI :', 'À la date du départ en formation, le ou la salarie doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
             }
         }
 
@@ -1291,7 +1478,7 @@ class CEPQuestionnaire {
         }
 
         // NB : les alertes Q9 (pénibilité/C2P) et Q10b (employeur non informé)
-        // sont réservées aux chargés de projets et ne figurent pas dans le PDF bénéficiaire.
+        // sont réservées aux referents et ne figurent pas dans le PDF bénéficiaire.
 
         y += 2;
 
@@ -1299,42 +1486,38 @@ class CEPQuestionnaire {
         // SECTION 2 : PRIORITÉ
         // ========================================
         drawSectionTitle('NIVEAU DE PRIORITÉ', { r: 16, g: 163, b: 129 }, '§2');
-        drawStatus('Statut', analysis.priorite.status, { r: 16, g: 163, b: 129 });
-        drawScoreBar(analysis.priorite.score, analysis.priorite.maxScore, { r: 16, g: 163, b: 129 });
 
-        // Détail des points
-        if (analysis.priorite.details.length > 0) {
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(80, 80, 80);
-            doc.text('Détail des points obtenus :', margin + 2, y);
-            doc.setFont(undefined, 'normal');
-            y += 6;
-
-            analysis.priorite.details.forEach(detail => {
-                checkPageBreak(8);
-                // Ligne alternée
-                doc.setFillColor(248, 250, 252);
-                doc.rect(margin, y - 4, contentWidth, 7, 'F');
-                doc.setFontSize(8.5);
-                doc.setTextColor(60, 60, 60);
-                doc.setFont(undefined, 'bold');
-                doc.text(`${detail.code}`, margin + 4, y);
-                doc.setFont(undefined, 'normal');
-                doc.text(`${detail.libelle}`, margin + 18, y);
-                doc.setFont(undefined, 'bold');
-                doc.setTextColor(16, 163, 129);
-                doc.text(`+${detail.points} pt${detail.points > 1 ? 's' : ''}`, margin + contentWidth - 20, y);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(0);
-                y += 7;
-            });
-            y += 3;
-        }
+        // Badge de niveau
+        const niveauPDFColors = {
+            'Très haute': { fill: [209, 250, 229], text: [6, 95, 70] },
+            'Haute': { fill: [219, 234, 254], text: [30, 64, 175] },
+            'Moyenne': { fill: [254, 243, 199], text: [146, 64, 14] },
+            'Faible': { fill: [254, 215, 170], text: [154, 52, 18] },
+            'Très faible': { fill: [254, 226, 226], text: [153, 27, 27] }
+        };
+        const niveauC = niveauPDFColors[analysis.priorite.niveau] || niveauPDFColors['Moyenne'];
+        checkPageBreak(14);
+        doc.setFillColor(...niveauC.fill);
+        doc.roundedRect(margin, y - 4, 50, 10, 3, 3, 'F');
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(...niveauC.text);
+        doc.text(analysis.priorite.niveau, margin + 5, y + 3);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0);
+        y += 14;
 
         // Alerte ouvrier/employé
         if (analysis.priorite.q3aAnalysis?.ouvrierEmploye) {
             drawAlertBox('Information :', 'Du fait de votre statut d\'ouvrier ou employé, vous avez de grandes chances d\'obtenir la prise en charge. L\'accompagnement d\'un conseiller en évolution professionnelle est vivement encouragé pour formaliser votre projet.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+        }
+
+        // Type de projet (interne / externe)
+        const q23Pdf = analysis.maturite.q23Analysis;
+        if (q23Pdf) {
+            if (q23Pdf.projetInterne) {
+                drawAlertBox('Projet interne :', 'Reconversion chez le même employeur. Ce type de projet facilite le cofinancement et rassure la commission sur le retour à l\'emploi. Orientation vers le CEP pour un accompagnement adapté.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+            }
         }
         y += 2;
 
@@ -1363,7 +1546,7 @@ class CEPQuestionnaire {
 
         // Vérification organisme
         if (analysis.maturite.q22Analysis?.nombreCriteres > 0) {
-            const detailsText = analysis.maturite.q22Analysis.details.map(d => `• ${d}`).join('\n');
+            const detailsText = analysis.maturite.q22Analysis.details.map(d => `- ${d}`).join('\n');
             drawAlertBox('Vérification du choix de l\'organisme :', detailsText, [220, 252, 231], [22, 163, 74], [22, 163, 74]);
         }
 
@@ -1402,7 +1585,7 @@ class CEPQuestionnaire {
                     doc.setFont(undefined, 'normal');
                     doc.setTextColor(60, 60, 60);
                     doc.text(wl.replace(/^\d+\.\s*/, ''), margin + 12, y);
-                } else if (wl.includes('Score de priorité') || wl.includes('Prochaines étapes')) {
+                } else if (wl.includes('Niveau de priorité') || wl.includes('Prochaines étapes')) {
                     doc.setFont(undefined, 'bold');
                     doc.setTextColor(40, 40, 40);
                     doc.text(wl, margin + 2, y);
@@ -1416,10 +1599,11 @@ class CEPQuestionnaire {
         doc.setTextColor(0);
 
         // ========================================
-        // COORDONNÉES DU CHARGÉ DE PROJETS
+        // COORDONNEES DU REFERENT + QR CODE CEP
         // ========================================
         y += 6;
-        const contactBoxHeight = 37;
+        const qrSize = 25;
+        const contactBoxHeight = 42;
         checkPageBreak(contactBoxHeight + 10);
 
         // Fond avec bordure
@@ -1428,24 +1612,42 @@ class CEPQuestionnaire {
         doc.setFillColor(99, 102, 241);
         doc.rect(margin - 2, y - 2, 3, contactBoxHeight, 'F');
 
+        // QR code mon-cep.org (à droite)
+        try {
+            const qr = qrcode(0, 'M');
+            qr.addData('https://mon-cep.org');
+            qr.make();
+            const qrDataUrl = qr.createDataURL(4, 0);
+            const qrX = margin + contentWidth - qrSize - 2;
+            doc.addImage(qrDataUrl, 'PNG', qrX, y, qrSize, qrSize);
+            doc.setFontSize(6);
+            doc.setTextColor(120, 120, 120);
+            doc.text('mon-cep.org', qrX + qrSize / 2, y + qrSize + 3, { align: 'center' });
+        } catch (e) {
+            // Si qrcode-generator n'est pas chargé, on affiche le lien en texte
+        }
+
+        const contactTextWidth = textWidth - qrSize - 10;
         doc.setFontSize(8.5);
         doc.setFont(undefined, 'italic');
         doc.setTextColor(80, 80, 80);
-        const contactLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle, nous vous invitons à revenir vers votre référent(e) Transitions Pro PACA :', textWidth - 10);
-        contactLines.forEach(line => { doc.text(line, margin + 7, y + 4); y += 4.5; });
-        y += 4;
+        const contactIntroLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle (CEP), nous vous invitons à revenir vers votre référent Transitions Pro PACA :', contactTextWidth);
+        let contactY = y + 4;
+        contactIntroLines.forEach(line => { doc.text(line, margin + 7, contactY); contactY += 4.5; });
+        contactY += 3;
         doc.setFont(undefined, 'bold');
         doc.setFontSize(10);
         doc.setTextColor(99, 102, 241);
-        doc.text(this.chargeProjets.nom, margin + 7, y);
-        y += 5;
+        doc.text(this.referent.nom, margin + 7, contactY);
+        contactY += 5;
         doc.setFont(undefined, 'normal');
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
-        const emailText = this.chargeProjets.email;
-        doc.textWithLink(emailText, margin + 7, y, { url: `mailto:${emailText}` });
-        const emailWidth = doc.getTextWidth(emailText);
-        doc.text(`  -  ${this.chargeProjets.tel}`, margin + 7 + emailWidth, y);
+        doc.text(`Tél. : ${this.referent.tel}`, margin + 7, contactY);
+        contactY += 5;
+        doc.setFontSize(8);
+        doc.setTextColor(99, 102, 241);
+        doc.textWithLink('Prendre RDV avec un CEP : mon-cep.org', margin + 7, contactY, { url: 'https://mon-cep.org' });
 
         // ========================================
         // PIED DE PAGE
@@ -1460,14 +1662,15 @@ class CEPQuestionnaire {
             // Texte
             doc.setFontSize(7);
             doc.setTextColor(160, 160, 160);
-            doc.text('Transitions Pro PACA - Questionnaire préalable au PTP', margin, pageHeight - 10);
+            doc.text('Impulsion - Transitions Pro PACA', margin, pageHeight - 10);
             doc.text(`Page ${i}/${pageCount}`, margin + contentWidth - 15, pageHeight - 10);
             doc.text(date, margin + contentWidth / 2 - 8, pageHeight - 10);
         }
 
-        // Nom du fichier avec prénom et nom du bénéficiaire
+        // Nom du fichier
         const sanitize = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-        const fileName = `prescription-cep-${sanitize(this.userInfo.prenom)}-${sanitize(this.userInfo.nom)}-${date.replace(/\//g, '-')}.pdf`;
+        const fileIdent = this.userInfo.codeInterne ? sanitize(this.userInfo.codeInterne) : `${sanitize(this.userInfo.prenom)}-${sanitize(this.userInfo.nom)}`;
+        const fileName = `impulsion-${fileIdent}-${date.replace(/\//g, '-')}.pdf`;
         doc.save(fileName);
     }
 
@@ -1477,14 +1680,17 @@ class CEPQuestionnaire {
         if (analysis.eligibilite.status === 'Éligible') {
             text += '- Vous êtes éligible au dispositif de reconversion professionnelle\n';
         }
-        text += `\nScore de priorité : ${analysis.priorite.score}/${analysis.priorite.maxScore} points\n`;
+        text += `\nNiveau de priorité : ${analysis.priorite.niveau}\n`;
 
-        if (analysis.priorite.score >= 15) {
-            text += '- Votre profil bénéficie d\'une priorité très élevée\n';
-            text += '- Traitement accéléré de votre dossier recommandé\n';
-        } else if (analysis.priorite.score >= 10) {
-            text += '- Votre profil est prioritaire pour l\'accès au dispositif\n';
-        } else if (analysis.priorite.score >= 7) {
+        // Type de projet
+        const q23Analysis = analysis.maturite.q23Analysis;
+        if (q23Analysis?.projetInterne) {
+            text += '- Projet interne : reconversion chez le même employeur\n';
+        }
+
+        if (analysis.priorite.niveau === 'Très haute' || analysis.priorite.niveau === 'Haute') {
+            text += '- Votre profil bénéficie d\'une priorité élevée pour l\'accès au dispositif\n';
+        } else if (analysis.priorite.niveau === 'Moyenne') {
             text += '- Votre profil présente une priorité moyenne\n';
         }
 
@@ -1514,14 +1720,19 @@ class CEPQuestionnaire {
 
     // ==================== ACTIONS ====================
 
-    restart() {
-        if (confirm('Êtes-vous sûr de vouloir recommencer ? Vos réponses actuelles seront perdues.')) {
+    newQuestionnaire() {
+        const msg = 'Attention : vous allez demarrer un nouveau questionnaire.\n\n' +
+                    'Les reponses actuelles ne seront plus modifiables.\n' +
+                    'Confirmez-vous vouloir continuer ?';
+        if (confirm(msg)) {
             this.answers = {};
-            localStorage.removeItem('cep_answers');
+            document.getElementById('user-civilite').value = '';
             document.getElementById('user-prenom').value = '';
             document.getElementById('user-nom').value = '';
-            this.userInfo = { prenom: '', nom: '' };
+            document.getElementById('user-code-interne').value = '';
+            this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '' };
             document.getElementById('result-screen').style.display = 'none';
+            this.timerSeconds = 0;
             this.renderAllQuestions();
             window.scrollTo(0, 0);
         }
