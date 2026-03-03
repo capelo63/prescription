@@ -90,17 +90,21 @@
                         <input type="text" id="user-code-interne" placeholder="Réf. ERP">
                     </div>
                 </div>
-                <div class="identity-row-employeur">
-                    <div class="identity-field">
-                        <label for="user-employeur">Employeur actuel</label>
+            </div>
+
+            <!-- Employeur -->
+            <div class="identity-block">
+                <div style="display: flex; gap: 12px; align-items: end;">
+                    <div style="flex: 3;">
+                        <label for="user-employeur" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">Employeur actuel</label>
                         <div class="autocomplete-wrapper">
-                            <input type="text" id="user-employeur" placeholder="Saisissez le nom ou le SIRET de l'entreprise" autocomplete="off">
+                            <input type="text" id="user-employeur" class="inline-input" placeholder="Saisissez le nom ou le SIRET de l'entreprise" autocomplete="off">
                             <div class="autocomplete-dropdown" id="employeur-dropdown"></div>
                         </div>
                     </div>
-                    <div class="identity-field">
-                        <label for="user-siret">SIRET</label>
-                        <input type="text" id="user-siret" placeholder="Renseigné automatiquement" readonly>
+                    <div style="flex: 2;">
+                        <label for="user-siret" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-light); margin-bottom: 4px;">SIRET</label>
+                        <input type="text" id="user-siret" class="inline-input" placeholder="Renseigné automatiquement" readonly style="background: var(--bg-color); color: var(--text-light);">
                     </div>
                 </div>
             </div>
