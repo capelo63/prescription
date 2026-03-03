@@ -13,11 +13,11 @@
                  alt="Transitions Pro PACA"
                  class="header-logo">
             <h1>Impulsion</h1>
-            <p class="header-subtitle">Outil d'aide a la prescription - Transitions Pro PACA</p>
+            <p class="header-subtitle">Outil d'aide à la prescription - Transitions Pro PACA</p>
             <div class="intro-block">
                 <h2>Bienvenue</h2>
-                <p>Ce questionnaire va permettre de faire un premier point rapide sur votre projet. L'objectif n'est pas d'echanger en detail a ce stade : cet echange viendra ensuite, soit avec un conseiller en evolution professionnelle (CEP), soit avec votre referent Transitions Pro PACA.</p>
-                <p><strong>Pourquoi ces questions ?</strong> Nous visons la mise en oeuvre concrete de votre projet. Il est primordial d'intervenir tot pour vous sensibiliser a l'importance d'etre tactique dans votre demarche.</p>
+                <p>Ce questionnaire va permettre de faire un premier point rapide sur votre projet. L'objectif n'est pas d'échanger en détail à ce stade : cet échange viendra ensuite, soit avec un conseiller en évolution professionnelle (CEP), soit avec votre référent Transitions Pro PACA.</p>
+                <p><strong>Pourquoi ces questions ?</strong> Nous visons la mise en œuvre concrète de votre projet. Il est primordial d'intervenir tôt pour vous sensibiliser à l'importance d'être tactique dans votre démarche.</p>
 
                 <h3>Comment fonctionne un projet de transition professionnelle ?</h3>
                 <ol>
@@ -28,13 +28,13 @@
 
                 <p>Ce questionnaire aborde trois aspects :</p>
                 <ul>
-                    <li><strong>Eligibilite</strong> — Verifier si vous pouvez beneficier du dispositif</li>
-                    <li><strong>Priorite</strong> — Evaluer votre niveau de priorite</li>
-                    <li><strong>Maturite du projet</strong> — Analyser l'avancement de votre reflexion</li>
+                    <li><strong>Éligibilité</strong> — Vérifier si vous pouvez bénéficier du dispositif</li>
+                    <li><strong>Priorité</strong> — Évaluer votre niveau de priorité</li>
+                    <li><strong>Maturité du projet</strong> — Analyser l'avancement de votre réflexion</li>
                 </ul>
-                <p>A l'issue, vous recevrez une prescription personnalisee a presenter a votre conseiller CEP.</p>
+                <p>À l'issue, vous recevrez une prescription personnalisée à présenter à votre conseiller CEP.</p>
 
-                <p class="confidentiality-notice"><strong>Confidentialite :</strong> Les informations recueillies sont couvertes par le secret professionnel. Elles ne font l'objet d'aucune exploitation statistique ni d'aucune revente a des tiers.</p>
+                <p class="confidentiality-notice"><strong>Confidentialité :</strong> Les informations recueillies sont couvertes par le secret professionnel. Elles ne font l'objet d'aucune exploitation statistique ni d'aucune revente à des tiers.</p>
             </div>
         </header>
 
@@ -42,7 +42,7 @@
         <div id="progress-container">
             <div class="progress-top-row">
                 <p class="progress-text">
-                    <span id="answered-count">0</span> / <span id="total-questions">0</span> questions repondues
+                    <span id="answered-count">0</span> / <span id="total-questions">0</span> questions répondues
                 </p>
                 <p class="timer-text" id="timer-display">00:00</p>
             </div>
@@ -56,21 +56,21 @@
             <div class="identity-block">
                 <div class="identity-row">
                     <div class="identity-field">
-                        <label for="referent-select">Referent Transitions Pro PACA</label>
+                        <label for="referent-select">Référent Transitions Pro PACA</label>
                         <select id="referent-select">
-                            <option value="">-- Selectionnez --</option>
+                            <option value="">-- Sélectionnez --</option>
                             <option value="nathalie">Nathalie Cornet</option>
                             <option value="cindy">Cindy Lecouf</option>
-                            <option value="elies">Elies Lemhani</option>
+                            <option value="elies">Eliès Lemhani</option>
                             <option value="maurine">Maurine Loubeau</option>
                             <option value="zacharie">Zacharie Pinton</option>
                             <option value="domoina">Domoina Rakotoarimanana</option>
                             <option value="sylvie">Sylvie Troubat</option>
-                            <option value="marie">Marie-Josee Verdu-Saglietto</option>
+                            <option value="marie">Marie-Josée Verdu-Saglietto</option>
                         </select>
                     </div>
                     <div class="identity-field identity-field-small">
-                        <label for="user-civilite">Civilite</label>
+                        <label for="user-civilite">Civilité</label>
                         <select id="user-civilite">
                             <option value="">--</option>
                             <option value="Mme">Mme</option>
@@ -78,17 +78,24 @@
                         </select>
                     </div>
                     <div class="identity-field">
-                        <label for="user-prenom">Prenom du beneficiaire</label>
-                        <input type="text" id="user-prenom" placeholder="Prenom">
+                        <label for="user-prenom">Prénom du bénéficiaire</label>
+                        <input type="text" id="user-prenom" placeholder="Prénom">
                     </div>
                     <div class="identity-field">
-                        <label for="user-nom">Nom du beneficiaire</label>
+                        <label for="user-nom">Nom du bénéficiaire</label>
                         <input type="text" id="user-nom" placeholder="Nom">
                     </div>
                     <div class="identity-field identity-field-small">
                         <label for="user-code-interne">Code interne</label>
-                        <input type="text" id="user-code-interne" placeholder="Ref. ERP">
+                        <input type="text" id="user-code-interne" placeholder="Réf. ERP">
                     </div>
+                </div>
+                <div class="identity-row" style="margin-top: 12px;">
+                    <div class="identity-field" style="grid-column: span 3;">
+                        <label for="user-employeur">Employeur actuel</label>
+                        <input type="text" id="user-employeur" placeholder="Nom de l'entreprise">
+                    </div>
+                </div>
                 </div>
             </div>
 
@@ -97,17 +104,17 @@
 
             <!-- Bouton resultats -->
             <div id="results-trigger" class="results-trigger" style="display:none;">
-                <button id="show-results-btn" class="btn btn-primary btn-large">Voir les resultats et generer la prescription</button>
+                <button id="show-results-btn" class="btn btn-primary btn-large">Voir les résultats et générer la prescription</button>
             </div>
 
             <!-- Resultats -->
             <div id="result-screen" style="display:none;">
                 <div class="result-content">
-                    <h2>Resultats de l'evaluation</h2>
+                    <h2>Résultats de l'évaluation</h2>
                     <div id="result-summary"></div>
                     <div id="prescription-content"></div>
                     <div class="result-actions">
-                        <button id="download-pdf-btn" class="btn btn-primary">Telecharger la prescription (PDF)</button>
+                        <button id="download-pdf-btn" class="btn btn-primary">Télécharger la prescription (PDF)</button>
                         <button id="new-questionnaire-btn" class="btn btn-secondary">Nouveau questionnaire</button>
                     </div>
                 </div>

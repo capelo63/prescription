@@ -6,17 +6,17 @@ class CEPQuestionnaire {
         this.answers = {};
         this.metiersPrioritaires = [];
         this.secteursDeclin = [];
-        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '' };
+        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '' };
         this.referent = { id: '', nom: '', email: '', tel: '' };
         this.referentsData = {
             'nathalie': { nom: 'Nathalie Cornet', email: 'n.cornet@transitionspro-paca.fr', tel: '04 91 13 23 15' },
             'cindy': { nom: 'Cindy Lecouf', email: 'c.lecouf@transitionspro-paca.fr', tel: '04 91 13 94 16' },
-            'elies': { nom: 'Elies Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
+            'elies': { nom: 'Eliès Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
             'maurine': { nom: 'Maurine Loubeau', email: 'm.loubeau@transitionspro-paca.fr', tel: '04 91 13 20 73' },
             'zacharie': { nom: 'Zacharie Pinton', email: 'z.pinton@transitionspro-paca.fr', tel: '04 91 13 94 15' },
             'domoina': { nom: 'Domoina Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr', tel: '04 91 13 93 83' },
             'sylvie': { nom: 'Sylvie Troubat', email: 's.troubat@transitionspro-paca.fr', tel: '04 91 13 20 72' },
-            'marie': { nom: 'Marie-Josee Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
+            'marie': { nom: 'Marie-Josée Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
         };
         this.timerSeconds = 0;
         this.timerInterval = null;
@@ -638,7 +638,7 @@ class CEPQuestionnaire {
     // ==================== EVENT LISTENERS ====================
 
     setupEventListeners() {
-        // Referent
+        // Référent
         document.getElementById('referent-select').addEventListener('change', (e) => {
             this.selectReferent(e.target.value);
         });
@@ -655,6 +655,9 @@ class CEPQuestionnaire {
         });
         document.getElementById('user-code-interne').addEventListener('input', (e) => {
             this.userInfo.codeInterne = e.target.value.trim();
+        });
+        document.getElementById('user-employeur').addEventListener('input', (e) => {
+            this.userInfo.employeur = e.target.value.trim();
         });
 
         // Resultats
@@ -674,12 +677,12 @@ class CEPQuestionnaire {
 
     showResults() {
         if (!this.userInfo.prenom || !this.userInfo.nom) {
-            alert('Veuillez renseigner le prenom et le nom du beneficiaire.');
+            alert('Veuillez renseigner le prénom et le nom du bénéficiaire.');
             document.getElementById('user-prenom').focus();
             return;
         }
         if (!this.referent.id) {
-            alert('Veuillez selectionner un referent Transitions Pro PACA.');
+            alert('Veuillez sélectionner un référent Transitions Pro PACA.');
             document.getElementById('referent-select').focus();
             return;
         }
@@ -722,6 +725,7 @@ class CEPQuestionnaire {
         summaryDiv.innerHTML = `
             <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: var(--bg-color); border-radius: 8px;">
                 <p style="font-size: 1.3em; color: var(--primary-color); margin: 0;"><strong>${this.userInfo.prenom} ${this.userInfo.nom}</strong></p>
+                ${this.userInfo.employeur ? `<p style="font-size: 0.95em; color: var(--text-color); margin-top: 4px;">Employeur : ${this.userInfo.employeur}</p>` : ''}
                 ${this.userInfo.codeInterne ? `<p style="font-size: 0.9em; color: var(--text-light); margin-top: 4px;">Code interne : ${this.userInfo.codeInterne}</p>` : ''}
             </div>
             <div class="result-card">
@@ -1138,7 +1142,7 @@ class CEPQuestionnaire {
 
     generateQ9AlertHTML(a) {
         if (!a || !a.penibiliteDetectee) return '';
-        return '<div class="alert alert-internal"><strong>Note referent :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
+        return '<div class="alert alert-internal"><strong>Note référent :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
     }
 
     generateEligibiliteCDDCDIHTML(a) {
@@ -1151,7 +1155,7 @@ class CEPQuestionnaire {
 
     generateQ10bAlertHTML(a) {
         if (!a || !a.nonParleEmployeur) return '';
-        return '<div class="alert alert-internal"><strong>Note referent :</strong> Le ou la salarie n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
+        return '<div class="alert alert-internal"><strong>Note référent :</strong> Le ou la salarie n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
     }
 
     generateQ3aAlertHTML(a) {
@@ -1288,8 +1292,10 @@ class CEPQuestionnaire {
 
         // Bloc identité
         const date = new Date().toLocaleDateString('fr-FR');
+        const hasEmployeur = this.userInfo.employeur && this.userInfo.employeur.length > 0;
+        const identBoxHeight = hasEmployeur ? 27 : 20;
         doc.setFillColor(248, 250, 252);
-        doc.roundedRect(margin - 2, y - 3, contentWidth + 4, 20, 2, 2, 'F');
+        doc.roundedRect(margin - 2, y - 3, contentWidth + 4, identBoxHeight, 2, 2, 'F');
 
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
@@ -1302,8 +1308,11 @@ class CEPQuestionnaire {
         doc.setTextColor(100, 100, 100);
         doc.text(`Référent : ${this.referent.nom}`, margin + 3, y + 11);
         doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
+        if (hasEmployeur) {
+            doc.text(`Employeur : ${this.userInfo.employeur}`, margin + 3, y + 18);
+        }
 
-        y += 24;
+        y += identBoxHeight + 4;
 
         const analysis = this.analyzeAnswers();
         this.generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date);
@@ -1478,7 +1487,7 @@ class CEPQuestionnaire {
         }
 
         // NB : les alertes Q9 (pénibilité/C2P) et Q10b (employeur non informé)
-        // sont réservées aux referents et ne figurent pas dans le PDF bénéficiaire.
+        // sont réservées aux référents et ne figurent pas dans le PDF bénéficiaire.
 
         y += 2;
 
@@ -1721,8 +1730,8 @@ class CEPQuestionnaire {
     // ==================== ACTIONS ====================
 
     newQuestionnaire() {
-        const msg = 'Attention : vous allez demarrer un nouveau questionnaire.\n\n' +
-                    'Les reponses actuelles ne seront plus modifiables.\n' +
+        const msg = 'Attention : vous allez démarrer un nouveau questionnaire.\n\n' +
+                    'Les réponses actuelles ne seront plus modifiables.\n' +
                     'Confirmez-vous vouloir continuer ?';
         if (confirm(msg)) {
             this.answers = {};
@@ -1730,7 +1739,8 @@ class CEPQuestionnaire {
             document.getElementById('user-prenom').value = '';
             document.getElementById('user-nom').value = '';
             document.getElementById('user-code-interne').value = '';
-            this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '' };
+            document.getElementById('user-employeur').value = '';
+            this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '' };
             document.getElementById('result-screen').style.display = 'none';
             this.timerSeconds = 0;
             this.renderAllQuestions();
