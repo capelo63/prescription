@@ -6,17 +6,18 @@ class CEPQuestionnaire {
         this.answers = {};
         this.metiersPrioritaires = [];
         this.secteursDeclin = [];
-        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '' };
+        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '', siret: '' };
+        this.employeurSearchTimeout = null;
         this.referent = { id: '', nom: '', email: '', tel: '' };
         this.referentsData = {
             'nathalie': { nom: 'Nathalie Cornet', email: 'n.cornet@transitionspro-paca.fr', tel: '04 91 13 23 15' },
             'cindy': { nom: 'Cindy Lecouf', email: 'c.lecouf@transitionspro-paca.fr', tel: '04 91 13 94 16' },
-            'elies': { nom: 'Elies Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
+            'elies': { nom: 'Eliès Lemhani', email: 'e.lemhani@transitionspro-paca.fr', tel: '04 91 13 94 12' },
             'maurine': { nom: 'Maurine Loubeau', email: 'm.loubeau@transitionspro-paca.fr', tel: '04 91 13 20 73' },
             'zacharie': { nom: 'Zacharie Pinton', email: 'z.pinton@transitionspro-paca.fr', tel: '04 91 13 94 15' },
             'domoina': { nom: 'Domoina Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr', tel: '04 91 13 93 83' },
             'sylvie': { nom: 'Sylvie Troubat', email: 's.troubat@transitionspro-paca.fr', tel: '04 91 13 20 72' },
-            'marie': { nom: 'Marie-Josee Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
+            'marie': { nom: 'Marie-Josée Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
         };
         this.timerSeconds = 0;
         this.timerInterval = null;
@@ -72,6 +73,52 @@ class CEPQuestionnaire {
             const s = (this.timerSeconds % 60).toString().padStart(2, '0');
             document.getElementById('timer-display').textContent = `${m}:${s}`;
         }, 1000);
+    }
+
+    // ==================== RECHERCHE ENTREPRISE (API GOUV) ====================
+
+    async searchEntreprise(term, dropdown, input) {
+        try {
+            const url = `https://recherche-entreprises.api.gouv.fr/search?q=${encodeURIComponent(term)}&page=1&per_page=8`;
+            const response = await fetch(url);
+            if (!response.ok) return;
+            const data = await response.json();
+
+            if (!data.results || data.results.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+
+            dropdown.innerHTML = data.results.map(e => {
+                const siege = e.siege || {};
+                const nom = e.nom_complet || e.nom_raison_sociale || '';
+                const siret = siege.siret || '';
+                const ville = siege.libelle_commune || '';
+                const naf = siege.activite_principale ? `NAF ${siege.activite_principale}` : '';
+                const effectif = e.tranche_effectif_salarie ? `${e.tranche_effectif_salarie} sal.` : '';
+                const details = [ville, naf, effectif].filter(Boolean).join(' — ');
+                return `<div class="autocomplete-item" data-nom="${nom}" data-siret="${siret}">
+                    <strong>${nom}</strong>
+                    <span class="autocomplete-code">${siret ? `SIRET ${siret}` : ''} ${details ? `· ${details}` : ''}</span>
+                </div>`;
+            }).join('');
+
+            dropdown.style.display = 'block';
+            dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const nom = item.dataset.nom;
+                    const siret = item.dataset.siret;
+                    input.value = nom;
+                    this.userInfo.employeur = nom;
+                    this.userInfo.siret = siret;
+                    document.getElementById('user-siret').value = siret;
+                    dropdown.style.display = 'none';
+                });
+            });
+        } catch (err) {
+            // En cas d'erreur réseau, l'utilisateur peut saisir manuellement
+            dropdown.style.display = 'none';
+        }
     }
 
     // ==================== RENDU DE TOUTES LES QUESTIONS ====================
@@ -638,7 +685,7 @@ class CEPQuestionnaire {
     // ==================== EVENT LISTENERS ====================
 
     setupEventListeners() {
-        // Referent
+        // Référent
         document.getElementById('referent-select').addEventListener('change', (e) => {
             this.selectReferent(e.target.value);
         });
@@ -655,6 +702,24 @@ class CEPQuestionnaire {
         });
         document.getElementById('user-code-interne').addEventListener('input', (e) => {
             this.userInfo.codeInterne = e.target.value.trim();
+        });
+        // Employeur avec autocomplétion API Recherche d'Entreprises
+        const employeurInput = document.getElementById('user-employeur');
+        const employeurDropdown = document.getElementById('employeur-dropdown');
+        employeurInput.addEventListener('input', () => {
+            const term = employeurInput.value.trim();
+            this.userInfo.employeur = term;
+            // Réinitialiser SIRET quand l'utilisateur tape
+            document.getElementById('user-siret').value = '';
+            this.userInfo.siret = '';
+            clearTimeout(this.employeurSearchTimeout);
+            if (term.length >= 3) {
+                this.employeurSearchTimeout = setTimeout(() => {
+                    this.searchEntreprise(term, employeurDropdown, employeurInput);
+                }, 300);
+            } else {
+                employeurDropdown.style.display = 'none';
+            }
         });
 
         // Resultats
@@ -674,12 +739,12 @@ class CEPQuestionnaire {
 
     showResults() {
         if (!this.userInfo.prenom || !this.userInfo.nom) {
-            alert('Veuillez renseigner le prenom et le nom du beneficiaire.');
+            alert('Veuillez renseigner le prénom et le nom du bénéficiaire.');
             document.getElementById('user-prenom').focus();
             return;
         }
         if (!this.referent.id) {
-            alert('Veuillez selectionner un referent Transitions Pro PACA.');
+            alert('Veuillez sélectionner un référent Transitions Pro PACA.');
             document.getElementById('referent-select').focus();
             return;
         }
@@ -722,6 +787,7 @@ class CEPQuestionnaire {
         summaryDiv.innerHTML = `
             <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: var(--bg-color); border-radius: 8px;">
                 <p style="font-size: 1.3em; color: var(--primary-color); margin: 0;"><strong>${this.userInfo.prenom} ${this.userInfo.nom}</strong></p>
+                ${this.userInfo.employeur ? `<p style="font-size: 0.95em; color: var(--text-color); margin-top: 4px;">Employeur : ${this.userInfo.employeur}${this.userInfo.siret ? ` <span style="color: var(--text-light); font-size: 0.85em;">(SIRET ${this.userInfo.siret})</span>` : ''}</p>` : ''}
                 ${this.userInfo.codeInterne ? `<p style="font-size: 0.9em; color: var(--text-light); margin-top: 4px;">Code interne : ${this.userInfo.codeInterne}</p>` : ''}
             </div>
             <div class="result-card">
@@ -1138,7 +1204,7 @@ class CEPQuestionnaire {
 
     generateQ9AlertHTML(a) {
         if (!a || !a.penibiliteDetectee) return '';
-        return '<div class="alert alert-internal"><strong>Note referent :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
+        return '<div class="alert alert-internal"><strong>Note référent :</strong> Conditions de travail pénibles détectées. Interroger les dispositifs C2P/FIPU.</div>';
     }
 
     generateEligibiliteCDDCDIHTML(a) {
@@ -1151,7 +1217,7 @@ class CEPQuestionnaire {
 
     generateQ10bAlertHTML(a) {
         if (!a || !a.nonParleEmployeur) return '';
-        return '<div class="alert alert-internal"><strong>Note referent :</strong> Le ou la salarie n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
+        return '<div class="alert alert-internal"><strong>Note référent :</strong> Le ou la salarie n\'a pas encore informé son employeur. Alerter sur les points suivants : ne surtout pas signer de rupture conventionnelle ou solliciter une démission avant le passage du dossier devant la commission ; ne pas non plus le faire trop tôt pendant la période de formation. En revanche, il serait bienvenu d\'évoquer ces possibilités avec son employeur au moment de la demande d\'autorisation d\'absence.</div>';
     }
 
     generateQ3aAlertHTML(a) {
@@ -1288,8 +1354,10 @@ class CEPQuestionnaire {
 
         // Bloc identité
         const date = new Date().toLocaleDateString('fr-FR');
+        const hasEmployeur = this.userInfo.employeur && this.userInfo.employeur.length > 0;
+        const identBoxHeight = hasEmployeur ? 27 : 20;
         doc.setFillColor(248, 250, 252);
-        doc.roundedRect(margin - 2, y - 3, contentWidth + 4, 20, 2, 2, 'F');
+        doc.roundedRect(margin - 2, y - 3, contentWidth + 4, identBoxHeight, 2, 2, 'F');
 
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
@@ -1302,8 +1370,14 @@ class CEPQuestionnaire {
         doc.setTextColor(100, 100, 100);
         doc.text(`Référent : ${this.referent.nom}`, margin + 3, y + 11);
         doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
+        if (hasEmployeur) {
+            const employeurText = this.userInfo.siret
+                ? `Employeur : ${this.userInfo.employeur} (SIRET ${this.userInfo.siret})`
+                : `Employeur : ${this.userInfo.employeur}`;
+            doc.text(employeurText, margin + 3, y + 18);
+        }
 
-        y += 24;
+        y += identBoxHeight + 4;
 
         const analysis = this.analyzeAnswers();
         this.generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date);
@@ -1478,7 +1552,7 @@ class CEPQuestionnaire {
         }
 
         // NB : les alertes Q9 (pénibilité/C2P) et Q10b (employeur non informé)
-        // sont réservées aux referents et ne figurent pas dans le PDF bénéficiaire.
+        // sont réservées aux référents et ne figurent pas dans le PDF bénéficiaire.
 
         y += 2;
 
@@ -1721,8 +1795,8 @@ class CEPQuestionnaire {
     // ==================== ACTIONS ====================
 
     newQuestionnaire() {
-        const msg = 'Attention : vous allez demarrer un nouveau questionnaire.\n\n' +
-                    'Les reponses actuelles ne seront plus modifiables.\n' +
+        const msg = 'Attention : vous allez démarrer un nouveau questionnaire.\n\n' +
+                    'Les réponses actuelles ne seront plus modifiables.\n' +
                     'Confirmez-vous vouloir continuer ?';
         if (confirm(msg)) {
             this.answers = {};
@@ -1730,7 +1804,9 @@ class CEPQuestionnaire {
             document.getElementById('user-prenom').value = '';
             document.getElementById('user-nom').value = '';
             document.getElementById('user-code-interne').value = '';
-            this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '' };
+            document.getElementById('user-employeur').value = '';
+            document.getElementById('user-siret').value = '';
+            this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '', siret: '' };
             document.getElementById('result-screen').style.display = 'none';
             this.timerSeconds = 0;
             this.renderAllQuestions();
