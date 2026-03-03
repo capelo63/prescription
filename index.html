@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questionnaire CEP - Transitions Pro PACA</title>
+    <title>Impulsion - Transitions Pro PACA</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,54 +12,82 @@
             <img src="https://www.transitionspro-paca.fr/wp-content/uploads/2021/04/logo-transitions-pro-paca.png"
                  alt="Transitions Pro PACA"
                  class="header-logo">
-            <h1>Questionnaire préalable au projet de transition professionnelle</h1>
+            <h1>Impulsion</h1>
+            <p class="header-subtitle">Outil d'aide a la prescription - Transitions Pro PACA</p>
             <div class="intro-block">
                 <h2>Bienvenue</h2>
-                <p>Ce questionnaire, destiné à aider le ou la salarié·e à évaluer son projet de reconversion professionnelle, aborde trois aspects :</p>
+                <p>Ce questionnaire va permettre de faire un premier point rapide sur votre projet. L'objectif n'est pas d'echanger en detail a ce stade : cet echange viendra ensuite, soit avec un conseiller en evolution professionnelle (CEP), soit avec votre referent Transitions Pro PACA.</p>
+                <p><strong>Pourquoi ces questions ?</strong> Nous visons la mise en oeuvre concrete de votre projet. Il est primordial d'intervenir tot pour vous sensibiliser a l'importance d'etre tactique dans votre demarche.</p>
+
+                <h3>Comment fonctionne un projet de transition professionnelle ?</h3>
+                <ol>
+                    <li><strong>1re phase :</strong> Construction du projet</li>
+                    <li><strong>2e phase :</strong> Passage en commission paritaire chez Transitions Pro PACA</li>
+                    <li><strong>3e phase :</strong> Validation du projet par la commission paritaire</li>
+                </ol>
+
+                <p>Ce questionnaire aborde trois aspects :</p>
                 <ul>
-                    <li><strong>Éligibilité</strong> — Vérifier s'il peut bénéficier du dispositif</li>
-                    <li><strong>Priorité</strong> — Évaluer son niveau de priorité</li>
-                    <li><strong>Maturité du projet</strong> — Analyser l'avancement de sa réflexion</li>
+                    <li><strong>Eligibilite</strong> — Verifier si vous pouvez beneficier du dispositif</li>
+                    <li><strong>Priorite</strong> — Evaluer votre niveau de priorite</li>
+                    <li><strong>Maturite du projet</strong> — Analyser l'avancement de votre reflexion</li>
                 </ul>
-                <p>À l'issue, il recevra une prescription personnalisée à présenter à son conseiller CEP.</p>
+                <p>A l'issue, vous recevrez une prescription personnalisee a presenter a votre conseiller CEP.</p>
+
+                <p class="confidentiality-notice"><strong>Confidentialite :</strong> Les informations recueillies sont couvertes par le secret professionnel. Elles ne font l'objet d'aucune exploitation statistique ni d'aucune revente a des tiers.</p>
             </div>
         </header>
 
-        <!-- Barre de progression sticky -->
+        <!-- Timer + Barre de progression sticky -->
         <div id="progress-container">
+            <div class="progress-top-row">
+                <p class="progress-text">
+                    <span id="answered-count">0</span> / <span id="total-questions">0</span> questions repondues
+                </p>
+                <p class="timer-text" id="timer-display">00:00</p>
+            </div>
             <div class="progress-bar">
                 <div id="progress-fill" class="progress-fill"></div>
             </div>
-            <p class="progress-text">
-                <span id="answered-count">0</span> / <span id="total-questions">0</span> questions répondues
-            </p>
         </div>
 
         <main id="app">
-            <!-- Bloc identité en haut -->
+            <!-- Bloc identite en haut -->
             <div class="identity-block">
                 <div class="identity-row">
                     <div class="identity-field">
-                        <label for="charge-projets-select">Chargé·e de projets</label>
-                        <select id="charge-projets-select">
-                            <option value="">-- Sélectionnez --</option>
+                        <label for="referent-select">Referent Transitions Pro PACA</label>
+                        <select id="referent-select">
+                            <option value="">-- Selectionnez --</option>
                             <option value="nathalie">Nathalie Cornet</option>
                             <option value="cindy">Cindy Lecouf</option>
-                            <option value="elies">Eliès Lemhani</option>
+                            <option value="elies">Elies Lemhani</option>
                             <option value="maurine">Maurine Loubeau</option>
                             <option value="zacharie">Zacharie Pinton</option>
-                            <option value="domoina">Domoïna Rakotoarimanana</option>
+                            <option value="domoina">Domoina Rakotoarimanana</option>
                             <option value="sylvie">Sylvie Troubat</option>
-                            <option value="marie">Marie-Josée Verdu-Saglietto</option>
+                            <option value="marie">Marie-Josee Verdu-Saglietto</option>
+                        </select>
+                    </div>
+                    <div class="identity-field identity-field-small">
+                        <label for="user-civilite">Civilite</label>
+                        <select id="user-civilite">
+                            <option value="">--</option>
+                            <option value="Mme">Mme</option>
+                            <option value="M.">M.</option>
                         </select>
                     </div>
                     <div class="identity-field">
-                        <label for="user-prenom">Prénom du bénéficiaire</label>
-                        <input type="text" id="user-prenom" placeholder="Prénom">
+                        <label for="user-prenom">Prenom du beneficiaire</label>
+                        <input type="text" id="user-prenom" placeholder="Prenom">
                     </div>
                     <div class="identity-field">
-                        <label for="user-nom">Nom du bénéficiaire</label>
+                        <label for="user-nom">Nom du beneficiaire</label>
                         <input type="text" id="user-nom" placeholder="Nom">
+                    </div>
+                    <div class="identity-field identity-field-small">
+                        <label for="user-code-interne">Code interne</label>
+                        <input type="text" id="user-code-interne" placeholder="Ref. ERP">
                     </div>
                 </div>
             </div>
@@ -67,29 +95,32 @@
             <!-- Toutes les questions sont rendues ici dynamiquement -->
             <div id="questions-container"></div>
 
-            <!-- Bouton résultats -->
+            <!-- Bouton resultats -->
             <div id="results-trigger" class="results-trigger" style="display:none;">
-                <button id="show-results-btn" class="btn btn-primary btn-large">Voir les résultats et générer la prescription</button>
+                <button id="show-results-btn" class="btn btn-primary btn-large">Voir les resultats et generer la prescription</button>
             </div>
 
-            <!-- Résultats -->
+            <!-- Resultats -->
             <div id="result-screen" style="display:none;">
                 <div class="result-content">
-                    <h2>Résultats de l'évaluation</h2>
+                    <h2>Resultats de l'evaluation</h2>
                     <div id="result-summary"></div>
                     <div id="prescription-content"></div>
                     <div class="result-actions">
-                        <button id="download-pdf-btn" class="btn btn-primary">Télécharger la prescription (PDF)</button>
-                        <button id="restart-btn" class="btn btn-secondary">Nouveau questionnaire</button>
+                        <button id="download-pdf-btn" class="btn btn-primary">Telecharger la prescription (PDF)</button>
+                        <button id="new-questionnaire-btn" class="btn btn-secondary">Nouveau questionnaire</button>
                     </div>
                 </div>
             </div>
         </main>
 
-        <footer></footer>
+        <footer>
+            <p class="footer-text">Impulsion - Transitions Pro PACA</p>
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

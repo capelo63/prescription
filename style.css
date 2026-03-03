@@ -55,6 +55,12 @@ header h1 {
     color: var(--primary-color);
 }
 
+.header-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
 .intro-block {
     text-align: left;
     margin-top: 16px;
@@ -89,6 +95,35 @@ header h1 {
     margin-bottom: 4px;
 }
 
+.intro-block h3 {
+    font-size: 1rem;
+    color: var(--primary-color);
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+.intro-block ol {
+    padding-left: 0;
+    list-style: none;
+    margin: 8px 0;
+}
+
+.intro-block ol li {
+    font-size: 0.9rem;
+    padding: 4px 0 4px 12px;
+    border-left: 2px solid var(--success-color);
+    margin-bottom: 4px;
+}
+
+.confidentiality-notice {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fef3c7;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: #92400e;
+}
+
 /* Barre de progression sticky */
 #progress-container {
     position: sticky;
@@ -116,10 +151,23 @@ header h1 {
     transition: width 0.3s ease;
 }
 
+.progress-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
 .progress-text {
-    text-align: center;
     color: var(--text-light);
     font-size: 0.85rem;
+}
+
+.timer-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-variant-numeric: tabular-nums;
 }
 
 /* Bloc identité */
@@ -133,8 +181,8 @@ header h1 {
 
 .identity-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
+    grid-template-columns: 2fr 0.7fr 1.2fr 1.2fr 0.9fr;
+    gap: 12px;
     align-items: end;
 }
 
@@ -577,6 +625,10 @@ footer {
     border-top: 1px solid var(--border-color);
 }
 
+.footer-text {
+    margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
     .container {
@@ -592,7 +644,7 @@ footer {
     }
 
     .identity-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         gap: 10px;
     }
 

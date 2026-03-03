@@ -2,14 +2,14 @@
   "questions": [
     {
       "id": "Q1a",
-      "question": "Depuis quand êtes-vous salarié·e chez votre employeur actuel ?",
+      "question": "Depuis quand êtes-vous salarié chez votre employeur actuel ?",
       "objectif": "éligibilité",
       "section": "Éligibilité",
       "note": null
     },
     {
       "id": "Q1b",
-      "question": "Avez-vous été reconnu·e travailleur handicapé ?",
+      "question": "Avez-vous été reconnu travailleur handicapé ?",
       "objectif": "éligibilité",
       "section": "Éligibilité",
       "note": null
@@ -17,6 +17,13 @@
     {
       "id": "Q1c",
       "question": "Êtes-vous en arrêt ?",
+      "objectif": "éligibilité",
+      "section": "Éligibilité",
+      "note": null
+    },
+    {
+      "id": "Q1d",
+      "question": "Quelle est la date envisagée de début de votre projet (entrée en formation) ?",
       "objectif": "éligibilité",
       "section": "Éligibilité",
       "note": null
@@ -65,7 +72,7 @@
     },
     {
       "id": "Q7",
-      "question": "Êtes-vous reconnu·e inapte par le médecin du travail (ou en-cours de reconnaissance) ?",
+      "question": "Êtes-vous reconnu inapte par le médecin du travail (ou en cours de reconnaissance) ?",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null
@@ -82,7 +89,7 @@
       "question": "Pourquoi vouloir quitter votre emploi actuel ?",
       "objectif": "critère 1",
       "section": "Maturité - Emploi",
-      "note": "si emploi menacé => interroger transco ; si emploi prénible => interroger C2P/FIPU"
+      "note": "si emploi menacé => interroger transco ; si emploi pénible => interroger C2P/FIPU"
     },
     {
       "id": "Q10",
@@ -170,21 +177,21 @@
     },
     {
       "id": "Q17",
-      "question": "Connaissez-vous le niveau d'expérience demandée par les recruteurs pour ce métier ?",
+      "question": "Connaissez-vous le niveau d'expérience demandé par les recruteurs pour ce métier ?",
       "objectif": "critère 1",
       "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q18",
-      "question": "Quels sont les avantages de ce métier par rapport à maintenant ?",
+      "question": "Quels sont les avantages de ce métier par rapport à votre emploi actuel ?",
       "objectif": "critère 1",
       "section": "Maturité - Projet",
       "note": null
     },
     {
       "id": "Q19",
-      "question": "Avez-vous identifié des inconvénients à ce métier ?",
+      "question": "Avez-vous identifié des inconvénients à ce métier par rapport à votre situation actuelle ?",
       "objectif": "critère 1",
       "section": "Maturité - Projet",
       "note": null
@@ -219,7 +226,7 @@
     },
     {
       "id": "Q21a",
-      "question": "Quelles formation et quel organisme de formation ?",
+      "question": "Quelle formation et quel organisme de formation ?",
       "objectif": "critère 2",
       "section": "Maturité - Formation",
       "note": null
@@ -234,6 +241,13 @@
     {
       "id": "Q23",
       "question": "Avez-vous identifié des recruteurs susceptibles de vous embaucher dès la fin de formation ?",
+      "objectif": "critère 3",
+      "section": "Maturité - Emploi futur",
+      "note": null
+    },
+    {
+      "id": "Q23a",
+      "question": "Précisez votre démarche :",
       "objectif": "critère 3",
       "section": "Maturité - Emploi futur",
       "note": null
