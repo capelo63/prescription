@@ -205,6 +205,12 @@ header h1 {
     transition: border-color 0.2s;
 }
 
+.identity-field input[readonly] {
+    background-color: var(--bg-color);
+    color: var(--text-light);
+    cursor: default;
+}
+
 .identity-field input:focus,
 .identity-field select:focus {
     outline: none;

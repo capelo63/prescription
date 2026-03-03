@@ -93,7 +93,14 @@
                 <div class="identity-row" style="margin-top: 12px;">
                     <div class="identity-field" style="grid-column: span 3;">
                         <label for="user-employeur">Employeur actuel</label>
-                        <input type="text" id="user-employeur" placeholder="Nom de l'entreprise">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" id="user-employeur" placeholder="Saisissez le nom ou le SIRET de l'entreprise" autocomplete="off">
+                            <div class="autocomplete-dropdown" id="employeur-dropdown"></div>
+                        </div>
+                    </div>
+                    <div class="identity-field" style="grid-column: span 2;">
+                        <label for="user-siret">SIRET</label>
+                        <input type="text" id="user-siret" placeholder="Renseigné automatiquement" readonly>
                     </div>
                 </div>
                 </div>
