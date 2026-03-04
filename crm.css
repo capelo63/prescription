@@ -179,6 +179,69 @@
 .badge-developpement { background: #fef3c7; color: #92400e; }
 .badge-construire { background: #fee2e2; color: #991b1b; }
 
+/* Badges statut dossier */
+.badge-prescrit { background: #e0e7ff; color: #3730a3; }
+.badge-oriente { background: #dbeafe; color: #1e40af; }
+.badge-dossier { background: #fef3c7; color: #92400e; }
+.badge-commission { background: #f3e8ff; color: #6b21a8; }
+.badge-valide { background: #d1fae5; color: #065f46; }
+.badge-refuse { background: #fee2e2; color: #991b1b; }
+
+/* Badges rôle utilisateur */
+.badge-referent { background: #dbeafe; color: #1e40af; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; }
+.badge-manager { background: #f3e8ff; color: #6b21a8; font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; }
+
+/* Nav utilisateur */
+.user-nav-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+/* Timeline statut */
+.statut-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.statut-step {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-color);
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.15s;
+}
+
+.statut-step:hover {
+    border-color: var(--primary-color);
+    background: #eff6ff;
+}
+
+.statut-step.statut-current {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+}
+
+.statut-step-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.statut-step-desc {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
 /* Boutons d'action dans le tableau */
 .row-actions {
     display: flex;

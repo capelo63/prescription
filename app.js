@@ -25,12 +25,37 @@ class CEPQuestionnaire {
     }
 
     async init() {
+        // Auth guard : vérifier la connexion
+        this.authProfile = await auth.requireAuth();
+        if (!this.authProfile) return;
+
+        // Afficher la nav utilisateur
+        auth.renderUserNav(document.getElementById('user-nav'));
+
+        // Si le référent est connecté, pré-remplir et verrouiller le champ référent
+        this.autoSelectReferent();
+
         await this.loadData();
         this.restoreAutoSave();
         this.renderAllQuestions();
         this.setupEventListeners();
         this.startTimer();
         this.updateProgress();
+    }
+
+    autoSelectReferent() {
+        const email = this.authProfile.email.toLowerCase();
+        const emailToId = {};
+        Object.entries(this.referentsData).forEach(([id, data]) => {
+            emailToId[data.email.toLowerCase()] = id;
+        });
+        const matchedId = emailToId[email];
+        if (matchedId) {
+            this.selectReferent(matchedId);
+            const select = document.getElementById('referent-select');
+            select.value = matchedId;
+            select.disabled = true;
+        }
     }
 
     // ==================== CHARGEMENT DES DONNÉES ====================
@@ -696,13 +721,11 @@ class CEPQuestionnaire {
         try { localStorage.removeItem('impulsion_autosave'); } catch (e) {}
     }
 
-    // ==================== STOCKAGE DES PRESCRIPTIONS (CRM) ====================
+    // ==================== STOCKAGE DES PRESCRIPTIONS (Supabase) ====================
 
-    savePrescription(analysis) {
+    async savePrescription(analysis) {
         const prescription = {
-            id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
-            date: new Date().toISOString(),
-            referent: { ...this.referent },
+            referent_id: this.authProfile.id,
             beneficiaire: { ...this.userInfo },
             answers: { ...this.answers },
             results: {
@@ -710,13 +733,14 @@ class CEPQuestionnaire {
                 priorite: { niveau: analysis.priorite.niveau, score: analysis.priorite.score, maxScore: analysis.priorite.maxScore, details: analysis.priorite.details },
                 maturite: { status: analysis.maturite.status, score: analysis.maturite.score }
             },
-            timerSeconds: this.timerSeconds
+            timer_seconds: this.timerSeconds
         };
         try {
-            const existing = JSON.parse(localStorage.getItem('impulsion_prescriptions') || '[]');
-            existing.unshift(prescription);
-            localStorage.setItem('impulsion_prescriptions', JSON.stringify(existing));
-        } catch (e) {}
+            const { error } = await supabase.from('prescriptions').insert(prescription);
+            if (error) console.error('Erreur sauvegarde prescription:', error);
+        } catch (e) {
+            console.error('Erreur sauvegarde prescription:', e);
+        }
         return prescription;
     }
 
