@@ -34,9 +34,11 @@ class ImpulsionCRM {
 
     setupRoleUI() {
         if (this.isManager) {
-            // Manager : afficher le filtre référent et la colonne référent
+            // Manager : afficher le filtre référent, la colonne référent et le lien admin
             document.getElementById('filter-referent-wrapper').style.display = '';
             document.getElementById('col-referent').style.display = '';
+            const adminLink = document.getElementById('admin-link');
+            if (adminLink) adminLink.style.display = '';
             this.loadReferentsList();
         }
     }
