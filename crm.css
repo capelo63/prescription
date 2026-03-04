@@ -240,6 +240,30 @@
     color: var(--text-color);
 }
 
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-light);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-logout svg {
+    flex-shrink: 0;
+}
+
 /* Timeline statut */
 .statut-timeline {
     display: flex;
