@@ -38,7 +38,18 @@ class ImpulsionAuth {
 
         if (error || !data) {
             console.error('Erreur chargement profil:', error);
-            await this.logout();
+            // Afficher l'erreur au lieu de déconnecter silencieusement
+            document.body.style.display = '';
+            document.body.innerHTML = `
+                <div style="max-width:500px;margin:80px auto;padding:32px;background:#fee2e2;border-radius:12px;font-family:system-ui;text-align:center;">
+                    <h2 style="color:#991b1b;">Erreur de profil</h2>
+                    <p>Votre compte utilisateur existe mais votre profil est introuvable ou inaccessible.</p>
+                    <p style="font-size:0.85rem;color:#666;">Erreur : ${error?.message || 'Profil inexistant'}</p>
+                    <p style="font-size:0.85rem;color:#666;">ID utilisateur : ${this.user.id}</p>
+                    <button onclick="auth.logout()" style="margin-top:16px;padding:10px 24px;background:#991b1b;color:white;border:none;border-radius:8px;cursor:pointer;">
+                        Retour à la connexion
+                    </button>
+                </div>`;
             return null;
         }
         this.profile = data;
