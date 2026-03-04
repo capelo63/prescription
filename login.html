@@ -88,6 +88,30 @@
             max-width: 180px;
             height: auto;
         }
+        .login-success {
+            display: none;
+            padding: 10px 14px;
+            background: #d1fae5;
+            border: 1px solid #6ee7b7;
+            border-radius: 6px;
+            color: #065f46;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .login-toggle {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .login-toggle a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-toggle a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -98,10 +122,12 @@
                      alt="Transitions Pro PACA">
             </div>
             <h1>Impulsion</h1>
-            <p class="login-subtitle">Connectez-vous pour acceder a l'outil</p>
+            <p class="login-subtitle" id="login-subtitle">Connectez-vous pour acceder a l'outil</p>
 
             <div class="login-error" id="login-error"></div>
+            <div class="login-success" id="login-success"></div>
 
+            <!-- Formulaire connexion -->
             <form id="login-form">
                 <div class="login-field">
                     <label for="login-email">Adresse e-mail</label>
@@ -113,6 +139,31 @@
                 </div>
                 <button type="submit" class="login-btn" id="login-submit">Se connecter</button>
             </form>
+
+            <!-- Formulaire inscription -->
+            <form id="signup-form" style="display:none;">
+                <div class="login-field">
+                    <label for="signup-nom">Nom complet</label>
+                    <input type="text" id="signup-nom" placeholder="Prenom Nom" required>
+                </div>
+                <div class="login-field">
+                    <label for="signup-email">Adresse e-mail</label>
+                    <input type="email" id="signup-email" placeholder="votre.email@transitionspro-paca.fr" required>
+                </div>
+                <div class="login-field">
+                    <label for="signup-password">Mot de passe</label>
+                    <input type="password" id="signup-password" placeholder="Minimum 6 caracteres" required minlength="6">
+                </div>
+                <div class="login-field">
+                    <label for="signup-password-confirm">Confirmer le mot de passe</label>
+                    <input type="password" id="signup-password-confirm" placeholder="Retapez votre mot de passe" required minlength="6">
+                </div>
+                <button type="submit" class="login-btn" id="signup-submit">Creer mon compte</button>
+            </form>
+
+            <p class="login-toggle" id="login-toggle">
+                Pas encore de compte ? <a href="#" id="toggle-link">Creer un compte</a>
+            </p>
         </div>
 
         <footer>
@@ -132,14 +183,46 @@
             }
         })();
 
+        const errorDiv = document.getElementById('login-error');
+        const successDiv = document.getElementById('login-success');
+
+        function showError(msg) {
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+            successDiv.style.display = 'none';
+        }
+        function hideMessages() {
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+        }
+
+        // Toggle connexion / inscription
+        let isSignup = false;
+        document.getElementById('toggle-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            isSignup = !isSignup;
+            hideMessages();
+            document.getElementById('login-form').style.display = isSignup ? 'none' : 'block';
+            document.getElementById('signup-form').style.display = isSignup ? 'block' : 'none';
+            document.getElementById('login-subtitle').textContent = isSignup
+                ? 'Creez votre compte referent'
+                : 'Connectez-vous pour acceder a l\'outil';
+            document.getElementById('toggle-link').textContent = isSignup
+                ? 'Se connecter'
+                : 'Creer un compte';
+            document.getElementById('login-toggle').childNodes[0].textContent = isSignup
+                ? 'Deja un compte ? '
+                : 'Pas encore de compte ? ';
+        });
+
+        // Connexion
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
-            const errorDiv = document.getElementById('login-error');
             const submitBtn = document.getElementById('login-submit');
 
-            errorDiv.style.display = 'none';
+            hideMessages();
             submitBtn.disabled = true;
             submitBtn.textContent = 'Connexion...';
 
@@ -148,10 +231,63 @@
                 if (error) throw error;
                 window.location.href = 'crm.html';
             } catch (err) {
-                errorDiv.textContent = 'Identifiants incorrects. Verifiez votre e-mail et mot de passe.';
-                errorDiv.style.display = 'block';
+                showError('Identifiants incorrects. Verifiez votre e-mail et mot de passe.');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Se connecter';
+            }
+        });
+
+        // Inscription
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nom = document.getElementById('signup-nom').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const passwordConfirm = document.getElementById('signup-password-confirm').value;
+            const submitBtn = document.getElementById('signup-submit');
+
+            hideMessages();
+
+            if (password !== passwordConfirm) {
+                showError('Les mots de passe ne correspondent pas.');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('Le mot de passe doit contenir au moins 6 caracteres.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creation du compte...';
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { nom: nom, role: 'referent' }
+                    }
+                });
+                if (error) throw error;
+
+                // Si la confirmation email est activée
+                if (data.user && !data.session) {
+                    successDiv.textContent = 'Compte cree ! Verifiez votre boite mail pour confirmer votre adresse, puis connectez-vous.';
+                    successDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Creer mon compte';
+                } else {
+                    // Auto-confirm activé : connexion directe
+                    window.location.href = 'crm.html';
+                }
+            } catch (err) {
+                const msg = err.message === 'User already registered'
+                    ? 'Un compte existe deja avec cette adresse e-mail.'
+                    : 'Erreur lors de la creation du compte. Reessayez.';
+                showError(msg);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Creer mon compte';
             }
         });
     </script>
