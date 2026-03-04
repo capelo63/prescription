@@ -10,6 +10,48 @@
     text-decoration: none;
 }
 
+/* Accueil rapide */
+.crm-welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #eff6ff, #f0f4ff);
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #dbeafe;
+}
+
+.welcome-text h2 {
+    font-size: 1.15rem;
+    color: var(--primary-color);
+    margin: 0 0 4px 0;
+}
+
+.welcome-text p {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.btn-new-prescription {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.btn-icon.btn-edit {
+    color: var(--primary-color);
+}
+
+.btn-icon.btn-edit:hover {
+    border-color: var(--primary-color);
+    background: #eff6ff;
+}
+
 /* Filtres */
 .crm-filters {
     background: var(--card-bg);
@@ -400,5 +442,11 @@
 
     .filter-row {
         grid-template-columns: 1fr;
+    }
+
+    .crm-welcome {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
     }
 }

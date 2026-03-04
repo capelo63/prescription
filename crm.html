@@ -16,13 +16,21 @@
             <h1>Tableau de bord</h1>
             <p class="header-subtitle">Suivi des prescriptions - Impulsion</p>
             <nav class="crm-nav" style="display: flex; justify-content: center; align-items: center; gap: 16px;">
-                <a href="index.html" class="btn btn-secondary btn-nav">Nouveau questionnaire</a>
                 <a href="admin.html" class="btn btn-secondary btn-nav" id="admin-link" style="display:none;">Administration</a>
                 <span id="user-nav"></span>
             </nav>
         </header>
 
         <main id="crm-app">
+            <!-- Accueil rapide -->
+            <div class="crm-welcome" id="crm-welcome">
+                <div class="welcome-text">
+                    <h2 id="welcome-title">Bienvenue</h2>
+                    <p id="welcome-subtitle">Retrouvez vos prescriptions et administrez de nouveaux questionnaires.</p>
+                </div>
+                <a href="index.html" class="btn btn-primary btn-new-prescription">+ Nouveau questionnaire</a>
+            </div>
+
             <!-- Filtres -->
             <div class="crm-filters">
                 <div class="filter-row">

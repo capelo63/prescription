@@ -21,6 +21,7 @@ class CEPQuestionnaire {
         };
         this.timerSeconds = 0;
         this.timerInterval = null;
+        this.editingPrescriptionId = null;
         this.init();
     }
 
@@ -36,7 +37,16 @@ class CEPQuestionnaire {
         this.autoSelectReferent();
 
         await this.loadData();
-        this.restoreAutoSave();
+
+        // Vérifier si on charge une prescription existante (mode édition)
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('id');
+        if (editId) {
+            await this.loadExistingPrescription(editId);
+        } else {
+            this.restoreAutoSave();
+        }
+
         this.renderAllQuestions();
         this.setupEventListeners();
         this.startTimer();
@@ -721,6 +731,46 @@ class CEPQuestionnaire {
         try { localStorage.removeItem('impulsion_autosave'); } catch (e) {}
     }
 
+    // ==================== CHARGEMENT PRESCRIPTION EXISTANTE ====================
+
+    async loadExistingPrescription(id) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('prescriptions')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error || !data) {
+                console.error('Prescription introuvable:', error);
+                alert('Prescription introuvable ou accès refusé.');
+                return;
+            }
+
+            this.editingPrescriptionId = data.id;
+
+            // Restaurer les réponses
+            if (data.answers) this.answers = data.answers;
+
+            // Restaurer les infos bénéficiaire
+            if (data.beneficiaire) {
+                this.userInfo = { ...this.userInfo, ...data.beneficiaire };
+                document.getElementById('user-civilite').value = this.userInfo.civilite || '';
+                document.getElementById('user-prenom').value = this.userInfo.prenom || '';
+                document.getElementById('user-nom').value = this.userInfo.nom || '';
+                document.getElementById('user-code-interne').value = this.userInfo.codeInterne || '';
+                document.getElementById('user-employeur').value = this.userInfo.employeur || '';
+                document.getElementById('user-siret').value = this.userInfo.siret || '';
+            }
+
+            // Restaurer le timer
+            if (data.timer_seconds) this.timerSeconds = data.timer_seconds;
+
+        } catch (e) {
+            console.error('Erreur chargement prescription:', e);
+        }
+    }
+
     // ==================== STOCKAGE DES PRESCRIPTIONS (Supabase) ====================
 
     async savePrescription(analysis) {
@@ -736,8 +786,18 @@ class CEPQuestionnaire {
             timer_seconds: this.timerSeconds
         };
         try {
-            const { error } = await supabaseClient.from('prescriptions').insert(prescription);
-            if (error) console.error('Erreur sauvegarde prescription:', error);
+            if (this.editingPrescriptionId) {
+                // Mode édition : mettre à jour la prescription existante
+                const { error } = await supabaseClient
+                    .from('prescriptions')
+                    .update(prescription)
+                    .eq('id', this.editingPrescriptionId);
+                if (error) console.error('Erreur mise à jour prescription:', error);
+            } else {
+                // Nouveau questionnaire : insérer
+                const { error } = await supabaseClient.from('prescriptions').insert(prescription);
+                if (error) console.error('Erreur sauvegarde prescription:', error);
+            }
         } catch (e) {
             console.error('Erreur sauvegarde prescription:', e);
         }
@@ -827,6 +887,7 @@ class CEPQuestionnaire {
         document.getElementById('show-results-btn').addEventListener('click', () => this.showResults());
         document.getElementById('download-pdf-btn').addEventListener('click', () => this.downloadPDF());
         document.getElementById('new-questionnaire-btn').addEventListener('click', () => this.newQuestionnaire());
+        document.getElementById('back-to-dashboard-btn').addEventListener('click', () => this.goToDashboard());
 
         // Fermer les dropdowns autocomplete en cliquant ailleurs
         document.addEventListener('click', (e) => {
@@ -1899,26 +1960,13 @@ class CEPQuestionnaire {
     // ==================== ACTIONS ====================
 
     newQuestionnaire() {
-        const msg = 'Attention : vous allez démarrer un nouveau questionnaire.\n\n' +
-                    'Les réponses actuelles ne seront plus modifiables.\n' +
-                    'Confirmez-vous vouloir continuer ?';
-        if (confirm(msg)) {
-            this.answers = {};
-            document.getElementById('user-civilite').value = '';
-            document.getElementById('user-prenom').value = '';
-            document.getElementById('user-nom').value = '';
-            document.getElementById('user-code-interne').value = '';
-            document.getElementById('user-employeur').value = '';
-            document.getElementById('user-siret').value = '';
-            document.getElementById('referent-select').value = '';
-            this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '', siret: '' };
-            this.referent = { id: '', nom: '', email: '', tel: '' };
-            document.getElementById('result-screen').style.display = 'none';
-            this.timerSeconds = 0;
-            this.clearAutoSave();
-            this.renderAllQuestions();
-            window.scrollTo(0, 0);
-        }
+        this.clearAutoSave();
+        window.location.href = 'index.html';
+    }
+
+    goToDashboard() {
+        this.clearAutoSave();
+        window.location.href = 'crm.html';
     }
 }
 

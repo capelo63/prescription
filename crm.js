@@ -20,6 +20,10 @@ class ImpulsionCRM {
         // Afficher la nav utilisateur
         auth.renderUserNav(document.getElementById('user-nav'));
 
+        // Personnaliser l'accueil
+        const welcomeTitle = document.getElementById('welcome-title');
+        if (welcomeTitle) welcomeTitle.textContent = `Bienvenue, ${profile.nom}`;
+
         // Configurer l'interface selon le rôle
         this.setupRoleUI();
 
@@ -242,6 +246,7 @@ class ImpulsionCRM {
                 <td>
                     <div class="row-actions">
                         <button class="btn-icon" onclick="crm.showDetail('${p.id}')">Detail</button>
+                        <button class="btn-icon btn-edit" onclick="crm.editPrescription('${p.id}')">Modifier</button>
                         <button class="btn-icon" onclick="crm.showEditStatut('${p.id}')">Statut</button>
                         <button class="btn-icon btn-delete" onclick="crm.deletePrescription('${p.id}')">Suppr.</button>
                     </div>
@@ -486,6 +491,12 @@ class ImpulsionCRM {
         p.beneficiaire = beneficiaire;
         this.closeModal();
         this.applyFilters();
+    }
+
+    // ==================== ÉDITION QUESTIONNAIRE ====================
+
+    editPrescription(id) {
+        window.location.href = `index.html?id=${id}`;
     }
 
     // ==================== SUPPRESSION ====================
