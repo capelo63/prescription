@@ -26,6 +26,7 @@ class CEPQuestionnaire {
 
     async init() {
         await this.loadData();
+        this.restoreAutoSave();
         this.renderAllQuestions();
         this.setupEventListeners();
         this.startTimer();
@@ -646,6 +647,77 @@ class CEPQuestionnaire {
         this.answers[questionId] = answer;
         this.updateVisibility();
         this.updateProgress();
+        this.autoSave();
+    }
+
+    // ==================== SAUVEGARDE AUTOMATIQUE (localStorage) ====================
+
+    autoSave() {
+        const data = {
+            answers: this.answers,
+            userInfo: this.userInfo,
+            referent: this.referent,
+            timerSeconds: this.timerSeconds,
+            savedAt: new Date().toISOString()
+        };
+        try {
+            localStorage.setItem('impulsion_autosave', JSON.stringify(data));
+        } catch (e) {
+            // localStorage plein ou indisponible
+        }
+    }
+
+    restoreAutoSave() {
+        try {
+            const raw = localStorage.getItem('impulsion_autosave');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            if (data.answers) this.answers = data.answers;
+            if (data.userInfo) {
+                this.userInfo = data.userInfo;
+                document.getElementById('user-civilite').value = this.userInfo.civilite || '';
+                document.getElementById('user-prenom').value = this.userInfo.prenom || '';
+                document.getElementById('user-nom').value = this.userInfo.nom || '';
+                document.getElementById('user-code-interne').value = this.userInfo.codeInterne || '';
+                document.getElementById('user-employeur').value = this.userInfo.employeur || '';
+                document.getElementById('user-siret').value = this.userInfo.siret || '';
+            }
+            if (data.referent && data.referent.id) {
+                this.referent = data.referent;
+                document.getElementById('referent-select').value = data.referent.id;
+            }
+            if (data.timerSeconds) this.timerSeconds = data.timerSeconds;
+        } catch (e) {
+            // Donnée corrompue, on ignore
+        }
+    }
+
+    clearAutoSave() {
+        try { localStorage.removeItem('impulsion_autosave'); } catch (e) {}
+    }
+
+    // ==================== STOCKAGE DES PRESCRIPTIONS (CRM) ====================
+
+    savePrescription(analysis) {
+        const prescription = {
+            id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
+            date: new Date().toISOString(),
+            referent: { ...this.referent },
+            beneficiaire: { ...this.userInfo },
+            answers: { ...this.answers },
+            results: {
+                eligibilite: { status: analysis.eligibilite.status },
+                priorite: { niveau: analysis.priorite.niveau, score: analysis.priorite.score, maxScore: analysis.priorite.maxScore, details: analysis.priorite.details },
+                maturite: { status: analysis.maturite.status, score: analysis.maturite.score }
+            },
+            timerSeconds: this.timerSeconds
+        };
+        try {
+            const existing = JSON.parse(localStorage.getItem('impulsion_prescriptions') || '[]');
+            existing.unshift(prescription);
+            localStorage.setItem('impulsion_prescriptions', JSON.stringify(existing));
+        } catch (e) {}
+        return prescription;
     }
 
     updateProgress() {
@@ -688,20 +760,25 @@ class CEPQuestionnaire {
         // Référent
         document.getElementById('referent-select').addEventListener('change', (e) => {
             this.selectReferent(e.target.value);
+            this.autoSave();
         });
 
         // Identite
         document.getElementById('user-civilite').addEventListener('change', (e) => {
             this.userInfo.civilite = e.target.value;
+            this.autoSave();
         });
         document.getElementById('user-prenom').addEventListener('input', (e) => {
             this.userInfo.prenom = e.target.value.trim();
+            this.autoSave();
         });
         document.getElementById('user-nom').addEventListener('input', (e) => {
             this.userInfo.nom = e.target.value.trim();
+            this.autoSave();
         });
         document.getElementById('user-code-interne').addEventListener('input', (e) => {
             this.userInfo.codeInterne = e.target.value.trim();
+            this.autoSave();
         });
         // Employeur avec autocomplétion API Recherche d'Entreprises
         const employeurInput = document.getElementById('user-employeur');
@@ -758,6 +835,9 @@ class CEPQuestionnaire {
         const summaryDiv = document.getElementById('result-summary');
         const prescriptionDiv = document.getElementById('prescription-content');
         const analysis = this.analyzeAnswers();
+
+        // Sauvegarder la prescription dans le CRM
+        this.savePrescription(analysis);
 
         let prioriteDetailsHTML = '';
         if (analysis.priorite.details && analysis.priorite.details.length > 0) {
@@ -1806,9 +1886,12 @@ class CEPQuestionnaire {
             document.getElementById('user-code-interne').value = '';
             document.getElementById('user-employeur').value = '';
             document.getElementById('user-siret').value = '';
+            document.getElementById('referent-select').value = '';
             this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '', siret: '' };
+            this.referent = { id: '', nom: '', email: '', tel: '' };
             document.getElementById('result-screen').style.display = 'none';
             this.timerSeconds = 0;
+            this.clearAutoSave();
             this.renderAllQuestions();
             window.scrollTo(0, 0);
         }
