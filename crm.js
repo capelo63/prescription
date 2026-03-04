@@ -203,7 +203,7 @@ class ImpulsionCRM {
         document.getElementById('stat-moyenne').textContent = data.filter(p => p.results?.priorite?.niveau === 'Moyenne').length;
         document.getElementById('stat-faible').textContent = data.filter(p => ['Faible', 'Très faible'].includes(p.results?.priorite?.niveau)).length;
         document.getElementById('stat-mature').textContent = data.filter(p => p.results?.maturite?.status === 'Projet mature').length;
-        document.getElementById('crm-count').textContent = `${data.length} resultat(s)`;
+        document.getElementById('crm-count').textContent = `${data.length} résultat(s)`;
     }
 
     // ==================== RENDU TABLEAU ====================
@@ -245,7 +245,7 @@ class ImpulsionCRM {
                 <td>${maturiteBadge}</td>
                 <td>
                     <div class="row-actions">
-                        <button class="btn-icon" onclick="crm.showDetail('${p.id}')">Detail</button>
+                        <button class="btn-icon" onclick="crm.showDetail('${p.id}')">Détail</button>
                         <button class="btn-icon btn-edit" onclick="crm.editPrescription('${p.id}')">Modifier</button>
                         <button class="btn-icon" onclick="crm.showEditStatut('${p.id}')">Statut</button>
                         <button class="btn-icon btn-delete" onclick="crm.deletePrescription('${p.id}')">Suppr.</button>
@@ -265,9 +265,9 @@ class ImpulsionCRM {
 
     getStatutBadge(statut) {
         const labels = {
-            'prescrit': 'Prescrit', 'oriente_cep': 'Oriente CEP',
+            'prescrit': 'Prescrit', 'oriente_cep': 'Orienté CEP',
             'dossier_en_cours': 'Dossier en cours', 'commission': 'Commission',
-            'valide': 'Valide', 'refuse': 'Refuse'
+            'valide': 'Validé', 'refuse': 'Refusé'
         };
         const classes = {
             'prescrit': 'badge-prescrit', 'oriente_cep': 'badge-oriente',
@@ -278,7 +278,7 @@ class ImpulsionCRM {
     }
 
     getMaturiteBadge(status) {
-        const labels = { 'Projet mature': 'Mature', 'Projet en développement': 'En dev.', 'Projet à construire': 'A construire' };
+        const labels = { 'Projet mature': 'Mature', 'Projet en développement': 'En dév.', 'Projet à construire': 'À construire' };
         const classes = { 'Projet mature': 'badge-mature', 'Projet en développement': 'badge-developpement', 'Projet à construire': 'badge-construire' };
         return `<span class="badge ${classes[status] || ''}">${labels[status] || status || '-'}</span>`;
     }
@@ -311,27 +311,27 @@ class ImpulsionCRM {
 
         let html = `
             <div class="detail-section">
-                <h3>Informations generales</h3>
+                <h3>Informations générales</h3>
                 <div class="detail-row"><span class="label">Date</span><span class="value">${date}</span></div>
-                <div class="detail-row"><span class="label">Referent</span><span class="value">${this.escapeHtml(referentNom)}</span></div>
+                <div class="detail-row"><span class="label">Référent</span><span class="value">${this.escapeHtml(referentNom)}</span></div>
                 <div class="detail-row"><span class="label">Statut</span><span class="value">${this.getStatutBadge(p.statut)}</span></div>
                 ${b.codeInterne ? `<div class="detail-row"><span class="label">Code interne</span><span class="value">${this.escapeHtml(b.codeInterne)}</span></div>` : ''}
                 ${b.employeur ? `<div class="detail-row"><span class="label">Employeur</span><span class="value">${this.escapeHtml(b.employeur)}</span></div>` : ''}
                 ${b.siret ? `<div class="detail-row"><span class="label">SIRET</span><span class="value">${b.siret}</span></div>` : ''}
-                <div class="detail-row"><span class="label">Duree de l'entretien</span><span class="value">${this.formatDuree(p.timer_seconds)}</span></div>
+                <div class="detail-row"><span class="label">Durée de l'entretien</span><span class="value">${this.formatDuree(p.timer_seconds)}</span></div>
             </div>
             <div class="detail-section">
-                <h3>Resultats</h3>
-                <div class="detail-row"><span class="label">Eligibilite</span><span class="value">${p.results?.eligibilite?.status || '-'}</span></div>
-                <div class="detail-row"><span class="label">Priorite</span><span class="value">${this.getPrioriteBadge(p.results?.priorite?.niveau)} (${p.results?.priorite?.score || 0}/${p.results?.priorite?.maxScore || 20} pts)</span></div>
-                <div class="detail-row"><span class="label">Maturite</span><span class="value">${this.getMaturiteBadge(p.results?.maturite?.status)}</span></div>
+                <h3>Résultats</h3>
+                <div class="detail-row"><span class="label">Éligibilité</span><span class="value">${p.results?.eligibilite?.status || '-'}</span></div>
+                <div class="detail-row"><span class="label">Priorité</span><span class="value">${this.getPrioriteBadge(p.results?.priorite?.niveau)} (${p.results?.priorite?.score || 0}/${p.results?.priorite?.maxScore || 20} pts)</span></div>
+                <div class="detail-row"><span class="label">Maturité</span><span class="value">${this.getMaturiteBadge(p.results?.maturite?.status)}</span></div>
             </div>
         `;
 
         // Detail des points de priorité
         const details = p.results?.priorite?.details;
         if (details && details.length > 0) {
-            html += `<div class="detail-section"><h3>Detail des points de priorite</h3>`;
+            html += `<div class="detail-section"><h3>Détail des points de priorité</h3>`;
             details.forEach(d => {
                 html += `<div class="detail-row"><span class="label">${d.code} - ${d.libelle}</span><span class="value">+${d.points} pt${d.points > 1 ? 's' : ''}</span></div>`;
             });
@@ -349,7 +349,7 @@ class ImpulsionCRM {
 
         // Réponses au questionnaire
         if (p.answers && Object.keys(p.answers).length > 0) {
-            html += `<div class="detail-section"><h3>Reponses au questionnaire</h3>`;
+            html += `<div class="detail-section"><h3>Réponses au questionnaire</h3>`;
             Object.entries(p.answers).forEach(([qId, answer]) => {
                 const displayAnswer = answer.length > 100 ? answer.substring(0, 100) + '...' : answer;
                 html += `<div class="detail-row"><span class="label">${qId}</span><span class="value">${this.escapeHtml(displayAnswer)}</span></div>`;
@@ -360,10 +360,10 @@ class ImpulsionCRM {
         // Modifier le bénéficiaire
         html += `
             <div class="detail-section">
-                <h3>Modifier le beneficiaire</h3>
+                <h3>Modifier le bénéficiaire</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
-                        <label class="filter-field-label" style="font-size:0.8rem;font-weight:600;color:var(--text-light);">Prenom</label>
+                        <label class="filter-field-label" style="font-size:0.8rem;font-weight:600;color:var(--text-light);">Prénom</label>
                         <input type="text" id="edit-prenom" class="inline-input" value="${this.escapeHtml(b.prenom || '')}">
                     </div>
                     <div>
@@ -401,12 +401,12 @@ class ImpulsionCRM {
         document.getElementById('modal-title').textContent = `Statut - ${b.prenom || ''} ${b.nom || ''}`;
 
         const statuts = [
-            { value: 'prescrit', label: 'Prescrit', desc: 'Prescription generee' },
-            { value: 'oriente_cep', label: 'Oriente CEP', desc: 'Beneficiaire oriente vers un conseiller CEP' },
+            { value: 'prescrit', label: 'Prescrit', desc: 'Prescription générée' },
+            { value: 'oriente_cep', label: 'Orienté CEP', desc: 'Bénéficiaire orienté vers un conseiller CEP' },
             { value: 'dossier_en_cours', label: 'Dossier en cours', desc: 'Constitution du dossier en cours' },
-            { value: 'commission', label: 'Commission', desc: 'Dossier soumis a la commission paritaire' },
-            { value: 'valide', label: 'Valide', desc: 'Projet valide par la commission' },
-            { value: 'refuse', label: 'Refuse', desc: 'Projet refuse par la commission' }
+            { value: 'commission', label: 'Commission', desc: 'Dossier soumis à la commission paritaire' },
+            { value: 'valide', label: 'Validé', desc: 'Projet validé par la commission' },
+            { value: 'refuse', label: 'Refusé', desc: 'Projet refusé par la commission' }
         ];
 
         let html = '<div class="detail-section"><h3>Changer le statut du dossier</h3><div class="statut-timeline">';
@@ -433,7 +433,7 @@ class ImpulsionCRM {
             .eq('id', id);
 
         if (error) {
-            alert('Erreur lors de la mise a jour du statut.');
+            alert('Erreur lors de la mise à jour du statut.');
             console.error(error);
             return;
         }
@@ -461,7 +461,7 @@ class ImpulsionCRM {
 
         const p = this.prescriptions.find(x => x.id === id);
         if (p) p.notes = notes;
-        alert('Notes enregistrees.');
+        alert('Notes enregistrées.');
     }
 
     // ==================== MODIFICATION BÉNÉFICIAIRE ====================
@@ -522,15 +522,15 @@ class ImpulsionCRM {
 
     exportCSV() {
         if (this.filteredPrescriptions.length === 0) {
-            alert('Aucune donnee a exporter.');
+            alert('Aucune donnée à exporter.');
             return;
         }
 
         const headers = [
-            'Date', 'Heure', 'Civilite', 'Prenom', 'Nom', 'Code interne',
-            'Employeur', 'SIRET', 'Referent',
-            'Eligibilite', 'Priorite', 'Score priorite',
-            'Maturite', 'Statut', 'Notes'
+            'Date', 'Heure', 'Civilité', 'Prénom', 'Nom', 'Code interne',
+            'Employeur', 'SIRET', 'Référent',
+            'Éligibilité', 'Priorité', 'Score priorité',
+            'Maturité', 'Statut', 'Notes'
         ];
 
         const rows = this.filteredPrescriptions.map(p => {

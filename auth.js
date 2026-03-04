@@ -85,18 +85,18 @@ class ImpulsionAuth {
 
     // Afficher les infos utilisateur dans la nav
     renderUserNav(container) {
-        const roleLabel = this.isManager() ? 'Manager' : 'Referent';
+        const roleLabel = this.isManager() ? 'Manager' : 'Référent';
         const roleBadge = this.isManager() ? 'badge-manager' : 'badge-referent';
         container.innerHTML = `
             <span class="user-nav-name">${this.escapeHtml(this.profile.nom)}</span>
             <span class="badge ${roleBadge}">${roleLabel}</span>
-            <button id="logout-btn" class="btn-logout" title="Se deconnecter">
+            <button id="logout-btn" class="btn-logout" title="Se déconnecter">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
-                Deconnexion
+                Déconnexion
             </button>
         `;
         document.getElementById('logout-btn').addEventListener('click', () => this.logout());
