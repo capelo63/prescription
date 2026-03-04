@@ -11,7 +11,7 @@ class ImpulsionAuth {
     // Vérifier si l'utilisateur est connecté, sinon rediriger vers login
     async requireAuth() {
         try {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = 'login.html';
                 return null;
@@ -30,7 +30,7 @@ class ImpulsionAuth {
 
     // Charger le profil (rôle, nom) depuis la table profiles
     async loadProfile() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('profiles')
             .select('*')
             .eq('id', this.user.id)
@@ -47,7 +47,7 @@ class ImpulsionAuth {
 
     // Connexion par email/mot de passe
     async login(email, password) {
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
             email,
             password
         });
@@ -59,7 +59,7 @@ class ImpulsionAuth {
 
     // Déconnexion
     async logout() {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         window.location.href = 'login.html';
     }
 

@@ -736,7 +736,7 @@ class CEPQuestionnaire {
             timer_seconds: this.timerSeconds
         };
         try {
-            const { error } = await supabase.from('prescriptions').insert(prescription);
+            const { error } = await supabaseClient.from('prescriptions').insert(prescription);
             if (error) console.error('Erreur sauvegarde prescription:', error);
         } catch (e) {
             console.error('Erreur sauvegarde prescription:', e);

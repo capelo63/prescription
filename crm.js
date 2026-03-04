@@ -44,7 +44,7 @@ class ImpulsionCRM {
     }
 
     async loadReferentsList() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('profiles')
             .select('id, nom, email')
             .eq('role', 'referent')
@@ -65,7 +65,7 @@ class ImpulsionCRM {
     // ==================== CHARGEMENT SUPABASE ====================
 
     async loadPrescriptions() {
-        let query = supabase
+        let query = supabaseClient
             .from('prescriptions')
             .select('*')
             .order('created_at', { ascending: false });
@@ -84,7 +84,7 @@ class ImpulsionCRM {
         if (this.isManager && Object.keys(this.referents).length === 0) {
             const ids = [...new Set(this.prescriptions.map(p => p.referent_id))];
             if (ids.length > 0) {
-                const { data: profiles } = await supabase
+                const { data: profiles } = await supabaseClient
                     .from('profiles')
                     .select('id, nom')
                     .in('id', ids);
@@ -422,7 +422,7 @@ class ImpulsionCRM {
     }
 
     async updateStatut(id, newStatut) {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('prescriptions')
             .update({ statut: newStatut })
             .eq('id', id);
@@ -444,7 +444,7 @@ class ImpulsionCRM {
 
     async saveNotes(id) {
         const notes = document.getElementById('detail-notes').value;
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('prescriptions')
             .update({ notes })
             .eq('id', id);
@@ -473,7 +473,7 @@ class ImpulsionCRM {
             codeInterne: document.getElementById('edit-code').value.trim()
         };
 
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('prescriptions')
             .update({ beneficiaire })
             .eq('id', id);
@@ -493,7 +493,7 @@ class ImpulsionCRM {
     async deletePrescription(id) {
         if (!confirm('Supprimer cette prescription ?')) return;
 
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('prescriptions')
             .delete()
             .eq('id', id);

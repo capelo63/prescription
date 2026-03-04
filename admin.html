@@ -247,7 +247,7 @@
 
         // Charger la liste des utilisateurs
         async function loadUsers() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('profiles')
                 .select('*')
                 .order('created_at', { ascending: true });
@@ -306,7 +306,7 @@
                 const role = document.getElementById('new-role').value;
 
                 try {
-                    const { error } = await supabase.rpc('admin_create_user', {
+                    const { error } = await supabaseClient.rpc('admin_create_user', {
                         user_email: email,
                         user_password: password,
                         user_nom: nom,
@@ -352,7 +352,7 @@
 
             try {
                 // Mettre à jour nom et rôle
-                const { error: updateError } = await supabase.rpc('admin_update_user', {
+                const { error: updateError } = await supabaseClient.rpc('admin_update_user', {
                     target_user_id: id,
                     new_nom: nom,
                     new_role: role
@@ -365,7 +365,7 @@
                         showMessage('Le mot de passe doit faire au moins 6 caracteres.', 'error');
                         return;
                     }
-                    const { error: pwError } = await supabase.rpc('admin_reset_password', {
+                    const { error: pwError } = await supabaseClient.rpc('admin_reset_password', {
                         target_user_id: id,
                         new_password: password
                     });
@@ -385,7 +385,7 @@
             if (!confirm(`Supprimer le compte de ${nom} ?\nSes prescriptions seront conservees.`)) return;
 
             try {
-                const { error } = await supabase.rpc('admin_delete_user', {
+                const { error } = await supabaseClient.rpc('admin_delete_user', {
                     target_user_id: id
                 });
                 if (error) throw error;
