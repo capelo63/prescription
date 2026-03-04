@@ -10,14 +10,22 @@ class ImpulsionAuth {
 
     // Vérifier si l'utilisateur est connecté, sinon rediriger vers login
     async requireAuth() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            this.user = session.user;
+            await this.loadProfile();
+            // Auth réussie : afficher le contenu de la page
+            document.body.style.display = '';
+            return this.profile;
+        } catch (err) {
+            console.error('Erreur auth:', err);
             window.location.href = 'login.html';
             return null;
         }
-        this.user = session.user;
-        await this.loadProfile();
-        return this.profile;
     }
 
     // Charger le profil (rôle, nom) depuis la table profiles
