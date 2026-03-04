@@ -36,9 +36,9 @@
                 <div class="filter-row">
                     <!-- Filtre référent visible uniquement pour les managers -->
                     <div class="filter-field" id="filter-referent-wrapper" style="display:none;">
-                        <label for="filter-referent">Referent</label>
+                        <label for="filter-referent">Référent</label>
                         <select id="filter-referent">
-                            <option value="">Tous les referents</option>
+                            <option value="">Tous les référents</option>
                         </select>
                     </div>
                     <div class="filter-field">
@@ -46,27 +46,27 @@
                         <select id="filter-statut">
                             <option value="">Tous</option>
                             <option value="prescrit">Prescrit</option>
-                            <option value="oriente_cep">Oriente CEP</option>
+                            <option value="oriente_cep">Orienté CEP</option>
                             <option value="dossier_en_cours">Dossier en cours</option>
                             <option value="commission">Commission</option>
-                            <option value="valide">Valide</option>
-                            <option value="refuse">Refuse</option>
+                            <option value="valide">Validé</option>
+                            <option value="refuse">Refusé</option>
                         </select>
                     </div>
                     <div class="filter-field">
-                        <label for="filter-priorite">Priorite</label>
+                        <label for="filter-priorite">Priorité</label>
                         <select id="filter-priorite">
                             <option value="">Toutes</option>
-                            <option value="Très haute">Tres haute</option>
+                            <option value="Très haute">Très haute</option>
                             <option value="Haute">Haute</option>
                             <option value="Moyenne">Moyenne</option>
                             <option value="Faible">Faible</option>
-                            <option value="Très faible">Tres faible</option>
+                            <option value="Très faible">Très faible</option>
                         </select>
                     </div>
                     <div class="filter-field">
                         <label for="filter-search">Recherche</label>
-                        <input type="text" id="filter-search" placeholder="Nom, prenom, employeur...">
+                        <input type="text" id="filter-search" placeholder="Nom, prénom, employeur...">
                     </div>
                     <div class="filter-field">
                         <label for="filter-date-from">Du</label>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="stat-card stat-haute">
                     <span class="stat-value" id="stat-haute">-</span>
-                    <span class="stat-label">Haute / Tres haute</span>
+                    <span class="stat-label">Haute / Très haute</span>
                 </div>
                 <div class="stat-card stat-moyenne">
                     <span class="stat-value" id="stat-moyenne">-</span>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="stat-card stat-faible">
                     <span class="stat-value" id="stat-faible">-</span>
-                    <span class="stat-label">Faible / Tres faible</span>
+                    <span class="stat-label">Faible / Très faible</span>
                 </div>
                 <div class="stat-card stat-mature">
                     <span class="stat-value" id="stat-mature">-</span>
@@ -115,12 +115,12 @@
                     <thead>
                         <tr>
                             <th class="sortable" data-sort="date">Date</th>
-                            <th class="sortable" data-sort="beneficiaire">Beneficiaire</th>
+                            <th class="sortable" data-sort="beneficiaire">Bénéficiaire</th>
                             <th>Employeur</th>
-                            <th class="sortable" data-sort="referent" id="col-referent" style="display:none;">Referent</th>
-                            <th class="sortable" data-sort="priorite">Priorite</th>
+                            <th class="sortable" data-sort="referent" id="col-referent" style="display:none;">Référent</th>
+                            <th class="sortable" data-sort="priorite">Priorité</th>
                             <th class="sortable" data-sort="statut">Statut</th>
-                            <th class="sortable" data-sort="maturite">Maturite</th>
+                            <th class="sortable" data-sort="maturite">Maturité</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -131,8 +131,8 @@
 
             <!-- Message vide -->
             <div id="crm-empty" class="crm-empty" style="display:none;">
-                <p>Aucune prescription enregistree.</p>
-                <a href="index.html" class="btn btn-primary">Creer une prescription</a>
+                <p>Aucune prescription enregistrée.</p>
+                <a href="index.html" class="btn btn-primary">Créer une prescription</a>
             </div>
         </main>
 
@@ -140,7 +140,7 @@
         <div id="detail-modal" class="modal-overlay" style="display:none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 id="modal-title">Detail de la prescription</h2>
+                    <h2 id="modal-title">Détail de la prescription</h2>
                     <button id="modal-close" class="modal-close-btn">&times;</button>
                 </div>
                 <div id="modal-body" class="modal-body"></div>
