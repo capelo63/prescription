@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Impulsion</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="crm.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://www.transitionspro-paca.fr/wp-content/uploads/2021/04/logo-transitions-pro-paca.png"
+                 alt="Transitions Pro PACA"
+                 class="header-logo">
+            <h1>Tableau de bord</h1>
+            <p class="header-subtitle">Suivi des prescriptions - Impulsion</p>
+            <nav class="crm-nav">
+                <a href="index.html" class="btn btn-secondary btn-nav">Nouveau questionnaire</a>
+            </nav>
+        </header>
+
+        <main id="crm-app">
+            <!-- Filtres -->
+            <div class="crm-filters">
+                <div class="filter-row">
+                    <div class="filter-field">
+                        <label for="filter-referent">Referent</label>
+                        <select id="filter-referent">
+                            <option value="">Tous</option>
+                            <option value="nathalie">Nathalie Cornet</option>
+                            <option value="cindy">Cindy Lecouf</option>
+                            <option value="elies">Elies Lemhani</option>
+                            <option value="maurine">Maurine Loubeau</option>
+                            <option value="zacharie">Zacharie Pinton</option>
+                            <option value="domoina">Domoina Rakotoarimanana</option>
+                            <option value="sylvie">Sylvie Troubat</option>
+                            <option value="marie">Marie-Josee Verdu-Saglietto</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-priorite">Priorite</label>
+                        <select id="filter-priorite">
+                            <option value="">Toutes</option>
+                            <option value="Très haute">Tres haute</option>
+                            <option value="Haute">Haute</option>
+                            <option value="Moyenne">Moyenne</option>
+                            <option value="Faible">Faible</option>
+                            <option value="Très faible">Tres faible</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-maturite">Maturite</label>
+                        <select id="filter-maturite">
+                            <option value="">Toutes</option>
+                            <option value="Projet mature">Projet mature</option>
+                            <option value="Projet en développement">En developpement</option>
+                            <option value="Projet à construire">A construire</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-search">Recherche</label>
+                        <input type="text" id="filter-search" placeholder="Nom, prenom, employeur...">
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-date-from">Du</label>
+                        <input type="date" id="filter-date-from">
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-date-to">Au</label>
+                        <input type="date" id="filter-date-to">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="crm-stats" id="crm-stats">
+                <div class="stat-card stat-total">
+                    <span class="stat-value" id="stat-total">0</span>
+                    <span class="stat-label">Prescriptions</span>
+                </div>
+                <div class="stat-card stat-haute">
+                    <span class="stat-value" id="stat-haute">0</span>
+                    <span class="stat-label">Haute / Tres haute</span>
+                </div>
+                <div class="stat-card stat-moyenne">
+                    <span class="stat-value" id="stat-moyenne">0</span>
+                    <span class="stat-label">Moyenne</span>
+                </div>
+                <div class="stat-card stat-faible">
+                    <span class="stat-value" id="stat-faible">0</span>
+                    <span class="stat-label">Faible / Tres faible</span>
+                </div>
+                <div class="stat-card stat-mature">
+                    <span class="stat-value" id="stat-mature">0</span>
+                    <span class="stat-label">Projets matures</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="crm-actions">
+                <button id="export-csv-btn" class="btn btn-primary">Exporter en CSV</button>
+                <span class="crm-count" id="crm-count">0 resultat(s)</span>
+            </div>
+
+            <!-- Tableau des prescriptions -->
+            <div class="crm-table-wrapper">
+                <table class="crm-table" id="crm-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-sort="date">Date</th>
+                            <th class="sortable" data-sort="beneficiaire">Beneficiaire</th>
+                            <th>Employeur</th>
+                            <th class="sortable" data-sort="referent">Referent</th>
+                            <th class="sortable" data-sort="priorite">Priorite</th>
+                            <th class="sortable" data-sort="maturite">Maturite</th>
+                            <th>Duree</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crm-tbody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Message vide -->
+            <div id="crm-empty" class="crm-empty" style="display:none;">
+                <p>Aucune prescription enregistree.</p>
+                <a href="index.html" class="btn btn-primary">Creer une prescription</a>
+            </div>
+        </main>
+
+        <!-- Modal détail -->
+        <div id="detail-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Detail de la prescription</h2>
+                    <button id="modal-close" class="modal-close-btn">&times;</button>
+                </div>
+                <div id="modal-body" class="modal-body"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-text">Impulsion - Transitions Pro PACA</p>
+        </footer>
+    </div>
+
+    <script src="crm.js"></script>
+</body>
+</html>
