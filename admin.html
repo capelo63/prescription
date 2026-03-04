@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Impulsion</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="crm.css">
+    <style>
+        .admin-container { max-width: 900px; margin: 0 auto; }
+
+        .admin-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .admin-card h2 {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+        }
+
+        .admin-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .admin-form .full-width { grid-column: 1 / -1; }
+
+        .admin-field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+        .admin-field input,
+        .admin-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .admin-field input:focus,
+        .admin-field select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .admin-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .admin-message {
+            display: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .admin-message.success { display: block; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .admin-message.error { display: block; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .users-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: var(--bg-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .users-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        .users-table tr:hover { background: #f8fafc; }
+
+        .user-actions { display: flex; gap: 6px; }
+
+        .password-toggle {
+            position: relative;
+        }
+        .password-toggle input { padding-right: 40px; }
+        .password-toggle button {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            padding: 4px 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="https://www.transitionspro-paca.fr/wp-content/uploads/2021/04/logo-transitions-pro-paca.png"
+                 alt="Transitions Pro PACA"
+                 class="header-logo">
+            <h1>Administration</h1>
+            <p class="header-subtitle">Gestion des utilisateurs - Impulsion</p>
+            <nav class="crm-nav" style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+                <a href="crm.html" class="btn btn-secondary btn-nav">Tableau de bord</a>
+                <a href="index.html" class="btn btn-secondary btn-nav">Questionnaire</a>
+                <span id="user-nav"></span>
+            </nav>
+        </header>
+
+        <div class="admin-container">
+            <!-- Message feedback -->
+            <div id="admin-message" class="admin-message"></div>
+
+            <!-- Formulaire de création -->
+            <div class="admin-card">
+                <h2>Creer un utilisateur</h2>
+                <form id="create-user-form" class="admin-form">
+                    <div class="admin-field">
+                        <label for="new-nom">Nom complet</label>
+                        <input type="text" id="new-nom" placeholder="Prenom Nom" required>
+                    </div>
+                    <div class="admin-field">
+                        <label for="new-email">Adresse e-mail</label>
+                        <input type="email" id="new-email" placeholder="prenom@transitionspro-paca.fr" required>
+                    </div>
+                    <div class="admin-field">
+                        <label for="new-password">Mot de passe</label>
+                        <div class="password-toggle">
+                            <input type="password" id="new-password" placeholder="Min. 6 caracteres" required minlength="6">
+                            <button type="button" onclick="togglePassword('new-password', this)">Voir</button>
+                        </div>
+                    </div>
+                    <div class="admin-field">
+                        <label for="new-role">Role</label>
+                        <select id="new-role">
+                            <option value="referent">Referent</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    <div class="admin-actions">
+                        <button type="submit" class="btn btn-primary" id="create-btn">Creer le compte</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Liste des utilisateurs -->
+            <div class="admin-card">
+                <h2>Utilisateurs (<span id="users-count">0</span>)</h2>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>E-mail</th>
+                            <th>Role</th>
+                            <th>Cree le</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-tbody">
+                        <tr><td colspan="5" style="text-align:center; color:var(--text-light);">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal édition -->
+        <div id="edit-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-content" style="max-width:500px;">
+                <div class="modal-header">
+                    <h2 id="edit-modal-title">Modifier l'utilisateur</h2>
+                    <button class="modal-close-btn" onclick="closeEditModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit-user-id">
+                    <div class="admin-form">
+                        <div class="admin-field full-width">
+                            <label for="edit-nom">Nom complet</label>
+                            <input type="text" id="edit-nom">
+                        </div>
+                        <div class="admin-field">
+                            <label for="edit-role">Role</label>
+                            <select id="edit-role">
+                                <option value="referent">Referent</option>
+                                <option value="manager">Manager</option>
+                            </select>
+                        </div>
+                        <div class="admin-field">
+                            <label for="edit-password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                            <div class="password-toggle">
+                                <input type="password" id="edit-password" placeholder="Laisser vide si inchange">
+                                <button type="button" onclick="togglePassword('edit-password', this)">Voir</button>
+                            </div>
+                        </div>
+                        <div class="admin-actions full-width">
+                            <button class="btn btn-primary" onclick="saveUser()">Enregistrer</button>
+                            <button class="btn btn-secondary" onclick="closeEditModal()">Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-text">Impulsion - Transitions Pro PACA</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        let users = [];
+
+        // Init
+        (async () => {
+            const profile = await auth.requireAuth();
+            if (!profile) return;
+
+            // Seuls les managers peuvent accéder à cette page
+            if (!auth.isManager()) {
+                window.location.href = 'crm.html';
+                return;
+            }
+
+            auth.renderUserNav(document.getElementById('user-nav'));
+            await loadUsers();
+            setupForm();
+        })();
+
+        // Charger la liste des utilisateurs
+        async function loadUsers() {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                showMessage('Erreur lors du chargement des utilisateurs.', 'error');
+                return;
+            }
+
+            users = data || [];
+            document.getElementById('users-count').textContent = users.length;
+            renderUsers();
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-tbody');
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-light);">Aucun utilisateur</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(u => {
+                const date = new Date(u.created_at).toLocaleDateString('fr-FR');
+                const roleBadge = u.role === 'manager'
+                    ? '<span class="badge badge-manager">Manager</span>'
+                    : '<span class="badge badge-referent">Referent</span>';
+                const isCurrentUser = u.id === auth.profile.id;
+
+                return `<tr>
+                    <td><strong>${escapeHtml(u.nom)}</strong>${isCurrentUser ? ' <span style="font-size:0.75rem;color:var(--text-light);">(vous)</span>' : ''}</td>
+                    <td>${escapeHtml(u.email)}</td>
+                    <td>${roleBadge}</td>
+                    <td>${date}</td>
+                    <td>
+                        <div class="user-actions">
+                            <button class="btn-icon" onclick="editUser('${u.id}')">Modifier</button>
+                            ${!isCurrentUser ? `<button class="btn-icon btn-delete" onclick="deleteUser('${u.id}', '${escapeHtml(u.nom)}')">Supprimer</button>` : ''}
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Formulaire de création
+        function setupForm() {
+            document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('create-btn');
+                btn.disabled = true;
+                btn.textContent = 'Creation...';
+
+                const email = document.getElementById('new-email').value.trim();
+                const password = document.getElementById('new-password').value;
+                const nom = document.getElementById('new-nom').value.trim();
+                const role = document.getElementById('new-role').value;
+
+                try {
+                    const { error } = await supabase.rpc('admin_create_user', {
+                        user_email: email,
+                        user_password: password,
+                        user_nom: nom,
+                        user_role: role
+                    });
+
+                    if (error) throw error;
+
+                    showMessage(`Compte cree pour ${nom} (${email})`, 'success');
+                    document.getElementById('create-user-form').reset();
+                    await loadUsers();
+                } catch (err) {
+                    showMessage(err.message || 'Erreur lors de la creation du compte.', 'error');
+                }
+
+                btn.disabled = false;
+                btn.textContent = 'Creer le compte';
+            });
+        }
+
+        // Modifier un utilisateur
+        function editUser(id) {
+            const u = users.find(x => x.id === id);
+            if (!u) return;
+
+            document.getElementById('edit-user-id').value = u.id;
+            document.getElementById('edit-nom').value = u.nom;
+            document.getElementById('edit-role').value = u.role;
+            document.getElementById('edit-password').value = '';
+            document.getElementById('edit-modal-title').textContent = `Modifier - ${u.nom}`;
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        async function saveUser() {
+            const id = document.getElementById('edit-user-id').value;
+            const nom = document.getElementById('edit-nom').value.trim();
+            const role = document.getElementById('edit-role').value;
+            const password = document.getElementById('edit-password').value;
+
+            try {
+                // Mettre à jour nom et rôle
+                const { error: updateError } = await supabase.rpc('admin_update_user', {
+                    target_user_id: id,
+                    new_nom: nom,
+                    new_role: role
+                });
+                if (updateError) throw updateError;
+
+                // Réinitialiser le mot de passe si renseigné
+                if (password.length > 0) {
+                    if (password.length < 6) {
+                        showMessage('Le mot de passe doit faire au moins 6 caracteres.', 'error');
+                        return;
+                    }
+                    const { error: pwError } = await supabase.rpc('admin_reset_password', {
+                        target_user_id: id,
+                        new_password: password
+                    });
+                    if (pwError) throw pwError;
+                }
+
+                showMessage('Utilisateur modifie avec succes.', 'success');
+                closeEditModal();
+                await loadUsers();
+            } catch (err) {
+                showMessage(err.message || 'Erreur lors de la modification.', 'error');
+            }
+        }
+
+        // Supprimer un utilisateur
+        async function deleteUser(id, nom) {
+            if (!confirm(`Supprimer le compte de ${nom} ?\nSes prescriptions seront conservees.`)) return;
+
+            try {
+                const { error } = await supabase.rpc('admin_delete_user', {
+                    target_user_id: id
+                });
+                if (error) throw error;
+
+                showMessage(`Compte de ${nom} supprime.`, 'success');
+                await loadUsers();
+            } catch (err) {
+                showMessage(err.message || 'Erreur lors de la suppression.', 'error');
+            }
+        }
+
+        // Utilitaires
+        function showMessage(text, type) {
+            const el = document.getElementById('admin-message');
+            el.textContent = text;
+            el.className = `admin-message ${type}`;
+            setTimeout(() => { el.className = 'admin-message'; }, 5000);
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Cacher';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Voir';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
