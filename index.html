@@ -14,8 +14,9 @@
                  class="header-logo">
             <h1>Impulsion</h1>
             <p class="header-subtitle">Outil d'aide à la prescription - Transitions Pro PACA</p>
-            <nav class="crm-nav" style="margin-top: 8px;">
+            <nav class="crm-nav" style="margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 16px;">
                 <a href="crm.html" class="btn-link" style="font-size: 0.9rem;">Tableau de bord</a>
+                <span id="user-nav"></span>
             </nav>
             <div class="intro-block">
                 <h2>Bienvenue</h2>
@@ -139,6 +140,9 @@
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="app.js"></script>

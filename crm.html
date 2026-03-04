@@ -15,8 +15,9 @@
                  class="header-logo">
             <h1>Tableau de bord</h1>
             <p class="header-subtitle">Suivi des prescriptions - Impulsion</p>
-            <nav class="crm-nav">
+            <nav class="crm-nav" style="display: flex; justify-content: center; align-items: center; gap: 16px;">
                 <a href="index.html" class="btn btn-secondary btn-nav">Nouveau questionnaire</a>
+                <span id="user-nav"></span>
             </nav>
         </header>
 
@@ -24,18 +25,23 @@
             <!-- Filtres -->
             <div class="crm-filters">
                 <div class="filter-row">
-                    <div class="filter-field">
+                    <!-- Filtre référent visible uniquement pour les managers -->
+                    <div class="filter-field" id="filter-referent-wrapper" style="display:none;">
                         <label for="filter-referent">Referent</label>
                         <select id="filter-referent">
+                            <option value="">Tous les referents</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-statut">Statut</label>
+                        <select id="filter-statut">
                             <option value="">Tous</option>
-                            <option value="nathalie">Nathalie Cornet</option>
-                            <option value="cindy">Cindy Lecouf</option>
-                            <option value="elies">Elies Lemhani</option>
-                            <option value="maurine">Maurine Loubeau</option>
-                            <option value="zacharie">Zacharie Pinton</option>
-                            <option value="domoina">Domoina Rakotoarimanana</option>
-                            <option value="sylvie">Sylvie Troubat</option>
-                            <option value="marie">Marie-Josee Verdu-Saglietto</option>
+                            <option value="prescrit">Prescrit</option>
+                            <option value="oriente_cep">Oriente CEP</option>
+                            <option value="dossier_en_cours">Dossier en cours</option>
+                            <option value="commission">Commission</option>
+                            <option value="valide">Valide</option>
+                            <option value="refuse">Refuse</option>
                         </select>
                     </div>
                     <div class="filter-field">
@@ -47,15 +53,6 @@
                             <option value="Moyenne">Moyenne</option>
                             <option value="Faible">Faible</option>
                             <option value="Très faible">Tres faible</option>
-                        </select>
-                    </div>
-                    <div class="filter-field">
-                        <label for="filter-maturite">Maturite</label>
-                        <select id="filter-maturite">
-                            <option value="">Toutes</option>
-                            <option value="Projet mature">Projet mature</option>
-                            <option value="Projet en développement">En developpement</option>
-                            <option value="Projet à construire">A construire</option>
                         </select>
                     </div>
                     <div class="filter-field">
@@ -76,23 +73,23 @@
             <!-- Statistiques -->
             <div class="crm-stats" id="crm-stats">
                 <div class="stat-card stat-total">
-                    <span class="stat-value" id="stat-total">0</span>
+                    <span class="stat-value" id="stat-total">-</span>
                     <span class="stat-label">Prescriptions</span>
                 </div>
                 <div class="stat-card stat-haute">
-                    <span class="stat-value" id="stat-haute">0</span>
+                    <span class="stat-value" id="stat-haute">-</span>
                     <span class="stat-label">Haute / Tres haute</span>
                 </div>
                 <div class="stat-card stat-moyenne">
-                    <span class="stat-value" id="stat-moyenne">0</span>
+                    <span class="stat-value" id="stat-moyenne">-</span>
                     <span class="stat-label">Moyenne</span>
                 </div>
                 <div class="stat-card stat-faible">
-                    <span class="stat-value" id="stat-faible">0</span>
+                    <span class="stat-value" id="stat-faible">-</span>
                     <span class="stat-label">Faible / Tres faible</span>
                 </div>
                 <div class="stat-card stat-mature">
-                    <span class="stat-value" id="stat-mature">0</span>
+                    <span class="stat-value" id="stat-mature">-</span>
                     <span class="stat-label">Projets matures</span>
                 </div>
             </div>
@@ -100,7 +97,7 @@
             <!-- Actions -->
             <div class="crm-actions">
                 <button id="export-csv-btn" class="btn btn-primary">Exporter en CSV</button>
-                <span class="crm-count" id="crm-count">0 resultat(s)</span>
+                <span class="crm-count" id="crm-count">Chargement...</span>
             </div>
 
             <!-- Tableau des prescriptions -->
@@ -111,10 +108,10 @@
                             <th class="sortable" data-sort="date">Date</th>
                             <th class="sortable" data-sort="beneficiaire">Beneficiaire</th>
                             <th>Employeur</th>
-                            <th class="sortable" data-sort="referent">Referent</th>
+                            <th class="sortable" data-sort="referent" id="col-referent" style="display:none;">Referent</th>
                             <th class="sortable" data-sort="priorite">Priorite</th>
+                            <th class="sortable" data-sort="statut">Statut</th>
                             <th class="sortable" data-sort="maturite">Maturite</th>
-                            <th>Duree</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -130,7 +127,7 @@
             </div>
         </main>
 
-        <!-- Modal détail -->
+        <!-- Modal détail / édition -->
         <div id="detail-modal" class="modal-overlay" style="display:none;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -146,6 +143,9 @@
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
     <script src="crm.js"></script>
 </body>
 </html>
