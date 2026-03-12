@@ -1495,7 +1495,7 @@ class CEPQuestionnaire {
         // Titre
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
-        doc.text('Impulsion - Prescription', margin, y);
+        doc.text('Transitions Pro PACA', margin, y);
         y += 5;
         doc.setLineWidth(0.3);
         doc.line(margin, y, margin + contentWidth, y);
@@ -1508,7 +1508,7 @@ class CEPQuestionnaire {
         doc.text(identLabel, margin, y);
         doc.text(`Date : ${date}`, margin + contentWidth - 30, y);
         y += lh;
-        doc.text(`Référent : ${this.referent.nom}  —  Tél. : ${this.referent.tel}`, margin, y);
+        doc.text(`Référent : ${this.referent.nom}`, margin, y);
         y += lh;
         if (this.userInfo.employeur && this.userInfo.employeur.length > 0) {
             const empText = this.userInfo.siret
@@ -1528,7 +1528,7 @@ class CEPQuestionnaire {
 
         // Titre de section (texte gras souligné, pas de couleur)
         const drawSection = (title) => {
-            y += 2;
+            y += 5;
             doc.setFontSize(9);
             doc.setFont(undefined, 'bold');
             doc.text(title, margin, y);
@@ -1671,14 +1671,32 @@ class CEPQuestionnaire {
         doc.setLineWidth(0.2);
         doc.line(margin, y, margin + contentWidth, y);
         y += 4;
-        drawLine('Après avoir rencontré un conseiller en évolution professionnelle (CEP), revenez vers votre référent :', 0);
-        drawField(this.referent.nom, `Tél. : ${this.referent.tel}`);
-        drawLine('Prendre RDV avec un CEP : mon-cep.org', 0);
+        drawLine('Après avoir rencontré un conseiller en évolution professionnelle (CEP), revenez vers votre référent Transitions Pro PACA :', 0);
+        drawField(this.referent.nom, '');
+        doc.setFontSize(7.5);
+        doc.setTextColor(0);
+        doc.textWithLink('Prendre RDV avec un CEP : mon-cep.org', margin, y, { url: 'https://mon-cep.org' });
+        y += lh;
+
+        // QR code mon-cep.org
+        try {
+            const qr = qrcode(0, 'M');
+            qr.addData('https://mon-cep.org');
+            qr.make();
+            const qrDataUrl = qr.createDataURL(4, 0);
+            const qrSize = 18;
+            doc.addImage(qrDataUrl, 'PNG', margin, y, qrSize, qrSize);
+            doc.setFontSize(6.5);
+            doc.text('mon-cep.org', margin + qrSize / 2, y + qrSize + 3, { align: 'center' });
+            y += qrSize + 5;
+        } catch (e) {
+            // qrcode-generator non chargé
+        }
 
         // ---- PIED DE PAGE ----
         doc.setFontSize(6.5);
         doc.setTextColor(120);
-        doc.text('Impulsion - Transitions Pro PACA', margin, pageHeight - 8);
+        doc.text('Transitions Pro PACA', margin, pageHeight - 8);
         doc.text(date, margin + contentWidth / 2 - 8, pageHeight - 8);
         doc.text('Page 1/1', margin + contentWidth - 12, pageHeight - 8);
         doc.setTextColor(0);
