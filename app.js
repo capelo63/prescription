@@ -1481,430 +1481,207 @@ class CEPQuestionnaire {
     downloadPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        const margin = 20;
-        let y = margin;
-        const lineHeight = 7;
-        const pageHeight = doc.internal.pageSize.height;
-
-        // Logo Transitions Pro PACA embarqué en base64 (évite les problèmes CORS)
-        const logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVQAAACcCAMAAAAXgKPqAAAAk1BMVEUAqKkAqKkAqKkAqKkAqKkAqKkAqKkAqKkAqKkAqKkAqKkAqKlYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFpYWFoaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsaFxsAAAAAqKkAqKkAqKkAqKlYWFoaFxtBSSmKAAAALnRSTlNAUGBwgI+fr7/P3+/v38+/r5+PgHBgUEAwIBAQIDBAUGBwgI+fr7/P3+8AECAwKCvEyAAADzBJREFUeNrsmglyqzoQRbGNMYYlMNrMDaiy/9V9CRlaA4pJghL/V75ViUFIcPvQSGJwHELIGajCA1D5hAQjAKHyAVz64wJcXLqB/vElWkz/T+14A+KA0DQ40eWTz/5d2G7Hx15OAW3ks8ZzVU2HgGzUuYcXluMQOBCHQfImMs5wvQBbnej5HFfYP6CSAKHSdocZNjblBT4ZWJUeRtJP1dkJOiJUd7j4oGog23WGFxaFyjmcScDJUJIaVOJyVgdCBoRKyxao2PTYA/SEHHnyn66wQA0EqGxRlUu2K4QXFoPasyv/eiYDJ3PWoQZhP8E7X4IjQu2Dow510iH0WN5fPPDPC9RreBSguj+DSuCFRaH64bWHnoxTZ+hfr+SAUHmH6buBO8G7nrzLDHVqx/tUGeoE/8hS6Rj0xOF7Geg2N1igBldy/KehOg5lcwwpCUbm5HugZap7Cq8u6/TGQ7hAZV2xIVODU09GVv/Eq/N99cSboXoXH/5pqNOvF/oBmcgcw16H2ofEpeSJfyXjcvlfPAPUgVx9cmJww4sAFTyyXP4jGUxQ3c/l/3+gBp7rEmciEx51qOAyqJ7vuoG7QD2GKtQzr38KaOxs8UxOItQBodJkNkGVC79Z60/1gDolju9OZLwLQg19nw9GfejChNv1cfQP2VkIfH8EwO6YD1B8Bwc+WaBVjlNDTxyovonr/wC15xxY3gwjxdBDzxj1UyINjuMMtHBgFR+zJQpyHOnvkZeNjsN+YFoaHjtle5j2e8C99AdszI7ifBPX/wEqvI44rnCXWn+qV4I68HHqWa3w9e+o4IXkBCR8Tmu8kvClmb4W1H9Fb6gW9IZqQW+oFvSGakFvqBb0hmpBb6gW9IZqQW+oFvSGakE/hhqnsV6YppFWLdFbYjWpllnmWnRfyQYbCbqVbewqJyo/dNXcYNZiUVNmsCLWulKd02ZdLhUVrJpoPS07vtubUHpnh57W+zPR5Y9iLVSUN9xjlUk2OmpDIh3VtFIBKzba+55cHWQqqmPHiJXCVsd6mzbc5MJ6KhRTIp9K7pgdtXCopXU6rZds0SNrCnuh1qKsk7JhUbsEgieNKUfIlWDjDrvJ+VhXzj2gMBSdXyMX6nW5+RpzSN8rHo8tknWdsJZ0EaDwCkl5wV1zWxls1LslqwnqHe1/QjV6FMt2HoWxGk2Nwcgqt0J1sRYyVZTJUFvYbKOBneR061CTNahqjwQZBiJoRmWIJtIPeVOhBmRVjgY103uuGKEy5SYb7Upw+8jJdXAzkLuBNqpYTeC5arQeTWHowkVcB7ImT6iFZFRVMtR2Baopuhh2kQPxfdJj6OAr2eOwWFR1aBnV6sYFqPfVaKLlxGXpbd5BquIapC8n+MoBNKj5fFaKNCtlNCkOD6s25oDqHG3cYBc5oI8Sq0VRpZ/NeD1/Mf+0aJBDl017LVegovB9tMFVw1eaSOwkCxlqCwYbiDwq/wYqtYQuxAmV7gZHu7Vo0D9evx18EyqePYFjjSvo+HMb0Ox7+W+Gqs9RKrEfQwldpRINLrfinUKbfBNqqgwwjbQNU9Voo1NuWPbRF6CCxm+63PR2WHpXosFGtXjrCPAzqKlhG6aqbqNVbex4s/p1qOgDbbO4UNKobo4GZRtq8wlUG/oJ1LthiicU343XXfSLUD9So43dsnMvqI3hbkQo7owjRPGbUOsVG/vO9/eCGpnmzWJxbp7L/CLUj9RoY6/B6WdQK76CE07ZnAK1VaPB4S3/Raj1yuTfHtUfTKnKhyntTlV+3KVBvS2bfg8qraLfplqjuh1q1CgeWp6oy+8iKYNbORpco8p/AWqLqarYaKxR3Qw1bpTHJMmcoaV6p8rXC+wXlGgiDMc+1Bz7fNVGZ4vqBqh3qqLW7p1us6FMvVOdm2GqYjQqVetQ02o++ZqNxBZVE9Tnj/6qOQMiaVaAUOdMyDCaFarWoaaYqmhDpZrBntoOVb3zx/lpozw+nWsWM20xGvU5aGYb6tyFl2hDp9olsKO+CLVUH/oXj3qIB6HGHxgXRqOFYxsqpupswzbVr0EttIf+mfasCKHOQ1iN0ayGYxkqpupswzbVr0DtuHn9KZv0hA2hYqrO0RjCsQx1SdXZhm2qm6HqD/3RYCVuRqiYqnM0hnBiu1CXVH1iY6dH1FvnqYV29efiPOomj+QINZ79YjRr4TSWoS7vAA02dn9FvQlqor7tkWf8iTiFRahYbU5rUzi5XajQPLGx73u/TVDRVaY+9L9zCc/5ZKixHI0pnNYy1PyJjY/Zxj7aAhUv8BJtyMIAZKhQStEYw0nsQoX2cxv5vvcAG6FG+HoEN5nuDHAFU/XJK5SbZaj5Nhs7faS2ESpU6is0TdjTSwYrczTC2SosQ4X2mY09X1lthZrhUdGDpimRESrGZrb82GQbav7ERvMXUOeRKUbEirBP0l9Py2cEXwbj6wTbUKHVoMYx/93/5epmqKWIqjBALQE0qKkSTdKtfUX6I6j4MYUZao42lq+q2+RvL39pqqo/7IcOtyJUJVVroW0ib8y/B9X82Y+exa1so+EN/3SgWkylOKRX0rfSyEoxmGI0uNYk+GEYVfRNqMYP1HSouWQjmRv+4ZRKmKqqt6X6bevHf+2d6XabOhCA3cRJXUdCbGZRznW307QdO9H7v92dYZAVQ2ioAzUm+v4gCXyO83WA0VY3F1I2/xpe/PhsJeWPE5P/Hkspt0ePzdbX+PXlHndTnCf55/DkO6YxgMK44G1L3TbmiducukCtx6Lfrftg8ynkOE839ThVdQ/Q9lBgS6rz+NDVGft+6oBKj+XpVqqb6Hs4fHC0Nf/9pX6xgeDeue2V6tuWVPfJB1tr8HDyeGqPjRTb1icfXDrDjD30xy/0jqbfTmr7qf65JbUjC2xZ/XH/FqntLT+dUu/tH3BsdcRB6taer3bTd3v7/2r4d8p/99qc9t/P401h3V9hcdhAwQy6Oe3r7+e3y2BxylKdMt6f1dHEy/6/22XH/PVbuxZ53QV/9e7dlp/rB/TPb0d/NCc5zVCl/6a1eVXfbZSf/7SN8v7bYXx60Jn/Rfc+WtfU3i+73cIx3Nh3wy9f0+cq2C8eARlrw+/2K23GGTBKB9lF7fFS/wle6gh4qSPgpY6AlzoCXuoIeKkj4KWOwLSkPi76fJ/9Ylrf+pipSb3ljv4r3OBV6z1MmClJ5SGpj72uWsGEmZJU/+MJI+CljoCXOgJe6gjUulZ/Zu2l9mZWv5wG08FLHQEvdQSun/qzhgkzJam79VNvPsCEmZJU2N2s+vGx62vrPM9LODeTkvpmtDCIzOC8zEtqbpgczsrspKZ5bEwAZ2V2UnOAyBg4K3OUmqDUTCEJQBEaiYdSKjy9MRuALDBBhpUYLwipQC0yxWMqTTDI43iOUmOUmvCztRR0COlEASCxlBkCHRqissyF+iNDWJ2d1DTfCCPRkExCVUbGxAqFavJYkjppRCKMIKmKCwG2BChTmCARgzyOZyf1EHYKEIWxqSl8A7SVGlMCnqTYJKmJK0AJBUVpMsjjeJZSE3BSsYxSSahWFIYUy6l1mduCjfJh3nGzk5rmuYa21ALPGK4gHVIRL7XjRYW0pNKz1JjCShUdUodJcd+N1BiFSeDbn4K5LdWeeTuTkvq4YGy9rj4+v+R6ufywgw6c1MaLihOnqJK6AV3AsVRs4RdVOchozJSkHgap766BuLH1tR3o26/4/LKvVEqpguq2B8E5KKdUuZNKKVUsq5RKxgIvfTtTkrpq/PTMU6MOj3eu3k8qJ/8RFUMSaFN9J7WR/M9Z6tNNJdVx1RjEfjlWdSBLLmVBCkQZyiABoqiPmTKq6qbKEq8PsZSHomrJlAgHGd+amtRPqxW73bNUrH6q7ng73bK+ua3qO5guU5O6sHf5kqUCclXPn5Dd1Q7PT30+ZYpSYUn2nFS4dZIfXX26TFLqoiF1yRJd3Ut9hpf6z/FSR6D7meqlnsyf3/49peooAUINMoZ/GlOT2pmn7vpJ5ZHoumt/LqYmtatHdQ09pSrqcXqpL0n9CM2+f0+puprn81IbUt0o1FHPv6fUrBqBtlJLt7QqzwtAsGmQ7v1FSb1dLq/sd+Lf9r3jm7+n1NgguZXKE9SaRlqwoLCQ4lEOMRJ1SVIXrsoSeRsgQE+p0kjUaaWaihhA1YXcECGMy/SlLjgX6Ce1RHPSBE5qXoY8uh/p0AhIjChiE8G4TF8qrDkZ6CV1gxojY7STSsHJhQQLyTCj0DUXLJUUrqGfVAxLeldlbalRorBQVEt+xuYCpO65Q9Vr6E+YIM/QYEsqU4WyUUPMmCKXLJWzAtvj2rlua5vcMLItNVBKxdWsyvgZ7CVIrSRamXe3q+oAL5GYmuKFZ2qNVoMsmEAuWururs7/Px13W9sERuZ5jrd46qSGdm4/Tenuj7BBwrhcglR+hvaYotb1bLQwIfoVFK5EZPPUnEP5XaVUy8Yk6cpm/Qv7DN2hXmR9BS9Ci0w4B1CQcbgigcYzkgs6oON7elHB1XL/vLq7uq4d75f2e+4/LLHcRVpP9icFQJ5qXjjFQbxJNkBkeBybSUkdnDNt/vFSR8BLHYF5Sx1mEV+bdy1VD7LctM27lnom5i91s+loHy+1mpvURNB4NBZ0zFsii44R1Ko9MbyeVQz7QpuZ1Mj2ocoAj7FdXN2G2wM+mdGlAzIvqRh+IlFkShqDxtJXpCZ8cujN7POSWknSoSohkjm6yl6RqozQWKaoHjJPmJ1UW8xCFZXYgsKCsKjq8UGcTlV1529UzrOFvKwlVkQGhcLaRhX4caXcxxzvVOrGIKIEU5Ec6hWlMET+/NrwMG8geWuLsnPcfz/8OlOpWhihaOA0pkhVha0fXmdBFamHamgEFRQFcHQkNVB/P/w6U6kYdBnKUvaZ6uqENBG3M8KEqU280Hx5kHrq4MF8peaQOKmuDm4HZX5IGdLCbVCNwEvtK5V4USovsJB2L6sovdQBpCpsV6Ja1pLTGS+1v9TULqtsSNWmJqsCVXupDXipVBjqtlRnh1TFriXjhRbGRDZQaUjAS33eTZVVN7U0Rm0ESdXoLAOshxtBYUiERiSR9RUbw70qCQptJ0lJiWuYSC8VrC5C6rqQsTST1vXSPhxc8o82gzrIM5v864COXmqNjgXGaEmFw/9OiU3Zoc5kAasnQpNwkItS2qUWOhL8TxKIU+Zj/gc59ZXnaudylgAAAABJRU5ErkJggg==';
-
+        const margin = 15;
+        let y = 15;
+        const lh = 4.2;
         const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
         const contentWidth = pageWidth - margin * 2;
-
-        // Logo en haut, centré
-        const logoWidth = 45;
-        const logoRatio = 156 / 340; // dimensions réelles du PNG: 340x156
-        const logoHeight = logoWidth * logoRatio;
-        const logoX = (pageWidth - logoWidth) / 2;
-        doc.addImage(logoBase64, 'PNG', logoX, y, logoWidth, logoHeight);
-        y += logoHeight + 5;
-
-        // Titre principal
-        doc.setFontSize(15);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(37, 99, 235);
-        const titleLines = doc.splitTextToSize('Impulsion - Prescription', contentWidth);
-        doc.text(titleLines, margin, y);
-        y += lineHeight * titleLines.length + 2;
-
-        // Ligne décorative sous le titre
-        doc.setDrawColor(37, 99, 235);
-        doc.setLineWidth(1);
-        doc.line(margin, y, margin + 60, y);
-        doc.setLineWidth(0.3);
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin + 60, y, margin + contentWidth, y);
-        y += 8;
-
-        // Bloc identité
         const date = new Date().toLocaleDateString('fr-FR');
-        const hasEmployeur = this.userInfo.employeur && this.userInfo.employeur.length > 0;
-        const identBoxHeight = hasEmployeur ? 27 : 20;
-        doc.setFillColor(248, 250, 252);
-        doc.roundedRect(margin - 2, y - 3, contentWidth + 4, identBoxHeight, 2, 2, 'F');
 
+        doc.setTextColor(0);
+        doc.setDrawColor(0);
+
+        // Titre
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
-        doc.setTextColor(37, 99, 235);
-        const identLabel = this.userInfo.codeInterne ? `Réf. : ${this.userInfo.codeInterne}` : `${this.userInfo.prenom} ${this.userInfo.nom}`;
-        doc.text(identLabel, margin + 3, y + 4);
+        doc.text('Impulsion - Prescription', margin, y);
+        y += 5;
+        doc.setLineWidth(0.3);
+        doc.line(margin, y, margin + contentWidth, y);
+        y += 5;
 
-        doc.setFontSize(9);
+        // Identité
+        doc.setFontSize(8);
         doc.setFont(undefined, 'normal');
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Référent : ${this.referent.nom}`, margin + 3, y + 11);
-        doc.text(`Date : ${date}`, margin + contentWidth - 35, y + 4);
-        if (hasEmployeur) {
-            const employeurText = this.userInfo.siret
+        const identLabel = this.userInfo.codeInterne ? `Réf. : ${this.userInfo.codeInterne}` : `${this.userInfo.prenom} ${this.userInfo.nom}`;
+        doc.text(identLabel, margin, y);
+        doc.text(`Date : ${date}`, margin + contentWidth - 30, y);
+        y += lh;
+        doc.text(`Référent : ${this.referent.nom}  —  Tél. : ${this.referent.tel}`, margin, y);
+        y += lh;
+        if (this.userInfo.employeur && this.userInfo.employeur.length > 0) {
+            const empText = this.userInfo.siret
                 ? `Employeur : ${this.userInfo.employeur} (SIRET ${this.userInfo.siret})`
                 : `Employeur : ${this.userInfo.employeur}`;
-            doc.text(employeurText, margin + 3, y + 18);
+            doc.text(empText, margin, y);
+            y += lh;
         }
-
-        y += identBoxHeight + 4;
+        y += 3;
 
         const analysis = this.analyzeAnswers();
-        this.generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date);
+        this.generatePDFContent(doc, analysis, y, margin, lh, pageHeight, contentWidth, date);
     }
 
-    generatePDFContent(doc, analysis, y, margin, lineHeight, pageHeight, date) {
-        const pageWidth = doc.internal.pageSize.width;
-        const contentWidth = pageWidth - margin * 2;
-        const textWidth = contentWidth - 6;
+    generatePDFContent(doc, analysis, y, margin, lh, pageHeight, contentWidth, date) {
+        const textWidth = contentWidth;
 
-        const checkPageBreak = (needed) => {
-            if (y + needed > pageHeight - 20) { doc.addPage(); y = 20; }
-        };
-
-        // Ligne de séparation décorative
-        const drawSeparator = (color) => {
-            checkPageBreak(8);
-            doc.setDrawColor(color.r, color.g, color.b);
-            doc.setLineWidth(0.5);
+        // Titre de section (texte gras souligné, pas de couleur)
+        const drawSection = (title) => {
+            y += 2;
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            doc.text(title, margin, y);
+            y += 1;
+            doc.setLineWidth(0.2);
             doc.line(margin, y, margin + contentWidth, y);
-            y += 8;
-        };
-
-        // Titre de section avec bandeau coloré
-        const drawSectionTitle = (title, color, icon) => {
-            checkPageBreak(18);
-            y += 4;
-            doc.setFillColor(color.r, color.g, color.b);
-            doc.roundedRect(margin - 2, y - 5, contentWidth + 4, 12, 2, 2, 'F');
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(255, 255, 255);
-            doc.text(`${icon}  ${title}`, margin + 3, y + 3);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(0);
-            y += 14;
-        };
-
-        // Cartouche d'alerte avec calcul de hauteur correct
-        const drawAlertBox = (label, message, fillColor, borderColor, labelColor) => {
-            doc.setFontSize(8.5);
-            const lines = doc.splitTextToSize(message, textWidth - 4);
-            // Hauteur = padding top (5) + label (5) + espace après label (3) + lignes * 4.5 + padding bottom (5)
-            const contentLineHeight = 4.5;
-            const boxHeight = 5 + 5 + 3 + (lines.length * contentLineHeight) + 5;
-            checkPageBreak(boxHeight + 4);
-
-            // Fond
-            doc.setFillColor(...fillColor);
-            doc.roundedRect(margin, y, contentWidth, boxHeight, 1.5, 1.5, 'F');
-            // Bordure gauche épaisse (accent)
-            doc.setFillColor(...borderColor);
-            doc.rect(margin, y, 3, boxHeight, 'F');
-
-            // Label
-            const labelY = y + 8;
-            doc.setFontSize(8.5);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(...labelColor);
-            doc.text(label, margin + 7, labelY);
-
-            // Contenu
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(60, 60, 60);
-            doc.setFontSize(8);
-            let textY = labelY + 6;
-            lines.forEach(line => {
-                doc.text(line, margin + 7, textY);
-                textY += contentLineHeight;
-            });
-
-            y += boxHeight + 4;
-        };
-
-        // Cartouche contextuel avec niveau (faible/moyen/bon)
-        const drawContextBox = (title, analysis) => {
-            if (!analysis || !analysis.message) return;
-            const niveauColors = {
-                'bon': { fill: [220, 252, 231], border: [22, 163, 74], label: [22, 163, 74], icon: '✓' },
-                'moyen': { fill: [219, 234, 254], border: [59, 130, 246], label: [59, 130, 246], icon: '~' },
-                'faible': { fill: [254, 242, 232], border: [234, 88, 12], label: [234, 88, 12], icon: '!' }
-            };
-            const c = niveauColors[analysis.niveau] || niveauColors['moyen'];
-            const niveauLabel = analysis.niveau === 'bon' ? 'Maturité solide' : analysis.niveau === 'moyen' ? 'Maturité partielle' : 'Objectiver les contraintes';
-            drawAlertBox(`${title} — ${niveauLabel}`, analysis.message, c.fill, c.border, c.label);
-        };
-
-        // Indicateur de statut avec icône
-        const drawStatus = (label, value, color) => {
-            checkPageBreak(12);
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(color.r, color.g, color.b);
-            doc.text(value, margin + 2, y);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(0);
-            y += lineHeight + 2;
-        };
-
-        // Texte descriptif
-        const drawText = (text, fontSize) => {
-            doc.setFontSize(fontSize || 9);
-            doc.setTextColor(80, 80, 80);
-            const lines = doc.splitTextToSize(text, textWidth);
-            lines.forEach(line => {
-                checkPageBreak(6);
-                doc.text(line, margin + 2, y);
-                y += 5;
-            });
-            doc.setTextColor(0);
             y += 3;
-        };
-
-        // Barre de score visuelle
-        const drawScoreBar = (score, maxScore, color) => {
-            checkPageBreak(20);
-            const barWidth = 100;
-            const barHeight = 8;
-            const barX = margin + 2;
-            const pct = Math.min(score / maxScore, 1);
-
-            // Fond gris
-            doc.setFillColor(230, 230, 230);
-            doc.roundedRect(barX, y, barWidth, barHeight, 3, 3, 'F');
-            // Barre de progression
-            if (pct > 0) {
-                doc.setFillColor(color.r, color.g, color.b);
-                doc.roundedRect(barX, y, barWidth * pct, barHeight, 3, 3, 'F');
-            }
-            // Score texte
-            doc.setFontSize(11);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(color.r, color.g, color.b);
-            doc.text(`${score} / ${maxScore} points`, barX + barWidth + 8, y + 6);
             doc.setFont(undefined, 'normal');
-            doc.setTextColor(0);
-            y += barHeight + 8;
         };
 
-        // ========================================
-        // SECTION 1 : ÉLIGIBILITÉ
-        // ========================================
-        drawSectionTitle('ÉLIGIBILITÉ', { r: 37, g: 99, b: 235 }, '§1');
-        drawStatus('Statut', analysis.eligibilite.status, { r: 37, g: 99, b: 235 });
-        drawText(analysis.eligibilite.details);
+        // Texte simple
+        const drawLine = (text, indent) => {
+            doc.setFontSize(7.5);
+            doc.setFont(undefined, 'normal');
+            const x = margin + (indent || 0);
+            const lines = doc.splitTextToSize(text, textWidth - (indent || 0));
+            lines.forEach(l => {
+                doc.text(l, x, y);
+                y += lh;
+            });
+        };
 
-        // Cartouche CDI/CDD
+        // Ligne avec label gras + valeur
+        const drawField = (label, value) => {
+            doc.setFontSize(7.5);
+            doc.setFont(undefined, 'bold');
+            doc.text(label, margin + 2, y);
+            const labelW = doc.getTextWidth(label + ' ');
+            doc.setFont(undefined, 'normal');
+            doc.text(value, margin + 2 + labelW, y);
+            y += lh;
+        };
+
+        // Point (bullet)
+        const drawBullet = (text) => {
+            doc.setFontSize(7.5);
+            doc.setFont(undefined, 'normal');
+            doc.text('•', margin + 2, y);
+            const lines = doc.splitTextToSize(text, textWidth - 8);
+            lines.forEach(l => {
+                doc.text(l, margin + 6, y);
+                y += lh;
+            });
+        };
+
+        // ---- ÉLIGIBILITÉ ----
+        drawSection('1. ÉLIGIBILITÉ');
+        drawField('Statut :', analysis.eligibilite.status);
+        drawLine(analysis.eligibilite.details, 2);
+
         if (analysis.eligibilite.eligibiliteCDDCDI) {
             if (analysis.eligibilite.eligibiliteCDDCDI.isCDD) {
-                drawAlertBox('Conditions d\'éligibilité CDD :', 'À la date du départ en formation, le ou la salarie doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé au cours des 5 dernières années, dont 120 jours (ou 4 mois) en CDD. Il doit être encore sous contrat CDD au moment du dépôt du dossier et débuter sa formation au plus tard 6 mois après la fin de son contrat.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+                drawBullet('Conditions CDD : ancienneté 24 mois sur 5 ans dont 4 mois en CDD ; sous contrat CDD au dépôt ; formation dans les 6 mois après fin de contrat.');
             } else {
-                drawAlertBox('Conditions d\'éligibilité CDI :', 'À la date du départ en formation, le ou la salarie doit justifier d\'une ancienneté d\'au moins 24 mois, consécutifs ou non, en qualité de salarié de droit privé, dont 12 mois dans l\'entreprise, quelle qu\'ait été la nature des contrats de travail successifs.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+                drawBullet('Conditions CDI : ancienneté 24 mois dont 12 mois dans l\'entreprise.');
             }
         }
-
-        // Alertes Q1a
         if (analysis.eligibilite.q1aAnalysis?.ancienneteInsuffisante) {
-            drawAlertBox('Alerte :', 'Il faudra avoir 12 mois d\'ancienneté à la date d\'entrée en formation.', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+            drawBullet('Alerte : 12 mois d\'ancienneté requis à la date d\'entrée en formation.');
         }
         if (analysis.eligibilite.q1aAnalysis?.ancienneteElevee) {
-            drawAlertBox('Alerte :', 'Le taux de mise en oeuvre de la reconversion décline après 5 ans d\'ancienneté. Compte tenu de votre ancienneté, nous vous invitons à faire preuve de la plus grande vigilance lors de votre demande d\'autorisation d\'absence et à anticiper les futurs freins : mettre votre CV à jour, vous préparer pour les entretiens d\'embauche, envisager une perte des indemnités de licenciement, vous préparer à vivre une nouvelle période d\'essai, à perdre des congés, à voir votre rémunération baisser...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+            drawBullet('Alerte : ancienneté élevée — vigilance sur la mise en œuvre de la reconversion (CV, entretiens, période d\'essai, rémunération...).');
         }
-
-        // Alerte travailleur handicapé
         if (analysis.eligibilite.q1bAnalysis?.travailleurHandicape) {
-            drawAlertBox('Information :', 'Du fait de la reconnaissance de votre statut de travailleur handicapé, nous vous invitons à solliciter un accompagnement renforcé auprès de Cap Emploi, de la médecine du travail ou encore de l\'éventuel référent au sein de l\'organisme de formation.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+            drawBullet('Travailleur handicapé : solliciter Cap Emploi, médecine du travail ou référent handicap de l\'organisme de formation.');
         }
-
-        // Alerte rémunération
         if (analysis.eligibilite.q3bAnalysis?.remunerationElevee) {
-            drawAlertBox('Attention :', 'Votre rémunération est supérieure à la moyenne des rémunérations prises en charge par Transitions Pro PACA. Cet élément risque de faire réagir négativement la commission. Pistes de compensation : formation partiellement hors temps de travail, organisme plus compétitif en coût/durée, solutions de cofinancement...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+            drawBullet('Rémunération supérieure à la moyenne — risque de réaction négative de la commission. Pistes : formation hors temps de travail, organisme plus compétitif, cofinancement.');
         }
 
-        // NB : les alertes Q9 (pénibilité/C2P) et Q10b (employeur non informé)
-        // sont réservées aux référents et ne figurent pas dans le PDF bénéficiaire.
+        // ---- PRIORITÉ ----
+        drawSection('2. NIVEAU DE PRIORITÉ');
+        drawField('Niveau :', analysis.priorite.niveau);
 
-        y += 2;
-
-        // ========================================
-        // SECTION 2 : PRIORITÉ
-        // ========================================
-        drawSectionTitle('NIVEAU DE PRIORITÉ', { r: 16, g: 163, b: 129 }, '§2');
-
-        // Badge de niveau
-        const niveauPDFColors = {
-            'Très haute': { fill: [209, 250, 229], text: [6, 95, 70] },
-            'Haute': { fill: [219, 234, 254], text: [30, 64, 175] },
-            'Moyenne': { fill: [254, 243, 199], text: [146, 64, 14] },
-            'Faible': { fill: [254, 215, 170], text: [154, 52, 18] },
-            'Très faible': { fill: [254, 226, 226], text: [153, 27, 27] }
-        };
-        const niveauC = niveauPDFColors[analysis.priorite.niveau] || niveauPDFColors['Moyenne'];
-        checkPageBreak(14);
-        doc.setFillColor(...niveauC.fill);
-        doc.roundedRect(margin, y - 4, 50, 10, 3, 3, 'F');
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        doc.setTextColor(...niveauC.text);
-        doc.text(analysis.priorite.niveau, margin + 5, y + 3);
-        doc.setFont(undefined, 'normal');
-        doc.setTextColor(0);
-        y += 14;
-
-        // Alerte ouvrier/employé
         if (analysis.priorite.q3aAnalysis?.ouvrierEmploye) {
-            drawAlertBox('Information :', 'Du fait de votre statut d\'ouvrier ou employé, vous avez de grandes chances d\'obtenir la prise en charge. L\'accompagnement d\'un conseiller en évolution professionnelle est vivement encouragé pour formaliser votre projet.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+            drawBullet('Statut ouvrier/employé : grandes chances de prise en charge. Accompagnement CEP vivement encouragé.');
         }
-
-        // Type de projet (interne / externe)
         const q23Pdf = analysis.maturite.q23Analysis;
-        if (q23Pdf) {
-            if (q23Pdf.projetInterne) {
-                drawAlertBox('Projet interne :', 'Reconversion chez le même employeur. Ce type de projet facilite le cofinancement et rassure la commission sur le retour à l\'emploi. Orientation vers le CEP pour un accompagnement adapté.', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
-            }
+        if (q23Pdf?.projetInterne) {
+            drawBullet('Projet interne : reconversion chez le même employeur — facilite le cofinancement.');
         }
-        y += 2;
 
-        // ========================================
-        // SECTION 3 : MATURITÉ DU PROJET
-        // ========================================
-        drawSectionTitle('MATURITÉ DU PROJET', { r: 234, g: 136, b: 0 }, '§3');
-        drawStatus('Statut', analysis.maturite.status, { r: 234, g: 136, b: 0 });
-        drawText(analysis.maturite.details);
+        // ---- MATURITÉ ----
+        drawSection('3. MATURITÉ DU PROJET');
+        drawField('Statut :', analysis.maturite.status);
+        drawLine(analysis.maturite.details, 2);
 
-        // Alerte cohérence
         if (analysis.maturite.critere1Analysis?.renseignementNecessaire) {
-            drawAlertBox('Attention :', 'Nous vous suggérons de renforcer la cohérence de votre projet : enquêtes métiers, immersion facilitée, stages...', [254, 242, 232], [234, 88, 12], [234, 88, 12]);
+            drawBullet('Renforcer la cohérence du projet : enquêtes métiers, immersions, stages.');
         }
 
-        // Cartouches contextuels de maturité
-        drawContextBox('Connaissance du métier', analysis.maturite.q15Analysis);
-        drawContextBox('Rémunération débutant', analysis.maturite.q16Analysis);
-        drawContextBox('Expérience requise', analysis.maturite.q17Analysis);
-        drawContextBox('Inconvénients du métier', analysis.maturite.q19Analysis);
+        // Remarques CEP : titre seul, sans texte
+        const cepRemarks = [
+            { key: 'q15Analysis', title: 'Connaissance du métier' },
+            { key: 'q16Analysis', title: 'Rémunération débutant' },
+            { key: 'q17Analysis', title: 'Expérience requise' },
+            { key: 'q19Analysis', title: 'Inconvénients du métier' },
+            { key: 'q23Analysis', title: 'Recruteurs identifiés' }
+        ];
+        const activeCepRemarks = cepRemarks.filter(r => {
+            const a = analysis.maturite[r.key];
+            return a && a.niveau && a.message;
+        });
+        if (activeCepRemarks.length > 0) {
+            doc.setFontSize(7.5);
+            doc.setFont(undefined, 'bold');
+            doc.text('Points d\'attention CEP :', margin + 2, y);
+            y += lh;
+            doc.setFont(undefined, 'normal');
+            activeCepRemarks.forEach(r => {
+                const a = analysis.maturite[r.key];
+                const niveauLabel = a.niveau === 'bon' ? 'Maturité solide' : a.niveau === 'moyen' ? 'Maturité partielle' : 'Objectiver les contraintes';
+                drawBullet(`${r.title} — ${niveauLabel}`);
+            });
+        }
 
-        // Formation
         if (analysis.maturite.q21Analysis?.afficherInfoFormation) {
-            drawAlertBox('Information :', 'Pour comparer les organismes de formation, nous vous suggérons d\'en interroger plusieurs à l\'aide du guide Transitions Pro PACA (https://www.transitionspro-paca.fr/telechargement/10630/).', [219, 234, 254], [37, 99, 235], [37, 99, 235]);
+            drawBullet('Comparer les organismes de formation via le guide Transitions Pro PACA.');
         }
-
-        // Vérification organisme
         if (analysis.maturite.q22Analysis?.nombreCriteres > 0) {
-            const detailsText = analysis.maturite.q22Analysis.details.map(d => `- ${d}`).join('\n');
-            drawAlertBox('Vérification du choix de l\'organisme :', detailsText, [220, 252, 231], [22, 163, 74], [22, 163, 74]);
+            const details = analysis.maturite.q22Analysis.details.map(d => d).join(' ; ');
+            drawBullet(`Vérification organisme : ${details}`);
         }
 
-        // Recruteurs (Q23 contextuel)
-        if (analysis.maturite.q23Analysis?.message) {
-            drawContextBox('Recruteurs identifiés', analysis.maturite.q23Analysis);
-        }
-
-        y += 2;
-
-        // ========================================
-        // SECTION 4 : RECOMMANDATIONS
-        // ========================================
-        drawSectionTitle('RECOMMANDATIONS', { r: 99, g: 102, b: 241 }, '§4');
-
-        doc.setFontSize(9);
-        doc.setTextColor(60, 60, 60);
+        // ---- RECOMMANDATIONS ----
+        drawSection('4. RECOMMANDATIONS');
         const prescText = this.generatePrescriptionText(analysis);
         const prescLines = prescText.split('\n');
-
         prescLines.forEach(line => {
-            if (!line.trim()) { y += 3; return; }
-            const wrapped = doc.splitTextToSize(line, textWidth);
-            wrapped.forEach(wl => {
-                checkPageBreak(7);
-                if (wl.trim().startsWith('-')) {
-                    doc.setFont(undefined, 'normal');
-                    doc.setTextColor(99, 102, 241);
-                    doc.text('>', margin + 4, y);
-                    doc.setTextColor(60, 60, 60);
-                    doc.text(wl.replace(/^[\s\-]+/, ''), margin + 10, y);
-                } else if (wl.match(/^\d+\./)) {
-                    doc.setFont(undefined, 'bold');
-                    doc.setTextColor(99, 102, 241);
-                    doc.text(wl.match(/^\d+\./)[0], margin + 4, y);
-                    doc.setFont(undefined, 'normal');
-                    doc.setTextColor(60, 60, 60);
-                    doc.text(wl.replace(/^\d+\.\s*/, ''), margin + 12, y);
-                } else if (wl.includes('Niveau de priorité') || wl.includes('Prochaines étapes')) {
-                    doc.setFont(undefined, 'bold');
-                    doc.setTextColor(40, 40, 40);
-                    doc.text(wl, margin + 2, y);
-                    doc.setFont(undefined, 'normal');
-                } else {
-                    doc.text(wl, margin + 2, y);
-                }
-                y += 5.5;
-            });
+            if (!line.trim()) { y += 1.5; return; }
+            if (line.trim().startsWith('-')) {
+                drawBullet(line.replace(/^[\s\-]+/, ''));
+            } else {
+                drawLine(line, 2);
+            }
         });
+
+        // ---- CONTACT ----
+        y += 2;
+        doc.setLineWidth(0.2);
+        doc.line(margin, y, margin + contentWidth, y);
+        y += 4;
+        drawLine('Après avoir rencontré un conseiller en évolution professionnelle (CEP), revenez vers votre référent :', 0);
+        drawField(this.referent.nom, `Tél. : ${this.referent.tel}`);
+        drawLine('Prendre RDV avec un CEP : mon-cep.org', 0);
+
+        // ---- PIED DE PAGE ----
+        doc.setFontSize(6.5);
+        doc.setTextColor(120);
+        doc.text('Impulsion - Transitions Pro PACA', margin, pageHeight - 8);
+        doc.text(date, margin + contentWidth / 2 - 8, pageHeight - 8);
+        doc.text('Page 1/1', margin + contentWidth - 12, pageHeight - 8);
         doc.setTextColor(0);
-
-        // ========================================
-        // COORDONNEES DU REFERENT + QR CODE CEP
-        // ========================================
-        y += 6;
-        const qrSize = 25;
-        const contactBoxHeight = 42;
-        checkPageBreak(contactBoxHeight + 10);
-
-        // Fond avec bordure
-        doc.setFillColor(245, 245, 255);
-        doc.roundedRect(margin - 2, y - 2, contentWidth + 4, contactBoxHeight, 3, 3, 'F');
-        doc.setFillColor(99, 102, 241);
-        doc.rect(margin - 2, y - 2, 3, contactBoxHeight, 'F');
-
-        // QR code mon-cep.org (à droite)
-        try {
-            const qr = qrcode(0, 'M');
-            qr.addData('https://mon-cep.org');
-            qr.make();
-            const qrDataUrl = qr.createDataURL(4, 0);
-            const qrX = margin + contentWidth - qrSize - 2;
-            doc.addImage(qrDataUrl, 'PNG', qrX, y, qrSize, qrSize);
-            doc.setFontSize(6);
-            doc.setTextColor(120, 120, 120);
-            doc.text('mon-cep.org', qrX + qrSize / 2, y + qrSize + 3, { align: 'center' });
-        } catch (e) {
-            // Si qrcode-generator n'est pas chargé, on affiche le lien en texte
-        }
-
-        const contactTextWidth = textWidth - qrSize - 10;
-        doc.setFontSize(8.5);
-        doc.setFont(undefined, 'italic');
-        doc.setTextColor(80, 80, 80);
-        const contactIntroLines = doc.splitTextToSize('Après avoir rencontré un conseiller en évolution professionnelle (CEP), nous vous invitons à revenir vers votre référent Transitions Pro PACA :', contactTextWidth);
-        let contactY = y + 4;
-        contactIntroLines.forEach(line => { doc.text(line, margin + 7, contactY); contactY += 4.5; });
-        contactY += 3;
-        doc.setFont(undefined, 'bold');
-        doc.setFontSize(10);
-        doc.setTextColor(99, 102, 241);
-        doc.text(this.referent.nom, margin + 7, contactY);
-        contactY += 5;
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(80, 80, 80);
-        doc.text(`Tél. : ${this.referent.tel}`, margin + 7, contactY);
-        contactY += 5;
-        doc.setFontSize(8);
-        doc.setTextColor(99, 102, 241);
-        doc.textWithLink('Prendre RDV avec un CEP : mon-cep.org', margin + 7, contactY, { url: 'https://mon-cep.org' });
-
-        // ========================================
-        // PIED DE PAGE
-        // ========================================
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            // Ligne de séparation
-            doc.setDrawColor(200, 200, 200);
-            doc.setLineWidth(0.3);
-            doc.line(margin, pageHeight - 15, margin + contentWidth, pageHeight - 15);
-            // Texte
-            doc.setFontSize(7);
-            doc.setTextColor(160, 160, 160);
-            doc.text('Impulsion - Transitions Pro PACA', margin, pageHeight - 10);
-            doc.text(`Page ${i}/${pageCount}`, margin + contentWidth - 15, pageHeight - 10);
-            doc.text(date, margin + contentWidth / 2 - 8, pageHeight - 10);
-        }
 
         // Nom du fichier
         const sanitize = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
