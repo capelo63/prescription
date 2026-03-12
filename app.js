@@ -1646,7 +1646,11 @@ class CEPQuestionnaire {
         }
 
         if (analysis.maturite.q21Analysis?.afficherInfoFormation) {
-            drawBullet('Comparer les organismes de formation via le guide Transitions Pro PACA.');
+            doc.setFontSize(7.5);
+            doc.setFont(undefined, 'normal');
+            doc.text('•', margin + 2, y);
+            doc.textWithLink('Comparer les organismes de formation via le guide Transitions Pro PACA.', margin + 6, y, { url: 'https://www.transitionspro-paca.fr/telechargement/10630/' });
+            y += lh;
         }
         if (analysis.maturite.q22Analysis?.nombreCriteres > 0) {
             const details = analysis.maturite.q22Analysis.details.map(d => d).join(' ; ');
