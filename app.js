@@ -1646,7 +1646,11 @@ class CEPQuestionnaire {
         }
 
         if (analysis.maturite.q21Analysis?.afficherInfoFormation) {
-            drawBullet('Comparer les organismes de formation via le guide Transitions Pro PACA.');
+            doc.setFontSize(7.5);
+            doc.setFont(undefined, 'normal');
+            doc.text('•', margin + 2, y);
+            doc.textWithLink('Comparer les organismes de formation via le guide Transitions Pro PACA.', margin + 6, y, { url: 'https://www.transitionspro-paca.fr/telechargement/10630/' });
+            y += lh;
         }
         if (analysis.maturite.q22Analysis?.nombreCriteres > 0) {
             const details = analysis.maturite.q22Analysis.details.map(d => d).join(' ; ');
@@ -1672,7 +1676,7 @@ class CEPQuestionnaire {
         doc.line(margin, y, margin + contentWidth, y);
         y += 4;
         drawLine('Après avoir rencontré un conseiller en évolution professionnelle (CEP), revenez vers votre référent Transitions Pro PACA :', 0);
-        drawField(this.referent.nom, '');
+        drawField(this.referent.nom, `Tél. : ${this.referent.tel}`);
         doc.setFontSize(7.5);
         doc.setTextColor(0);
         doc.textWithLink('Prendre RDV avec un CEP : mon-cep.org', margin, y, { url: 'https://mon-cep.org' });
