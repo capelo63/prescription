@@ -1672,7 +1672,7 @@ class CEPQuestionnaire {
         doc.line(margin, y, margin + contentWidth, y);
         y += 4;
         drawLine('Après avoir rencontré un conseiller en évolution professionnelle (CEP), revenez vers votre référent Transitions Pro PACA :', 0);
-        drawField(this.referent.nom, '');
+        drawField(this.referent.nom, `Tél. : ${this.referent.tel}`);
         doc.setFontSize(7.5);
         doc.setTextColor(0);
         doc.textWithLink('Prendre RDV avec un CEP : mon-cep.org', margin, y, { url: 'https://mon-cep.org' });
