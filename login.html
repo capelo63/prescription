@@ -112,6 +112,19 @@
         .login-toggle a:hover {
             text-decoration: underline;
         }
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.82rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -137,7 +150,17 @@
                     <label for="login-password">Mot de passe</label>
                     <input type="password" id="login-password" placeholder="Votre mot de passe" required>
                 </div>
+                <a href="#" class="forgot-link" id="forgot-link">Mot de passe oublié ?</a>
                 <button type="submit" class="login-btn" id="login-submit">Se connecter</button>
+            </form>
+
+            <!-- Formulaire mot de passe oublié -->
+            <form id="forgot-form" style="display:none;">
+                <div class="login-field">
+                    <label for="forgot-email">Adresse e-mail</label>
+                    <input type="email" id="forgot-email" placeholder="votre.email@transitionspro-paca.fr" required>
+                </div>
+                <button type="submit" class="login-btn" id="forgot-submit">Envoyer le lien de réinitialisation</button>
             </form>
 
             <!-- Formulaire inscription -->
@@ -196,9 +219,34 @@
             successDiv.style.display = 'none';
         }
 
-        // Toggle connexion / inscription
-        let isSignup = false;
-        document.getElementById('toggle-link').addEventListener('click', (e) => {
+        // Toggle mot de passe oublié
+        let isForgot = false;
+        document.getElementById('forgot-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            isForgot = true;
+            hideMessages();
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('forgot-form').style.display = 'block';
+            document.getElementById('login-subtitle').textContent = 'Saisissez votre e-mail pour recevoir un lien de réinitialisation';
+            document.getElementById('login-toggle').innerHTML = '<a href="#" id="back-link">Retour à la connexion</a>';
+            document.getElementById('back-link').addEventListener('click', resetToLogin);
+        });
+
+        function resetToLogin(e) {
+            if (e) e.preventDefault();
+            isForgot = false;
+            isSignup = false;
+            hideMessages();
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('forgot-form').style.display = 'none';
+            document.getElementById('login-subtitle').textContent = 'Connectez-vous pour acceder a l\'outil';
+            document.getElementById('login-toggle').innerHTML = 'Pas encore de compte ? <a href="#" id="toggle-link">Creer un compte</a>';
+            document.getElementById('toggle-link').addEventListener('click', toggleSignup);
+        }
+
+        function toggleSignup(e) {
             e.preventDefault();
             isSignup = !isSignup;
             hideMessages();
@@ -207,13 +255,37 @@
             document.getElementById('login-subtitle').textContent = isSignup
                 ? 'Creez votre compte referent'
                 : 'Connectez-vous pour acceder a l\'outil';
-            document.getElementById('toggle-link').textContent = isSignup
-                ? 'Se connecter'
-                : 'Creer un compte';
-            document.getElementById('login-toggle').childNodes[0].textContent = isSignup
-                ? 'Deja un compte ? '
-                : 'Pas encore de compte ? ';
+            document.getElementById('toggle-link').textContent = isSignup ? 'Se connecter' : 'Creer un compte';
+            document.getElementById('login-toggle').childNodes[0].textContent = isSignup ? 'Deja un compte ? ' : 'Pas encore de compte ? ';
+        }
+
+        // Réinitialisation mot de passe
+        document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value.trim();
+            const submitBtn = document.getElementById('forgot-submit');
+
+            hideMessages();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Envoi en cours...';
+
+            try {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+                if (error) throw error;
+                successDiv.textContent = 'Un e-mail de réinitialisation vous a été envoyé. Vérifiez votre boîte mail.';
+                successDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Envoyer le lien de réinitialisation';
+            } catch (err) {
+                showError('Erreur lors de l\'envoi. Vérifiez l\'adresse e-mail saisie.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Envoyer le lien de réinitialisation';
+            }
         });
+
+        // Toggle connexion / inscription
+        let isSignup = false;
+        document.getElementById('toggle-link').addEventListener('click', toggleSignup);
 
         // Connexion
         document.getElementById('login-form').addEventListener('submit', async (e) => {
