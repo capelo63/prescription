@@ -17,7 +17,8 @@ class CEPQuestionnaire {
             'zacharie': { nom: 'Zacharie Pinton', email: 'z.pinton@transitionspro-paca.fr', tel: '04 91 13 94 15' },
             'domoina': { nom: 'Domoina Rakotoarimanana', email: 'd.rakotoarimanana@transitionspro-paca.fr', tel: '04 91 13 93 83' },
             'sylvie': { nom: 'Sylvie Troubat', email: 's.troubat@transitionspro-paca.fr', tel: '04 91 13 20 72' },
-            'marie': { nom: 'Marie-Josée Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' }
+            'marie': { nom: 'Marie-Josée Verdu-Saglietto', email: 'm.verdu-saglietto@transitionspro-paca.fr', tel: '04 91 13 94 13' },
+            'marion': { nom: 'Marion Turck', email: 'm.turck@transitionspro-paca.fr', tel: '04 91 13 21 63' }
         };
         this.timerSeconds = 0;
         this.timerInterval = null;
