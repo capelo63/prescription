@@ -1452,7 +1452,6 @@ class CEPQuestionnaire {
 
         if (analysis.maturite.status === 'Projet à construire') {
             p += '<li>Accompagnement CEP approfondi recommandé</li>';
-            p += '<li>Réalisation d\'un bilan de compétences suggérée</li>';
             p += '<li>Enquêtes métier et immersions professionnelles à prévoir</li>';
         } else if (analysis.maturite.status === 'Projet en développement') {
             p += '<li>Accompagnement CEP pour finaliser le projet</li>';
@@ -1737,7 +1736,6 @@ class CEPQuestionnaire {
 
         if (analysis.maturite.status === 'Projet à construire') {
             text += '- Accompagnement CEP approfondi recommandé\n';
-            text += '- Réalisation d\'un bilan de compétences suggérée\n';
             text += '- Enquêtes métier et immersions professionnelles à prévoir\n';
         } else if (analysis.maturite.status === 'Projet en développement') {
             text += '- Accompagnement CEP pour finaliser le projet\n';
