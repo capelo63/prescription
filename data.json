@@ -93,7 +93,7 @@
     },
     {
       "id": "Q10",
-      "question": "Comment pensez-vous quitter votre emploi ?",
+      "question": "Comment pensez-vous quitter votre emploi après le projet de formation ?",
       "objectif": "critère 3",
       "section": "Maturité - Emploi",
       "note": null
@@ -106,8 +106,15 @@
       "note": null
     },
     {
+      "id": "Q10c",
+      "question": "Commentaire :",
+      "objectif": "critère 3",
+      "section": "Maturité - Emploi",
+      "note": null
+    },
+    {
       "id": "Q11",
-      "question": "Quel est le secteur d'activité de votre employeur actuel, et est-il dans la liste des secteurs qui décrutent ?",
+      "question": "Quel est le secteur d'activité de votre employeur actuel ? (un secteur « en déclin » est un secteur où les recrutements diminuent — vérifiez s'il figure dans la liste)",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null
@@ -122,6 +129,13 @@
     {
       "id": "Q12",
       "question": "Quel est le métier visé, et est-il dans la liste des métiers priorisés en PACA ?",
+      "objectif": "priorité",
+      "section": "Priorité",
+      "note": null
+    },
+    {
+      "id": "Q12b",
+      "question": "Quel est le statut du bénéficiaire ?",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null
