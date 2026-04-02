@@ -240,6 +240,8 @@ class CEPQuestionnaire {
             this.createSecteurInput(container, qId, current);
         } else if (qId === 'Q12') {
             this.createMetierInput(container, qId, current);
+        } else if (qId === 'Q12b') {
+            this.createInlineButtons(container, qId, ['Salarié', 'Travailleur indépendant / TNS', 'Agent public', 'Autre'], current);
         } else if (qId === 'Q23') {
             this.createInlineButtons(container, qId, ['Oui, via France Travail', 'Oui, via mon réseau', 'Oui, promesse d\'embauche', 'Oui, projet interne (même employeur)', 'Non'], current);
         } else {
