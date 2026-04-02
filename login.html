@@ -163,6 +163,19 @@
                 <button type="submit" class="login-btn" id="forgot-submit">Envoyer le lien de réinitialisation</button>
             </form>
 
+            <!-- Formulaire nouveau mot de passe (après clic sur le lien reçu par e-mail) -->
+            <form id="reset-form" style="display:none;">
+                <div class="login-field">
+                    <label for="reset-password">Nouveau mot de passe</label>
+                    <input type="password" id="reset-password" placeholder="Minimum 6 caractères" required minlength="6">
+                </div>
+                <div class="login-field">
+                    <label for="reset-password-confirm">Confirmer le mot de passe</label>
+                    <input type="password" id="reset-password-confirm" placeholder="Retapez votre mot de passe" required minlength="6">
+                </div>
+                <button type="submit" class="login-btn" id="reset-submit">Enregistrer le nouveau mot de passe</button>
+            </form>
+
             <!-- Formulaire inscription -->
             <form id="signup-form" style="display:none;">
                 <div class="login-field">
@@ -197,8 +210,31 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
-        // Si déjà connecté, rediriger
+        // Détecter le mode récupération de mot de passe (lien reçu par e-mail)
+        let isRecovery = false;
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                isRecovery = true;
+                showResetForm();
+            } else if (event === 'SIGNED_IN' && !isRecovery) {
+                window.location.href = 'crm.html';
+            }
+        });
+
+        function showResetForm() {
+            hideMessages();
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('forgot-form').style.display = 'none';
+            document.getElementById('reset-form').style.display = 'block';
+            document.getElementById('login-subtitle').textContent = 'Choisissez votre nouveau mot de passe';
+            document.getElementById('login-toggle').innerHTML = '';
+        }
+
+        // Si déjà connecté (et pas en mode récupération), rediriger
         (async () => {
+            const hash = window.location.hash;
+            if (hash.includes('type=recovery')) return; // géré par onAuthStateChange
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 window.location.href = 'crm.html';
@@ -270,7 +306,9 @@
             submitBtn.textContent = 'Envoi en cours...';
 
             try {
-                const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://prescription-iota.vercel.app/login.html'
+                });
                 if (error) throw error;
                 successDiv.textContent = 'Un e-mail de réinitialisation vous a été envoyé. Vérifiez votre boîte mail.';
                 successDiv.style.display = 'block';
@@ -280,6 +318,37 @@
                 showError('Erreur lors de l\'envoi. Vérifiez l\'adresse e-mail saisie.');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Envoyer le lien de réinitialisation';
+            }
+        });
+
+        // Nouveau mot de passe (après lien de récupération)
+        document.getElementById('reset-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('reset-password').value;
+            const passwordConfirm = document.getElementById('reset-password-confirm').value;
+            const submitBtn = document.getElementById('reset-submit');
+
+            hideMessages();
+
+            if (password !== passwordConfirm) {
+                showError('Les mots de passe ne correspondent pas.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enregistrement...';
+
+            try {
+                const { error } = await supabaseClient.auth.updateUser({ password });
+                if (error) throw error;
+                isRecovery = false;
+                successDiv.textContent = 'Mot de passe mis à jour. Redirection...';
+                successDiv.style.display = 'block';
+                setTimeout(() => { window.location.href = 'crm.html'; }, 1500);
+            } catch (err) {
+                showError('Erreur lors de la mise à jour du mot de passe. Réessayez.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enregistrer le nouveau mot de passe';
             }
         });
 
