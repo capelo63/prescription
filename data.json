@@ -1,6 +1,13 @@
 {
   "questions": [
     {
+      "id": "Q10d",
+      "question": "Avez-vous déjà échangé avec un conseiller en évolution professionnelle (CEP) ?",
+      "objectif": "éligibilité",
+      "section": "Éligibilité",
+      "note": null
+    },
+    {
       "id": "Q1a",
       "question": "Depuis quand êtes-vous salarié chez votre employeur actuel ?",
       "objectif": "éligibilité",
@@ -108,13 +115,6 @@
     {
       "id": "Q10c",
       "question": "Commentaire :",
-      "objectif": "critère 3",
-      "section": "Maturité - Emploi",
-      "note": null
-    },
-    {
-      "id": "Q10d",
-      "question": "Avez-vous déjà échangé avec un conseiller en évolution professionnelle (CEP) ?",
       "objectif": "critère 3",
       "section": "Maturité - Emploi",
       "note": null
