@@ -362,6 +362,25 @@ header h1 {
     border-color: var(--primary-color);
 }
 
+/* Guide de saisie */
+.answer-guide {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+    color: var(--text-light);
+    font-style: italic;
+}
+.answer-guide-label {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--primary-color);
+    white-space: nowrap;
+}
+.answer-guide-item::before { content: '• '; }
+
 /* Autocomplétion */
 .autocomplete-wrapper {
     position: relative;

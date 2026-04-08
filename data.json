@@ -113,6 +113,13 @@
       "note": null
     },
     {
+      "id": "Q10d",
+      "question": "Avez-vous déjà échangé avec un conseiller en évolution professionnelle (CEP) ?",
+      "objectif": "critère 3",
+      "section": "Maturité - Emploi",
+      "note": null
+    },
+    {
       "id": "Q11",
       "question": "Quel est le secteur d'activité de votre employeur actuel ? (un secteur « en déclin » est un secteur où les recrutements diminuent — vérifiez s'il figure dans la liste)",
       "objectif": "priorité",
@@ -142,7 +149,7 @@
     },
     {
       "id": "Q13",
-      "question": "Avez-vous déjà obtenu CléA, VAE, suivi un accompagnement CEP... ?",
+      "question": "Avez-vous déjà obtenu CléA ou une certification via la VAE ?",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null
