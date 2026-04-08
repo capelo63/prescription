@@ -236,7 +236,7 @@ class CEPQuestionnaire {
             this.createInlineButtons(container, qId, ['Démission', 'Rupture conventionnelle', 'Licenciement', 'Autre'], current);
         } else if (qId === 'Q10b') {
             this.createInlineButtons(container, qId, ['Oui', 'Non'], current);
-        } else if (qId === 'Q10d') {
+        } else if (qId === 'Q10e') {
             this.createTextAreaWithGuide(container, qId, [
                 'Pourquoi avez-vous initié cette démarche ?',
                 'Selon quelles modalités avez-vous échangé avec le CEP ?',
@@ -257,7 +257,7 @@ class CEPQuestionnaire {
     }
 
     isYesNoQuestion(question) {
-        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q20', 'Q21'];
+        const yesNoIds = ['Q1b', 'Q1c', 'Q3a', 'Q4', 'Q5', 'Q6', 'Q7', 'Q10d', 'Q11b', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q19', 'Q20', 'Q21'];
         return yesNoIds.includes(question.id);
     }
 
@@ -662,6 +662,9 @@ class CEPQuestionnaire {
             return q2 === 'Sans diplôme' || q2 === 'CAP/BEP';
         }
         // Q3b est toujours visible quel que soit le choix à Q2
+        if (questionId === 'Q10e') {
+            return this.answers['Q10d'] === 'Oui';
+        }
         if (questionId === 'Q13a') {
             return this.answers['Q13'] === 'Oui';
         }
