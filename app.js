@@ -236,6 +236,13 @@ class CEPQuestionnaire {
             this.createInlineButtons(container, qId, ['Démission', 'Rupture conventionnelle', 'Licenciement', 'Autre'], current);
         } else if (qId === 'Q10b') {
             this.createInlineButtons(container, qId, ['Oui', 'Non'], current);
+        } else if (qId === 'Q10d') {
+            this.createTextAreaWithGuide(container, qId, [
+                'Pourquoi avez-vous initié cette démarche ?',
+                'Selon quelles modalités avez-vous échangé avec le CEP ?',
+                'Combien de rendez-vous avez-vous déjà obtenus ?',
+                'La démarche a-t-elle été facile ?'
+            ], current);
         } else if (qId === 'Q11') {
             this.createSecteurInput(container, qId, current);
         } else if (qId === 'Q12') {
@@ -297,6 +304,15 @@ class CEPQuestionnaire {
             if (e.key === 'Enter') this.focusNextQuestion(qId);
         });
         container.appendChild(input);
+    }
+
+    createTextAreaWithGuide(container, qId, guideItems, currentAnswer) {
+        const guide = document.createElement('div');
+        guide.className = 'answer-guide';
+        guide.innerHTML = '<span class="answer-guide-label">Points à explorer :</span> ' +
+            guideItems.map(item => `<span class="answer-guide-item">${item}</span>`).join('');
+        container.appendChild(guide);
+        this.createTextAreaInput(container, qId, 'Notes...', currentAnswer);
     }
 
     createTextAreaInput(container, qId, placeholder, currentAnswer) {

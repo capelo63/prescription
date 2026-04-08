@@ -1,6 +1,13 @@
 {
   "questions": [
     {
+      "id": "Q10d",
+      "question": "Avez-vous déjà échangé avec un conseiller en évolution professionnelle (CEP) ?",
+      "objectif": "éligibilité",
+      "section": "Éligibilité",
+      "note": null
+    },
+    {
       "id": "Q1a",
       "question": "Depuis quand êtes-vous salarié chez votre employeur actuel ?",
       "objectif": "éligibilité",
@@ -142,7 +149,7 @@
     },
     {
       "id": "Q13",
-      "question": "Avez-vous déjà obtenu CléA, VAE, suivi un accompagnement CEP... ?",
+      "question": "Avez-vous déjà obtenu CléA ou une certification via la VAE ?",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null
