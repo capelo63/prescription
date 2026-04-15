@@ -95,6 +95,20 @@
                         <input type="text" id="user-code-interne" placeholder="Réf. ERP">
                     </div>
                 </div>
+                <div class="identity-row" style="margin-top: 10px;">
+                    <div class="identity-field">
+                        <label for="user-email">Email du bénéficiaire</label>
+                        <input type="email" id="user-email" placeholder="prenom.nom@exemple.fr">
+                    </div>
+                    <div class="identity-field">
+                        <label for="user-tel">Téléphone</label>
+                        <input type="tel" id="user-tel" placeholder="06 00 00 00 00">
+                    </div>
+                    <div class="identity-field identity-field-small">
+                        <label for="user-cp">Code postal</label>
+                        <input type="text" id="user-cp" placeholder="13000">
+                    </div>
+                </div>
             </div>
 
             <!-- Employeur -->
@@ -112,6 +126,13 @@
                         <input type="text" id="user-siret" class="inline-input" placeholder="Renseigné automatiquement" readonly style="background: var(--bg-color); color: var(--text-light);">
                     </div>
                 </div>
+            </div>
+
+            <!-- Bouton demande de rappel CEP -->
+            <div class="identity-block" id="cep-block" style="display:none;">
+                <button id="cep-btn" class="btn-cep" type="button">
+                    Demande de rappel CEP — Avenir Actifs
+                </button>
             </div>
 
             <!-- Toutes les questions sont rendues ici dynamiquement -->
