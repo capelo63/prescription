@@ -6,7 +6,7 @@ class CEPQuestionnaire {
         this.answers = {};
         this.metiersPrioritaires = [];
         this.secteursDeclin = [];
-        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '', siret: '' };
+        this.userInfo = { civilite: '', prenom: '', nom: '', codeInterne: '', employeur: '', siret: '', email: '', tel: '', cp: '' };
         this.employeurSearchTimeout = null;
         this.referent = { id: '', nom: '', email: '', tel: '' };
         this.referentsData = {
@@ -738,6 +738,10 @@ class CEPQuestionnaire {
                 document.getElementById('user-code-interne').value = this.userInfo.codeInterne || '';
                 document.getElementById('user-employeur').value = this.userInfo.employeur || '';
                 document.getElementById('user-siret').value = this.userInfo.siret || '';
+                document.getElementById('user-email').value = this.userInfo.email || '';
+                document.getElementById('user-tel').value = this.userInfo.tel || '';
+                document.getElementById('user-cp').value = this.userInfo.cp || '';
+                this.updateCepButton();
             }
             if (data.referent && data.referent.id) {
                 this.referent = data.referent;
@@ -783,6 +787,10 @@ class CEPQuestionnaire {
                 document.getElementById('user-code-interne').value = this.userInfo.codeInterne || '';
                 document.getElementById('user-employeur').value = this.userInfo.employeur || '';
                 document.getElementById('user-siret').value = this.userInfo.siret || '';
+                document.getElementById('user-email').value = this.userInfo.email || '';
+                document.getElementById('user-tel').value = this.userInfo.tel || '';
+                document.getElementById('user-cp').value = this.userInfo.cp || '';
+                this.updateCepButton();
             }
 
             // Restaurer le timer
@@ -876,10 +884,12 @@ class CEPQuestionnaire {
         });
         document.getElementById('user-prenom').addEventListener('input', (e) => {
             this.userInfo.prenom = e.target.value.trim();
+            this.updateCepButton();
             this.autoSave();
         });
         document.getElementById('user-nom').addEventListener('input', (e) => {
             this.userInfo.nom = e.target.value.trim();
+            this.updateCepButton();
             this.autoSave();
         });
         document.getElementById('user-code-interne').addEventListener('input', (e) => {
@@ -905,6 +915,23 @@ class CEPQuestionnaire {
             }
         });
 
+        document.getElementById('user-email').addEventListener('input', (e) => {
+            this.userInfo.email = e.target.value.trim();
+            this.updateCepButton();
+            this.autoSave();
+        });
+        document.getElementById('user-tel').addEventListener('input', (e) => {
+            this.userInfo.tel = e.target.value.trim();
+            this.updateCepButton();
+            this.autoSave();
+        });
+        document.getElementById('user-cp').addEventListener('input', (e) => {
+            this.userInfo.cp = e.target.value.trim();
+            this.updateCepButton();
+            this.autoSave();
+        });
+        document.getElementById('cep-btn').addEventListener('click', () => this.openCepForm());
+
         // Resultats
         document.getElementById('show-results-btn').addEventListener('click', () => this.showResults());
         document.getElementById('download-pdf-btn').addEventListener('click', () => this.downloadPDF());
@@ -917,6 +944,25 @@ class CEPQuestionnaire {
                 document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.style.display = 'none');
             }
         });
+    }
+
+    // ==================== DEMANDE CEP AVENIR ACTIFS ====================
+
+    updateCepButton() {
+        const { prenom, nom, email, tel } = this.userInfo;
+        const visible = prenom && nom && email && tel;
+        document.getElementById('cep-block').style.display = visible ? '' : 'none';
+    }
+
+    openCepForm() {
+        const { prenom, nom, email, tel, cp } = this.userInfo;
+        const params = new URLSearchParams();
+        if (nom) params.set('nom', nom);
+        if (prenom) params.set('prenom', prenom);
+        if (email) params.set('email', email);
+        if (tel) params.set('tel', tel);
+        if (cp) params.set('cp', cp);
+        window.open('https://pacacorse.avenir-actifs.org/demande-rappel/?' + params.toString(), '_blank');
     }
 
     // ==================== RÉSULTATS ====================
