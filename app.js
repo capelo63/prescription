@@ -1009,11 +1009,11 @@ class CEPQuestionnaire {
 
         // Niveau de priorité avec badge coloré
         const niveauColors = {
-            'Très haute': { bg: '#d1fae5', color: '#065f46' },
-            'Haute': { bg: '#dbeafe', color: '#1e40af' },
-            'Moyenne': { bg: '#fef3c7', color: '#92400e' },
-            'Faible': { bg: '#fed7aa', color: '#9a3412' },
-            'Très faible': { bg: '#fee2e2', color: '#991b1b' }
+            'Priorité renforcée': { bg: '#d1fae5', color: '#065f46' },
+            'Priorité confirmée': { bg: '#dbeafe', color: '#1e40af' },
+            'En bonne voie': { bg: '#fef3c7', color: '#92400e' },
+            'À consolider': { bg: '#fed7aa', color: '#9a3412' },
+            'À renforcer': { bg: '#fee2e2', color: '#991b1b' }
         };
         const niveauStyle = niveauColors[analysis.priorite.niveau] || niveauColors['Moyenne'];
 
@@ -1209,20 +1209,20 @@ class CEPQuestionnaire {
         const maxScore = 20;
         let niveau, status;
         if (score >= 15) {
-            niveau = 'Très haute';
-            status = 'Priorité très haute';
+            niveau = 'Priorité renforcée';
+            status = 'Priorité renforcée';
         } else if (score >= 10) {
-            niveau = 'Haute';
-            status = 'Priorité haute';
+            niveau = 'Priorité confirmée';
+            status = 'Priorité confirmée';
         } else if (score >= 7) {
-            niveau = 'Moyenne';
-            status = 'Priorité moyenne';
+            niveau = 'En bonne voie';
+            status = 'En bonne voie';
         } else if (score >= 4) {
-            niveau = 'Faible';
-            status = 'Priorité faible';
+            niveau = 'À consolider';
+            status = 'À consolider';
         } else {
-            niveau = 'Très faible';
-            status = 'Priorité très faible';
+            niveau = 'À renforcer';
+            status = 'À renforcer';
         }
 
         return { score, maxScore, status, niveau, details, q3aAnalysis: this.analyzeQ3a() };
@@ -1507,10 +1507,10 @@ class CEPQuestionnaire {
             p += '<li>Projet interne : reconversion chez le même employeur</li>';
         }
 
-        if (analysis.priorite.niveau === 'Très haute' || analysis.priorite.niveau === 'Haute') {
+        if (analysis.priorite.niveau === 'Priorité renforcée' || analysis.priorite.niveau === 'Priorité confirmée') {
             p += '<li>Votre profil bénéficie d\'une priorité élevée pour l\'accès au dispositif</li>';
-        } else if (analysis.priorite.niveau === 'Moyenne') {
-            p += '<li>Votre profil présente une priorité moyenne</li>';
+        } else if (analysis.priorite.niveau === 'En bonne voie') {
+            p += '<li>Votre profil présente une bonne progression vers le dispositif</li>';
         } else {
             p += '<li>Il est recommandé d\'optimiser votre dossier pour renforcer votre priorité</li>';
         }
@@ -1793,9 +1793,9 @@ class CEPQuestionnaire {
             text += '- Projet interne : reconversion chez le même employeur\n';
         }
 
-        if (analysis.priorite.niveau === 'Très haute' || analysis.priorite.niveau === 'Haute') {
+        if (analysis.priorite.niveau === 'Priorité renforcée' || analysis.priorite.niveau === 'Priorité confirmée') {
             text += '- Votre profil bénéficie d\'une priorité élevée pour l\'accès au dispositif\n';
-        } else if (analysis.priorite.niveau === 'Moyenne') {
+        } else if (analysis.priorite.niveau === 'En bonne voie') {
             text += '- Votre profil présente une priorité moyenne\n';
         }
 
