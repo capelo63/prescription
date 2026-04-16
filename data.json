@@ -149,7 +149,7 @@
     },
     {
       "id": "Q12b",
-      "question": "Quel est le statut du bénéficiaire ?",
+      "question": "Quel est votre statut ?",
       "objectif": "priorité",
       "section": "Priorité",
       "note": null

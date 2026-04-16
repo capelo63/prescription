@@ -196,11 +196,20 @@ class CEPQuestionnaire {
 
             // Rendre l'input de réponse
             this.renderAnswerInput(question, qDiv.querySelector('.answer-zone'));
+
+            // Bouton CEP après Q10d
+            if (question.id === 'Q10d') {
+                container.appendChild(this.createCepButton('cep-block-q10d'));
+            }
         });
+
+        // Bouton CEP en fin de questionnaire
+        container.appendChild(this.createCepButton('cep-block-end'));
 
         // Appliquer la visibilité conditionnelle
         this.updateVisibility();
         this.updateProgress();
+        this.updateCepButton();
     }
 
     getSectionLabel(objectif) {
@@ -930,8 +939,6 @@ class CEPQuestionnaire {
             this.updateCepButton();
             this.autoSave();
         });
-        document.getElementById('cep-btn').addEventListener('click', () => this.openCepForm());
-
         // Resultats
         document.getElementById('show-results-btn').addEventListener('click', () => this.showResults());
         document.getElementById('download-pdf-btn').addEventListener('click', () => this.downloadPDF());
@@ -948,10 +955,27 @@ class CEPQuestionnaire {
 
     // ==================== DEMANDE CEP AVENIR ACTIFS ====================
 
+    createCepButton(id) {
+        const div = document.createElement('div');
+        div.id = id;
+        div.className = 'cep-btn-container';
+        div.style.display = 'none';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-cep';
+        btn.textContent = 'Demande de rappel CEP — Avenir Actifs';
+        btn.addEventListener('click', () => this.openCepForm());
+        div.appendChild(btn);
+        return div;
+    }
+
     updateCepButton() {
         const { prenom, nom, email, tel } = this.userInfo;
-        const visible = prenom && nom && email && tel;
-        document.getElementById('cep-block').style.display = visible ? '' : 'none';
+        const visible = !!(prenom && nom && email && tel);
+        ['cep-block', 'cep-block-q10d', 'cep-block-end'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = visible ? '' : 'none';
+        });
     }
 
     openCepForm() {
