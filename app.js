@@ -955,14 +955,18 @@ class CEPQuestionnaire {
     }
 
     openCepForm() {
-        const { prenom, nom, email, tel, cp } = this.userInfo;
+        const nom    = document.getElementById('user-nom').value.trim();
+        const prenom = document.getElementById('user-prenom').value.trim();
+        const email  = document.getElementById('user-email').value.trim();
+        const tel    = document.getElementById('user-tel').value.trim();
+        const cp     = document.getElementById('user-cp').value.trim();
         const params = new URLSearchParams();
-        if (nom) params.set('nom', nom);
+        if (nom)    params.set('nom', nom);
         if (prenom) params.set('prenom', prenom);
-        if (email) params.set('email', email);
-        if (tel) params.set('tel', tel);
-        if (cp) params.set('cp', cp);
-        window.open('https://pacacorse.avenir-actifs.org/demande-rappel/?' + params.toString(), '_blank');
+        if (email)  params.set('email', email);
+        if (tel)    params.set('tel', tel);
+        if (cp)     params.set('cp', cp);
+        window.open('https://web.sirom.net/portail_cep/public/engagement-cep-form/17?' + params.toString(), '_blank');
     }
 
     // ==================== RÉSULTATS ====================
