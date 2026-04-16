@@ -962,7 +962,7 @@ class CEPQuestionnaire {
         if (email) params.set('email', email);
         if (tel) params.set('tel', tel);
         if (cp) params.set('cp', cp);
-        window.open('https://pacacorse.avenir-actifs.org/demande-rappel/?' + params.toString(), '_blank');
+        window.open('https://web.sirom.net/portail_cep/public/engagement-cep-form/17?' + params.toString(), '_blank');
     }
 
     // ==================== RÉSULTATS ====================
