@@ -168,7 +168,13 @@ class ImpulsionCRM {
                     vb = (this.referents[b.referent_id]?.nom || '').toLowerCase();
                     break;
                 case 'priorite':
-                    const ordreP = { 'Très haute': 5, 'Haute': 4, 'Moyenne': 3, 'Faible': 2, 'Très faible': 1 };
+                    const ordreP = {
+                        'Priorité renforcée': 5, 'Très haute': 5,
+                        'Priorité confirmée': 4, 'Haute': 4,
+                        'En bonne voie': 3, 'Moyenne': 3,
+                        'À consolider': 2, 'Faible': 2,
+                        'À renforcer': 1, 'Très faible': 1
+                    };
                     va = ordreP[a.results?.priorite?.niveau] || 0;
                     vb = ordreP[b.results?.priorite?.niveau] || 0;
                     break;
@@ -199,9 +205,9 @@ class ImpulsionCRM {
     updateStats() {
         const data = this.filteredPrescriptions;
         document.getElementById('stat-total').textContent = data.length;
-        document.getElementById('stat-haute').textContent = data.filter(p => ['Très haute', 'Haute'].includes(p.results?.priorite?.niveau)).length;
-        document.getElementById('stat-moyenne').textContent = data.filter(p => p.results?.priorite?.niveau === 'Moyenne').length;
-        document.getElementById('stat-faible').textContent = data.filter(p => ['Faible', 'Très faible'].includes(p.results?.priorite?.niveau)).length;
+        document.getElementById('stat-haute').textContent = data.filter(p => ['Priorité renforcée', 'Priorité confirmée', 'Très haute', 'Haute'].includes(p.results?.priorite?.niveau)).length;
+        document.getElementById('stat-moyenne').textContent = data.filter(p => ['En bonne voie', 'Moyenne'].includes(p.results?.priorite?.niveau)).length;
+        document.getElementById('stat-faible').textContent = data.filter(p => ['À consolider', 'À renforcer', 'Faible', 'Très faible'].includes(p.results?.priorite?.niveau)).length;
         document.getElementById('stat-mature').textContent = data.filter(p => p.results?.maturite?.status === 'Projet mature').length;
         document.getElementById('crm-count').textContent = `${data.length} résultat(s)`;
     }
@@ -257,8 +263,11 @@ class ImpulsionCRM {
 
     getPrioriteBadge(niveau) {
         const classes = {
-            'Très haute': 'badge-tres-haute', 'Haute': 'badge-haute',
-            'Moyenne': 'badge-moyenne', 'Faible': 'badge-faible', 'Très faible': 'badge-tres-faible'
+            'Priorité renforcée': 'badge-priorite-renforcee', 'Très haute': 'badge-tres-haute',
+            'Priorité confirmée': 'badge-priorite-confirmee', 'Haute': 'badge-haute',
+            'En bonne voie': 'badge-en-bonne-voie', 'Moyenne': 'badge-moyenne',
+            'À consolider': 'badge-a-consolider', 'Faible': 'badge-faible',
+            'À renforcer': 'badge-a-renforcer', 'Très faible': 'badge-tres-faible'
         };
         return `<span class="badge ${classes[niveau] || ''}">${niveau || '-'}</span>`;
     }

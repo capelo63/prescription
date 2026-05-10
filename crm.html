@@ -28,7 +28,7 @@
                     <h2 id="welcome-title">Bienvenue</h2>
                     <p id="welcome-subtitle">Retrouvez vos prescriptions et administrez de nouveaux questionnaires.</p>
                 </div>
-                <a href="index.html" class="btn btn-primary btn-new-prescription">+ Nouveau questionnaire</a>
+                <a href="#" class="btn btn-primary btn-new-prescription" onclick="localStorage.removeItem('impulsion_autosave'); window.location.href='index.html'; return false;">+ Nouveau questionnaire</a>
             </div>
 
             <!-- Filtres -->
@@ -57,11 +57,11 @@
                         <label for="filter-priorite">Priorité</label>
                         <select id="filter-priorite">
                             <option value="">Toutes</option>
-                            <option value="Très haute">Très haute</option>
-                            <option value="Haute">Haute</option>
-                            <option value="Moyenne">Moyenne</option>
-                            <option value="Faible">Faible</option>
-                            <option value="Très faible">Très faible</option>
+                            <option value="Priorité renforcée">Priorité renforcée</option>
+                            <option value="Priorité confirmée">Priorité confirmée</option>
+                            <option value="En bonne voie">En bonne voie</option>
+                            <option value="À consolider">À consolider</option>
+                            <option value="À renforcer">À renforcer</option>
                         </select>
                     </div>
                     <div class="filter-field">
@@ -87,15 +87,15 @@
                 </div>
                 <div class="stat-card stat-haute">
                     <span class="stat-value" id="stat-haute">-</span>
-                    <span class="stat-label">Haute / Très haute</span>
+                    <span class="stat-label">Priorité renforcée / confirmée</span>
                 </div>
                 <div class="stat-card stat-moyenne">
                     <span class="stat-value" id="stat-moyenne">-</span>
-                    <span class="stat-label">Moyenne</span>
+                    <span class="stat-label">En bonne voie</span>
                 </div>
                 <div class="stat-card stat-faible">
                     <span class="stat-value" id="stat-faible">-</span>
-                    <span class="stat-label">Faible / Très faible</span>
+                    <span class="stat-label">À consolider / À renforcer</span>
                 </div>
                 <div class="stat-card stat-mature">
                     <span class="stat-value" id="stat-mature">-</span>
