@@ -1,3 +1,22 @@
+/* Élargir le conteneur pour le tableau CRM */
+.container {
+    max-width: 1280px;
+}
+
+/* Colonne Actions fixée à droite */
+.crm-table th:last-child,
+.crm-table td:last-child {
+    position: sticky;
+    right: 0;
+    background: var(--card-bg);
+    z-index: 1;
+    border-left: 1px solid var(--border-color);
+}
+
+.crm-table thead th:last-child {
+    background: var(--bg-color);
+}
+
 /* Navigation CRM */
 .crm-nav {
     margin-top: 12px;
@@ -211,11 +230,11 @@
     white-space: nowrap;
 }
 
-.badge-tres-haute { background: #d1fae5; color: #065f46; }
-.badge-haute { background: #dbeafe; color: #1e40af; }
-.badge-moyenne { background: #fef3c7; color: #92400e; }
-.badge-faible { background: #fed7aa; color: #9a3412; }
-.badge-tres-faible { background: #fee2e2; color: #991b1b; }
+.badge-tres-haute, .badge-priorite-renforcee { background: #d1fae5; color: #065f46; }
+.badge-haute, .badge-priorite-confirmee { background: #dbeafe; color: #1e40af; }
+.badge-moyenne, .badge-en-bonne-voie { background: #fef3c7; color: #92400e; }
+.badge-faible, .badge-a-consolider { background: #fed7aa; color: #9a3412; }
+.badge-tres-faible, .badge-a-renforcer { background: #fee2e2; color: #991b1b; }
 
 .badge-mature { background: #d1fae5; color: #065f46; }
 .badge-developpement { background: #fef3c7; color: #92400e; }

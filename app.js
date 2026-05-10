@@ -724,6 +724,7 @@ class CEPQuestionnaire {
             userInfo: this.userInfo,
             referent: this.referent,
             timerSeconds: this.timerSeconds,
+            prescriptionId: this.editingPrescriptionId || null,
             savedAt: new Date().toISOString()
         };
         try {
@@ -757,6 +758,7 @@ class CEPQuestionnaire {
                 document.getElementById('referent-select').value = data.referent.id;
             }
             if (data.timerSeconds) this.timerSeconds = data.timerSeconds;
+            if (data.prescriptionId) this.editingPrescriptionId = data.prescriptionId;
         } catch (e) {
             // Donnée corrompue, on ignore
         }
@@ -834,8 +836,14 @@ class CEPQuestionnaire {
                 if (error) console.error('Erreur mise à jour prescription:', error);
             } else {
                 // Nouveau questionnaire : insérer
-                const { error } = await supabaseClient.from('prescriptions').insert(prescription);
-                if (error) console.error('Erreur sauvegarde prescription:', error);
+                const { data: inserted, error } = await supabaseClient
+                    .from('prescriptions').insert(prescription).select('id').single();
+                if (error) {
+                    console.error('Erreur sauvegarde prescription:', error);
+                } else if (inserted) {
+                    this.editingPrescriptionId = inserted.id;
+                    this.clearAutoSave();
+                }
             }
         } catch (e) {
             console.error('Erreur sauvegarde prescription:', e);
