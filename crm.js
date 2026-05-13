@@ -513,13 +513,14 @@ class ImpulsionCRM {
     async deletePrescription(id) {
         if (!confirm('Supprimer cette prescription ?')) return;
 
-        const { error } = await supabaseClient
+        const { error, count } = await supabaseClient
             .from('prescriptions')
-            .delete()
+            .delete({ count: 'exact' })
             .eq('id', id);
 
-        if (error) {
-            alert('Erreur lors de la suppression.');
+        if (error || count === 0) {
+            alert('Suppression impossible : droits insuffisants ou prescription introuvable.');
+            if (error) console.error(error);
             return;
         }
 

@@ -106,6 +106,11 @@ CREATE POLICY "prescriptions_update_manager" ON prescriptions
 CREATE POLICY "prescriptions_delete_own" ON prescriptions
     FOR DELETE USING (referent_id = auth.uid());
 
+CREATE POLICY "prescriptions_delete_manager" ON prescriptions
+    FOR DELETE USING (
+        EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'manager')
+    );
+
 -- =============================================================
 -- 7. Créer les comptes utilisateurs
 -- =============================================================
