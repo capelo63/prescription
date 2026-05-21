@@ -279,6 +279,20 @@
       "objectif": "critère 3",
       "section": "Maturité - Emploi futur",
       "note": null
+    },
+    {
+      "id": "Q24a",
+      "question": "Certaines questions abordées lors de cet entretien l'avaient-elles déjà été avec votre CEP ?",
+      "objectif": "complémentarité",
+      "section": "Complémentarité CEP",
+      "note": null
+    },
+    {
+      "id": "Q24b",
+      "question": "Qu'a apporté cet entretien par rapport à votre suivi CEP ?",
+      "objectif": "complémentarité",
+      "section": null,
+      "note": null
     }
   ],
   "alertes": [
