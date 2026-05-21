@@ -260,6 +260,8 @@ class CEPQuestionnaire {
             this.createInlineButtons(container, qId, ['Salarié', 'Travailleur indépendant / TNS', 'Agent public', 'Autre'], current);
         } else if (qId === 'Q23') {
             this.createInlineButtons(container, qId, ['Oui, via France Travail', 'Oui, via mon réseau', 'Oui, promesse d\'embauche', 'Oui, projet interne (même employeur)', 'Non'], current);
+        } else if (qId === 'Q24a') {
+            this.createInlineButtons(container, qId, ['Oui', 'Non', 'En partie'], current);
         } else {
             this.createTextAreaInput(container, qId, 'Votre réponse...', current);
         }
@@ -689,6 +691,12 @@ class CEPQuestionnaire {
         }
         if (questionId === 'Q21a' || questionId === 'Q22') {
             return this.answers['Q21'] === 'Oui';
+        }
+        if (questionId === 'Q24a') {
+            return this.answers['Q10d'] === 'Oui';
+        }
+        if (questionId === 'Q24b') {
+            return this.answers['Q10d'] === 'Oui' && this.answers['Q24a'] !== 'Non';
         }
         return true;
     }
