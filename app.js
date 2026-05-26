@@ -1579,7 +1579,7 @@ class CEPQuestionnaire {
 
         p += '</ul>';
         p += '<p><strong>Prochaines étapes :</strong></p><ol>';
-        p += '<li>Présenter cette prescription à votre conseiller CEP</li>';
+        p += '<li>Présenter ce document à votre conseiller CEP</li>';
         p += '<li>Constituer votre dossier avec les pièces justificatives</li>';
         p += '<li>Finaliser le plan de financement</li>';
         p += '<li>Déposer votre demande d\'autorisation d\'absence</li>';
@@ -1859,7 +1859,7 @@ class CEPQuestionnaire {
         }
 
         text += '\nProchaines étapes :\n';
-        text += '1. Présenter cette prescription à votre conseiller CEP\n';
+        text += '1. Présenter ce document à votre conseiller CEP\n';
         text += '2. Constituer votre dossier avec les pièces justificatives\n';
         text += '3. Finaliser le plan de financement\n';
         text += '4. Déposer votre demande d\'autorisation d\'absence\n';
