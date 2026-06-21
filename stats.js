@@ -67,6 +67,8 @@ class ImpulsionStats {
         this.renderOverview(data);
         this.renderDuree(data);
         this.renderCEP(data);
+        this.renderCallback(data);
+        this.renderRDV(data);
         this.renderSatisfaction(data);
         this.renderPriorites(data);
         this.renderStatuts(data);
@@ -250,6 +252,98 @@ class ImpulsionStats {
         }
 
         document.getElementById('cep-content').innerHTML = html;
+    }
+
+    // ==================== CALLBACK CEP ====================
+
+    renderCallback(data) {
+        const total = data.length;
+        const clicked = data.filter(p => p.answers?.cep_callback === 'Oui').length;
+        const notClicked = total - clicked;
+
+        let html = this.bar('Formulaire de rappel utilisé', clicked, total, 'bar-green');
+        html += this.bar('Formulaire non utilisé', notClicked, total, 'bar-grey');
+
+        // Parmi ceux qui avaient déjà un CEP vs. non
+        const clickedCEP   = data.filter(p => p.answers?.cep_callback === 'Oui' && p.answers?.Q10d === 'Oui').length;
+        const clickedNoCEP = data.filter(p => p.answers?.cep_callback === 'Oui' && p.answers?.Q10d !== 'Oui').length;
+        if (clicked > 0) {
+            html += `<div class="stats-highlight">
+                Parmi les ${clicked} utilisations :
+                <strong>${clickedNoCEP}</strong> bénéficiaires sans CEP préalable
+                · <strong>${clickedCEP}</strong> avec CEP préalable
+            </div>`;
+        }
+
+        document.getElementById('callback-content').innerHTML = html;
+    }
+
+    // ==================== DÉMARCHE RDV CEP ====================
+
+    renderRDV(data) {
+        const nonCEP = data.filter(p => p.answers?.Q10d === 'Non');
+        const total = nonCEP.length;
+
+        if (total === 0) {
+            document.getElementById('rdv-content').innerHTML =
+                '<p class="stats-empty">Aucun bénéficiaire sans CEP préalable dans la sélection.</p>';
+            return;
+        }
+
+        // Q26a : tentative de RDV
+        const tried    = nonCEP.filter(p => p.answers?.Q26a === 'Oui').length;
+        const notTried = nonCEP.filter(p => p.answers?.Q26a === 'Non').length;
+        const nc26a    = total - tried - notTried;
+
+        let html = `<h3 class="stats-subtitle">Tentative de prise de RDV CEP (${total} bénéficiaires sans CEP)</h3>`;
+        html += this.bar('Oui — a tenté de prendre RDV', tried,    total, 'bar-green');
+        html += this.bar('Non — n\'a pas tenté',          notTried, total, 'bar-red');
+        if (nc26a > 0) html += this.bar('Non renseigné', nc26a, total, 'bar-grey');
+
+        // Q26b : résultat de la tentative (parmi ceux qui ont essayé)
+        if (tried > 0) {
+            const got      = nonCEP.filter(p => p.answers?.Q26a === 'Oui' && p.answers?.Q26b === 'Oui').length;
+            const notGot   = nonCEP.filter(p => p.answers?.Q26a === 'Oui' && p.answers?.Q26b === 'Non').length;
+            const waiting  = nonCEP.filter(p => p.answers?.Q26a === 'Oui' && p.answers?.Q26b === 'En attente').length;
+
+            html += `<h3 class="stats-subtitle" style="margin-top:20px;">Résultat des tentatives (${tried} bénéficiaires)</h3>`;
+            html += this.bar('RDV obtenu',   got,     tried, 'bar-green');
+            html += this.bar('En attente',   waiting, tried, 'bar-yellow');
+            html += this.bar('RDV non obtenu', notGot, tried, 'bar-red');
+
+            // Q26c : délai moyen
+            const delays = nonCEP
+                .filter(p => p.answers?.Q26c && !isNaN(parseInt(p.answers.Q26c)))
+                .map(p => parseInt(p.answers.Q26c));
+            if (delays.length > 0) {
+                const avg = Math.round(delays.reduce((s, d) => s + d, 0) / delays.length);
+                const min = Math.min(...delays);
+                const max = Math.max(...delays);
+                html += `<div class="stats-highlight">
+                    Délai moyen d'obtention du RDV : <strong>${avg} jours</strong>
+                    <span style="color:var(--text-light);font-weight:400;">
+                        (min ${min}j · max ${max}j — ${delays.length} réponse${delays.length > 1 ? 's' : ''})
+                    </span>
+                </div>`;
+            }
+        }
+
+        // Q26d : raisons de non-initiation
+        if (notTried > 0) {
+            const reasons = [
+                'Ne sait pas comment faire',
+                'Manque de temps',
+                'Ne juge pas nécessaire',
+                'Autre'
+            ];
+            html += `<h3 class="stats-subtitle" style="margin-top:20px;">Raisons de non-initiation (${notTried} bénéficiaires)</h3>`;
+            html += reasons.map(r => {
+                const count = nonCEP.filter(p => p.answers?.Q26d === r).length;
+                return this.bar(r, count, notTried, 'bar-orange');
+            }).join('');
+        }
+
+        document.getElementById('rdv-content').innerHTML = html;
     }
 
     // ==================== SATISFACTION ====================
