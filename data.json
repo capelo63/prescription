@@ -293,6 +293,13 @@
       "objectif": "complémentarité",
       "section": null,
       "note": null
+    },
+    {
+      "id": "Q25",
+      "question": "Comment le bénéficiaire évalue-t-il cet entretien ?",
+      "objectif": "satisfaction",
+      "section": "Satisfaction",
+      "note": null
     }
   ],
   "alertes": [
