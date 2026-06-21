@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques - Impulsion</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="crm.css">
+    <link rel="stylesheet" href="stats.css">
+</head>
+<body style="display:none;">
+    <div class="container">
+        <header>
+            <img src="https://www.transitionspro-paca.fr/wp-content/uploads/2021/04/logo-transitions-pro-paca.png"
+                 alt="Transitions Pro PACA"
+                 class="header-logo">
+            <h1>Statistiques</h1>
+            <p class="header-subtitle">Analyse des prescriptions - Impulsion</p>
+            <nav class="crm-nav" style="display: flex; justify-content: center; align-items: center; gap: 16px;">
+                <a href="crm.html" class="btn btn-secondary btn-nav">← Tableau de bord</a>
+                <span id="user-nav"></span>
+            </nav>
+        </header>
+
+        <main id="stats-app">
+            <!-- Filtres -->
+            <div class="crm-filters">
+                <div class="filter-row">
+                    <div class="filter-field" id="filter-referent-wrapper" style="display:none;">
+                        <label for="filter-referent">Chargé de projets</label>
+                        <select id="filter-referent">
+                            <option value="">Tous</option>
+                        </select>
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-date-from">Du</label>
+                        <input type="date" id="filter-date-from">
+                    </div>
+                    <div class="filter-field">
+                        <label for="filter-date-to">Au</label>
+                        <input type="date" id="filter-date-to">
+                    </div>
+                    <div class="filter-field" style="align-self: end;">
+                        <button class="btn btn-primary" id="apply-filters-btn" style="width:100%;">Actualiser</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vue d'ensemble -->
+            <div class="crm-stats" id="overview-cards"></div>
+
+            <!-- Durée des entretiens -->
+            <div class="stats-section">
+                <h2 class="stats-section-title">Durée des entretiens</h2>
+                <div id="duree-content"></div>
+            </div>
+
+            <!-- Taux CEP -->
+            <div class="stats-section">
+                <h2 class="stats-section-title">Échanges préalables avec un CEP (Q10d)</h2>
+                <div id="cep-content"></div>
+            </div>
+
+            <!-- Satisfaction -->
+            <div class="stats-section" id="satisfaction-section" style="display:none;">
+                <h2 class="stats-section-title">Satisfaction des bénéficiaires (Q25)</h2>
+                <div id="satisfaction-content"></div>
+            </div>
+
+            <!-- Priorités -->
+            <div class="stats-section">
+                <h2 class="stats-section-title">Répartition des niveaux de priorité</h2>
+                <div id="priorites-content"></div>
+            </div>
+
+            <!-- Statuts -->
+            <div class="stats-section">
+                <h2 class="stats-section-title">Statuts des dossiers</h2>
+                <div id="statuts-content"></div>
+            </div>
+
+            <!-- Maturité -->
+            <div class="stats-section">
+                <h2 class="stats-section-title">Maturité des projets</h2>
+                <div id="maturite-content"></div>
+            </div>
+
+            <!-- Taux de transformation -->
+            <div class="stats-section">
+                <h2 class="stats-section-title">Taux de transformation</h2>
+                <div id="transformation-content"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p class="footer-text">Impulsion - Transitions Pro PACA</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="stats.js"></script>
+</body>
+</html>

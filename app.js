@@ -262,6 +262,8 @@ class CEPQuestionnaire {
             this.createInlineButtons(container, qId, ['Oui, via France Travail', 'Oui, via mon réseau', 'Oui, promesse d\'embauche', 'Oui, projet interne (même employeur)', 'Non'], current);
         } else if (qId === 'Q24a') {
             this.createInlineButtons(container, qId, ['Oui', 'Non', 'En partie'], current);
+        } else if (qId === 'Q25') {
+            this.createInlineButtons(container, qId, ['Très utile', 'Utile', 'Peu utile', 'Inutile'], current);
         } else {
             this.createTextAreaInput(container, qId, 'Votre réponse...', current);
         }
