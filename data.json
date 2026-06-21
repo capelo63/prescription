@@ -15,6 +15,34 @@
       "note": null
     },
     {
+      "id": "Q26a",
+      "question": "Avez-vous tenté de prendre rendez-vous avec un CEP ?",
+      "objectif": "démarche CEP",
+      "section": "Démarche CEP",
+      "note": null
+    },
+    {
+      "id": "Q26b",
+      "question": "Avez-vous obtenu ce rendez-vous ?",
+      "objectif": "démarche CEP",
+      "section": null,
+      "note": null
+    },
+    {
+      "id": "Q26c",
+      "question": "Combien de jours avez-vous attendu pour obtenir ce rendez-vous ?",
+      "objectif": "démarche CEP",
+      "section": null,
+      "note": null
+    },
+    {
+      "id": "Q26d",
+      "question": "Pour quelle raison n'avez-vous pas encore initié de démarche CEP ?",
+      "objectif": "démarche CEP",
+      "section": null,
+      "note": null
+    },
+    {
       "id": "Q1a",
       "question": "Depuis quand êtes-vous salarié chez votre employeur actuel ?",
       "objectif": "éligibilité",

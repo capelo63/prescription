@@ -262,6 +262,19 @@ class CEPQuestionnaire {
             this.createInlineButtons(container, qId, ['Oui, via France Travail', 'Oui, via mon réseau', 'Oui, promesse d\'embauche', 'Oui, projet interne (même employeur)', 'Non'], current);
         } else if (qId === 'Q24a') {
             this.createInlineButtons(container, qId, ['Oui', 'Non', 'En partie'], current);
+        } else if (qId === 'Q26a') {
+            this.createInlineButtons(container, qId, ['Oui', 'Non'], current);
+        } else if (qId === 'Q26b') {
+            this.createInlineButtons(container, qId, ['Oui', 'Non', 'En attente'], current);
+        } else if (qId === 'Q26c') {
+            this.createNumberInput(container, qId, 'Nombre de jours', current);
+        } else if (qId === 'Q26d') {
+            this.createInlineButtons(container, qId, [
+                'Ne sait pas comment faire',
+                'Manque de temps',
+                'Ne juge pas nécessaire',
+                'Autre'
+            ], current);
         } else if (qId === 'Q25') {
             this.createInlineButtons(container, qId, ['Très utile', 'Utile', 'Peu utile', 'Inutile'], current);
         } else {
@@ -700,6 +713,18 @@ class CEPQuestionnaire {
         if (questionId === 'Q24b') {
             return this.answers['Q10d'] === 'Oui' && this.answers['Q24a'] !== 'Non';
         }
+        if (questionId === 'Q26a') {
+            return this.answers['Q10d'] === 'Non';
+        }
+        if (questionId === 'Q26b') {
+            return this.answers['Q10d'] === 'Non' && this.answers['Q26a'] === 'Oui';
+        }
+        if (questionId === 'Q26c') {
+            return this.answers['Q10d'] === 'Non' && this.answers['Q26a'] === 'Oui' && this.answers['Q26b'] === 'Oui';
+        }
+        if (questionId === 'Q26d') {
+            return this.answers['Q10d'] === 'Non' && this.answers['Q26a'] === 'Non';
+        }
         return true;
     }
 
@@ -1008,6 +1033,8 @@ class CEPQuestionnaire {
         if (email)  params.set('email', email);
         if (tel)    params.set('tel', tel);
         if (cp)     params.set('cp', cp);
+        this.answers['cep_callback'] = 'Oui';
+        this.autoSave();
         window.open('https://web.sirom.net/portail_cep/public/engagement-cep-form/17?' + params.toString(), '_blank');
     }
 
