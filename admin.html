@@ -142,13 +142,6 @@
                         <input type="email" id="new-email" placeholder="prenom@transitionspro-paca.fr" required>
                     </div>
                     <div class="admin-field">
-                        <label for="new-password">Mot de passe</label>
-                        <div class="password-toggle">
-                            <input type="password" id="new-password" placeholder="Min. 6 caracteres" required minlength="6">
-                            <button type="button" onclick="togglePassword('new-password', this)">Voir</button>
-                        </div>
-                    </div>
-                    <div class="admin-field">
                         <label for="new-role">Role</label>
                         <select id="new-role">
                             <option value="referent">Referent</option>
@@ -301,21 +294,24 @@
                 btn.textContent = 'Creation...';
 
                 const email = document.getElementById('new-email').value.trim();
-                const password = document.getElementById('new-password').value;
                 const nom = document.getElementById('new-nom').value.trim();
                 const role = document.getElementById('new-role').value;
 
                 try {
                     const { error } = await supabaseClient.rpc('admin_create_user', {
                         user_email: email,
-                        user_password: password,
                         user_nom: nom,
                         user_role: role
                     });
 
                     if (error) throw error;
 
-                    showMessage(`Compte cree pour ${nom} (${email})`, 'success');
+                    // Envoyer un e-mail à l'utilisateur pour qu'il définisse son mot de passe
+                    await supabaseClient.auth.resetPasswordForEmail(email, {
+                        redirectTo: window.location.origin + '/login.html'
+                    });
+
+                    showMessage(`Compte créé pour ${nom} (${email}). Un e-mail lui a été envoyé pour définir son mot de passe.`, 'success');
                     document.getElementById('create-user-form').reset();
                     await loadUsers();
                 } catch (err) {
