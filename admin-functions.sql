@@ -6,13 +6,21 @@
 -- Ces fonctions sont appelées depuis admin.html via supabaseClient.rpc()
 -- =============================================================
 
+-- Supprimer les versions précédentes (nécessaire si la signature change)
+DROP FUNCTION IF EXISTS admin_create_user(text, text, text, text);
+DROP FUNCTION IF EXISTS admin_create_user(text, text, text);
+DROP FUNCTION IF EXISTS admin_update_user(uuid, text, text);
+DROP FUNCTION IF EXISTS admin_reset_password(uuid, text);
+DROP FUNCTION IF EXISTS admin_delete_user(uuid);
+
 -- 1. Créer un utilisateur (auth + profil)
 -- Crée l'entrée dans auth.users, auth.identities,
 -- et déclenche automatiquement le trigger handle_new_user
 -- qui crée le profil dans la table profiles.
+-- Aucun mot de passe n'est demandé à l'admin : un mot de passe aléatoire
+-- est généré, et l'utilisateur reçoit un e-mail pour définir le sien.
 CREATE OR REPLACE FUNCTION admin_create_user(
     user_email TEXT,
-    user_password TEXT,
     user_nom TEXT,
     user_role TEXT DEFAULT 'referent'
 )
@@ -23,6 +31,7 @@ SET search_path = public, auth, extensions
 AS $$
 DECLARE
     new_user_id UUID;
+    random_password TEXT;
 BEGIN
     -- Seuls les managers peuvent créer des comptes
     IF NOT EXISTS (
@@ -37,6 +46,8 @@ BEGIN
     END IF;
 
     new_user_id := gen_random_uuid();
+    -- Mot de passe temporaire aléatoire (l'utilisateur le remplacera via l'e-mail envoyé)
+    random_password := encode(gen_random_bytes(32), 'hex');
 
     -- Créer l'utilisateur dans auth.users
     -- email_confirmed_at = NOW() : compte actif immédiatement, sans e-mail de confirmation
@@ -59,7 +70,7 @@ BEGIN
         'authenticated',
         'authenticated',
         lower(trim(user_email)),
-        crypt(user_password, gen_salt('bf')),
+        crypt(random_password, gen_salt('bf')),
         NOW(),
         NOW(),
         NOW(),
