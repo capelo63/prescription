@@ -174,6 +174,7 @@ $$;
 
 
 -- 4. Supprimer un utilisateur (profil + compte auth)
+-- Bloqué si l'utilisateur a des dossiers de prescription associés.
 CREATE OR REPLACE FUNCTION admin_delete_user(
     target_user_id UUID
 )
@@ -182,6 +183,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public, auth
 AS $$
+DECLARE
+    prescription_count INTEGER;
 BEGIN
     -- Seuls les managers peuvent supprimer des comptes
     IF NOT EXISTS (
@@ -193,6 +196,14 @@ BEGIN
     -- Empêcher l'auto-suppression
     IF target_user_id = auth.uid() THEN
         RAISE EXCEPTION 'Vous ne pouvez pas supprimer votre propre compte.';
+    END IF;
+
+    -- Bloquer si l'utilisateur a des dossiers de prescription
+    SELECT COUNT(*) INTO prescription_count
+    FROM prescriptions WHERE referent_id = target_user_id;
+
+    IF prescription_count > 0 THEN
+        RAISE EXCEPTION 'Impossible de supprimer ce compte : % dossier(s) sont associés à cet utilisateur. Veuillez les réassigner ou les supprimer d''abord.', prescription_count;
     END IF;
 
     -- Supprimer les identités auth (auth.identities)
