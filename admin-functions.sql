@@ -51,6 +51,8 @@ BEGIN
 
     -- Créer l'utilisateur dans auth.users
     -- email_confirmed_at = NOW() : compte actif immédiatement, sans e-mail de confirmation
+    -- Les champs token doivent être des chaînes vides (pas NULL) pour que GoTrue
+    -- puisse traiter la connexion sans erreur 500.
     INSERT INTO auth.users (
         id,
         instance_id,
@@ -63,7 +65,11 @@ BEGIN
         updated_at,
         raw_app_meta_data,
         raw_user_meta_data,
-        is_super_admin
+        is_super_admin,
+        confirmation_token,
+        recovery_token,
+        email_change_token_new,
+        email_change
     ) VALUES (
         new_user_id,
         '00000000-0000-0000-0000-000000000000',
@@ -76,7 +82,11 @@ BEGIN
         NOW(),
         '{"provider":"email","providers":["email"]}'::jsonb,
         jsonb_build_object('nom', user_nom, 'role', user_role),
-        FALSE
+        FALSE,
+        '',
+        '',
+        '',
+        ''
     );
 
     -- Enregistrer l'identité email dans auth.identities
