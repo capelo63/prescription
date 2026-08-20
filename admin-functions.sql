@@ -51,6 +51,8 @@ BEGIN
 
     -- Créer l'utilisateur dans auth.users
     -- email_confirmed_at = NOW() : compte actif immédiatement, sans e-mail de confirmation
+    -- Les champs token doivent être des chaînes vides (pas NULL) pour que GoTrue
+    -- puisse traiter la connexion sans erreur 500.
     INSERT INTO auth.users (
         id,
         instance_id,
@@ -63,7 +65,11 @@ BEGIN
         updated_at,
         raw_app_meta_data,
         raw_user_meta_data,
-        is_super_admin
+        is_super_admin,
+        confirmation_token,
+        recovery_token,
+        email_change_token_new,
+        email_change
     ) VALUES (
         new_user_id,
         '00000000-0000-0000-0000-000000000000',
@@ -76,7 +82,11 @@ BEGIN
         NOW(),
         '{"provider":"email","providers":["email"]}'::jsonb,
         jsonb_build_object('nom', user_nom, 'role', user_role),
-        FALSE
+        FALSE,
+        '',
+        '',
+        '',
+        ''
     );
 
     -- Enregistrer l'identité email dans auth.identities
@@ -174,6 +184,7 @@ $$;
 
 
 -- 4. Supprimer un utilisateur (profil + compte auth)
+-- Bloqué si l'utilisateur a des dossiers de prescription associés.
 CREATE OR REPLACE FUNCTION admin_delete_user(
     target_user_id UUID
 )
@@ -182,6 +193,8 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public, auth
 AS $$
+DECLARE
+    prescription_count INTEGER;
 BEGIN
     -- Seuls les managers peuvent supprimer des comptes
     IF NOT EXISTS (
@@ -193,6 +206,14 @@ BEGIN
     -- Empêcher l'auto-suppression
     IF target_user_id = auth.uid() THEN
         RAISE EXCEPTION 'Vous ne pouvez pas supprimer votre propre compte.';
+    END IF;
+
+    -- Bloquer si l'utilisateur a des dossiers de prescription
+    SELECT COUNT(*) INTO prescription_count
+    FROM prescriptions WHERE referent_id = target_user_id;
+
+    IF prescription_count > 0 THEN
+        RAISE EXCEPTION 'Impossible de supprimer ce compte : % dossier(s) sont associés à cet utilisateur. Veuillez les réassigner ou les supprimer d''abord.', prescription_count;
     END IF;
 
     -- Supprimer les identités auth (auth.identities)

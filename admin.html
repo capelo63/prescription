@@ -196,7 +196,7 @@
                             </select>
                         </div>
                         <div class="admin-field">
-                            <label for="edit-password">Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+                            <label for="edit-password">Mot de passe temporaire (laisser vide pour ne pas changer)</label>
                             <div class="password-toggle">
                                 <input type="password" id="edit-password" placeholder="Laisser vide si inchange">
                                 <button type="button" onclick="togglePassword('edit-password', this)">Voir</button>
@@ -306,14 +306,19 @@
 
                     if (error) throw error;
 
-                    // Envoyer un e-mail à l'utilisateur pour qu'il définisse son mot de passe
-                    await supabaseClient.auth.resetPasswordForEmail(email, {
+                    // Tenter l'envoi de l'e-mail de définition du mot de passe
+                    const { error: emailError } = await supabaseClient.auth.resetPasswordForEmail(email, {
                         redirectTo: window.location.origin + '/login.html'
                     });
 
-                    showMessage(`Compte créé pour ${nom} (${email}). Un e-mail lui a été envoyé pour définir son mot de passe.`, 'success');
                     document.getElementById('create-user-form').reset();
                     await loadUsers();
+
+                    if (emailError) {
+                        showMessage(`Compte créé pour ${nom} (${email}). L'e-mail n'a pas pu être envoyé (service SMTP non configuré). Utilisez "Modifier" pour définir un mot de passe temporaire à communiquer à l'utilisateur.`, 'success');
+                    } else {
+                        showMessage(`Compte créé pour ${nom} (${email}). Un e-mail lui a été envoyé pour définir son mot de passe.`, 'success');
+                    }
                 } catch (err) {
                     showMessage(err.message || 'Erreur lors de la creation du compte.', 'error');
                 }
@@ -398,7 +403,7 @@
             const el = document.getElementById('admin-message');
             el.textContent = text;
             el.className = `admin-message ${type}`;
-            setTimeout(() => { el.className = 'admin-message'; }, 5000);
+            setTimeout(() => { el.className = 'admin-message'; }, 8000);
         }
 
         function togglePassword(inputId, btn) {
