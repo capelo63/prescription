@@ -173,14 +173,39 @@ L'authentification est gérée par Supabase Auth (email + mot de passe). La clas
 
 ### Créer un compte utilisateur
 
-1. Dans le dashboard Supabase → **Authentication → Users → Invite user**, créer le compte avec l'email et un mot de passe temporaire.
-2. Le trigger `handle_new_user` crée automatiquement l'entrée dans `profiles` avec le rôle `'referent'` par défaut.
-3. Pour un manager, exécuter dans le SQL Editor :
-   ```sql
-   UPDATE profiles SET role = 'manager', nom = 'Prénom Nom'
-   WHERE email = 'adresse@email.fr';
-   ```
-4. Transmettre les identifiants à l'utilisateur et lui demander de changer son mot de passe.
+La gestion des comptes se fait exclusivement via la page **Administration** de l'application (`admin.html`), accessible aux managers uniquement. Ne pas créer de comptes directement dans le dashboard Supabase — cela contournerait la logique de création et produirait des comptes incomplets.
+
+1. Se connecter à l'application en tant que manager.
+2. Aller sur la page **Administration**.
+3. Remplir le formulaire (nom complet, adresse e-mail, rôle).
+4. Cliquer **"Créer le compte"** — la fonction `admin_create_user` crée l'entrée dans `auth.users`, `auth.identities` et déclenche le trigger `handle_new_user` qui crée le profil dans `profiles`.
+5. Si le service SMTP est configuré, un e-mail est envoyé à l'utilisateur pour qu'il définisse son mot de passe. Sinon, utiliser le bouton **"Modifier"** pour définir un mot de passe temporaire à communiquer à l'utilisateur.
+
+> **Note SMTP** : Supabase Free est limité à 3 e-mails/heure. Pour un usage fiable, configurer un SMTP externe (ex. Resend.com) dans Supabase → Authentication → Settings → SMTP Settings.
+
+### Modifier le rôle d'un utilisateur
+
+Via le bouton **"Modifier"** dans l'interface Administration : changer le rôle puis cliquer "Enregistrer". L'utilisateur doit se déconnecter et se reconnecter pour que le nouveau rôle soit pris en compte.
+
+En cas d'échec via l'interface, utiliser ce SQL dans Supabase :
+```sql
+UPDATE profiles SET role = 'manager' WHERE email = 'adresse@email.fr';
+UPDATE auth.users
+SET raw_user_meta_data = jsonb_set(raw_user_meta_data, '{role}', '"manager"'),
+    updated_at = NOW()
+WHERE email = 'adresse@email.fr';
+```
+
+### Dépannage — erreur 500 à la connexion
+
+Si un utilisateur créé via l'interface admin obtient une erreur 500 lors de la connexion, cela indique que les champs token de son compte sont NULL au lieu de chaînes vides. Correctif :
+```sql
+UPDATE auth.users
+SET confirmation_token = '', recovery_token = '',
+    email_change_token_new = '', email_change = ''
+WHERE email = 'adresse@email.fr';
+```
+Ce problème ne se produit plus pour les comptes créés après la mise à jour du script `admin-functions.sql` (août 2026).
 
 ---
 
@@ -325,24 +350,32 @@ Grâce à l'intégration Vercel ↔ GitHub, le processus est entièrement automa
 
 ### Créer un utilisateur
 
-Via Supabase Dashboard → Authentication → Users → « Invite user » ou « Add user ».
+Via la page **Administration** de l'application (`/admin.html`), accessible aux managers uniquement. Voir la section 5 pour le détail de la procédure.
 
-```sql
--- Après création dans l'interface, mettre à jour le nom et le rôle :
-UPDATE profiles
-SET nom = 'Prénom Nom', role = 'referent'
-WHERE email = 'prenom.nom@transitionspro-paca.fr';
-```
+> Ne pas créer de comptes directement dans le dashboard Supabase — cela produirait des comptes incomplets qui ne peuvent pas se connecter.
 
 ### Passer un utilisateur manager
 
+Via le bouton **"Modifier"** dans l'interface Administration, ou en cas d'échec via SQL :
+
 ```sql
-UPDATE profiles
-SET role = 'manager'
+UPDATE profiles SET role = 'manager' WHERE email = 'prenom.nom@transitionspro-paca.fr';
+UPDATE auth.users
+SET raw_user_meta_data = jsonb_set(raw_user_meta_data, '{role}', '"manager"'),
+    updated_at = NOW()
 WHERE email = 'prenom.nom@transitionspro-paca.fr';
 ```
 
-### Désactiver un compte
+### Supprimer un compte
+
+Via le bouton **"Supprimer"** dans l'interface Administration (bloqué si l'utilisateur a des dossiers associés), ou via SQL :
+
+```sql
+DELETE FROM auth.identities WHERE user_id = (SELECT id FROM auth.users WHERE email = 'adresse@email.fr');
+DELETE FROM auth.users WHERE email = 'adresse@email.fr';
+```
+
+### Désactiver un compte temporairement
 
 Dans Supabase → Authentication → Users → sélectionner l'utilisateur → « Disable user ».
 
